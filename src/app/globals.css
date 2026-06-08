@@ -1,0 +1,78 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-dm-sans:        'DM Sans', system-ui, sans-serif;
+  --font-jetbrains-mono: 'JetBrains Mono', monospace;
+
+  /* Spacing */
+  --nav-height:    64px;
+  --sidebar-width: 240px;
+}
+
+@layer base {
+  * {
+    @apply border-slate-200;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    font-family: var(--font-dm-sans);
+  }
+
+  body {
+    @apply bg-background text-slate-900;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar       { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { @apply bg-slate-200 rounded-full; }
+  ::-webkit-scrollbar-thumb:hover { @apply bg-slate-300; }
+}
+
+@layer components {
+  /* Card base */
+  .card {
+    @apply bg-white rounded-lg shadow-card border border-slate-100;
+  }
+
+  /* Currency amounts always use mono font */
+  .amount {
+    font-family: var(--font-jetbrains-mono);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Budget progress bar colours */
+  .progress-safe    { @apply bg-success-500; }
+  .progress-warning { @apply bg-warning-500; }
+  .progress-danger  { @apply bg-danger-500; }
+  .progress-over    { @apply bg-danger-600; }
+
+  /* Page layout helpers */
+  .page-container {
+    @apply mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-6;
+  }
+
+  .section-title {
+    @apply text-xl font-semibold text-slate-900 tracking-tight;
+  }
+}
+
+@layer utilities {
+  .text-balance { text-wrap: balance; }
+
+  /* Subtle hover lift for interactive cards */
+  .hover-lift {
+    @apply transition-all duration-200;
+  }
+  .hover-lift:hover {
+    @apply shadow-card-hover -translate-y-0.5;
+  }
+}
