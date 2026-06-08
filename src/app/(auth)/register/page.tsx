@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Wallet, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
-import { registerWithEmail } from '@/features/auth/api';
+import { registerWithEmail } from '@/features/auth/bak.api';
 import { registerSchema, type RegisterFormValues } from '@/features/auth/schema';
 import { cn } from '@/lib/utils';
 

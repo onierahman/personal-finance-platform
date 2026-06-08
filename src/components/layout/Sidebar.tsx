@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import { NAV_ITEMS } from '@/lib/constants';
 import { useUser } from '@/hooks/useUser';
-import { logout } from '@/features/auth/api';
+import { logout } from '@/features/auth/bak.api';
 import { useRouter } from 'next/navigation';
 import {
   LayoutDashboard, ArrowLeftRight, PieChart, Target,

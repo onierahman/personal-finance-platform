@@ -7,8 +7,8 @@
 -- ============================================================
 
 -- Enable required extensions
-create extension if not exists "uuid-ossp";
-create extension if not exists "pg_cron";
+create extension if not exists "uuid-ossp" with schema extensions;
+create extension if not exists "pg_cron" with schema extensions;
 
 -- ============================================================
 -- USERS
@@ -31,7 +31,7 @@ create table public.users (
 -- Checking, savings, credit card, investment, cash, etc.
 -- ============================================================
 create table public.accounts (
-  id          uuid primary key default uuid_generate_v4(),
+  id          uuid primary key default extensions.uuid_generate_v4(),
   user_id     uuid not null references public.users(id) on delete cascade,
   name        text not null,
   type        text not null check (type in (
@@ -51,7 +51,7 @@ create table public.accounts (
 -- Seeded with defaults, user can add custom
 -- ============================================================
 create table public.categories (
-  id         uuid primary key default uuid_generate_v4(),
+  id         uuid primary key default extensions.uuid_generate_v4(),
   user_id    uuid references public.users(id) on delete cascade, -- null = system default
   name       text not null,
   type       text not null check (type in ('expense','income','both')),
@@ -66,7 +66,7 @@ create table public.categories (
 -- Templates that auto-generate transactions
 -- ============================================================
 create table public.recurring_transactions (
-  id          uuid primary key default uuid_generate_v4(),
+  id          uuid primary key default  extensions.uuid_generate_v4(),
   account_id  uuid not null references public.accounts(id) on delete cascade,
   amount      decimal(15,2) not null check (amount > 0),
   type        text not null check (type in ('expense','income')),
@@ -90,7 +90,7 @@ create table public.recurring_transactions (
 -- Never hard-delete; use is_deleted + deleted_at
 -- ============================================================
 create table public.transactions (
-  id             uuid primary key default uuid_generate_v4(),
+  id             uuid primary key default extensions.uuid_generate_v4(),
   account_id     uuid not null references public.accounts(id) on delete restrict,
   recurring_id   uuid references public.recurring_transactions(id) on delete set null,
   amount         decimal(15,2) not null check (amount > 0),
@@ -116,7 +116,7 @@ create table public.transactions (
 -- Per-category monthly or annual limits
 -- ============================================================
 create table public.budgets (
-  id            uuid primary key default uuid_generate_v4(),
+  id            uuid primary key default extensions.uuid_generate_v4(),
   user_id       uuid not null references public.users(id) on delete cascade,
   category      text not null,
   limit_amount  decimal(15,2) not null check (limit_amount > 0),
@@ -134,7 +134,7 @@ create table public.budgets (
 -- Savings targets with deadlines and priorities
 -- ============================================================
 create table public.goals (
-  id              uuid primary key default uuid_generate_v4(),
+  id              uuid primary key default extensions.uuid_generate_v4(), 
   user_id         uuid not null references public.users(id) on delete cascade,
   name            text not null,
   description     text,
@@ -154,7 +154,7 @@ create table public.goals (
 -- Manual portfolio tracking — stocks, ETFs, crypto, etc.
 -- ============================================================
 create table public.investments (
-  id              uuid primary key default uuid_generate_v4(),
+  id              uuid primary key default extensions.uuid_generate_v4(),
   user_id         uuid not null references public.users(id) on delete cascade,
   asset_type      text not null check (asset_type in (
                     'stock','etf','crypto','mutual_fund','bond','real_estate','retirement','other'
@@ -175,7 +175,7 @@ create table public.investments (
 -- Bill reminders, budget alerts, goal milestones
 -- ============================================================
 create table public.notifications (
-  id         uuid primary key default uuid_generate_v4(),
+  id         uuid primary key default extensions.uuid_generate_v4(),
   user_id    uuid not null references public.users(id) on delete cascade,
   type       text not null check (type in (
                'bill_due','budget_exceeded','goal_achieved','low_balance',
@@ -193,7 +193,7 @@ create table public.notifications (
 -- Stored GPT responses — queryable, never re-called until stale
 -- ============================================================
 create table public.ai_insights (
-  id         uuid primary key default uuid_generate_v4(),
+  id         uuid primary key default extensions.uuid_generate_v4(),
   user_id    uuid not null references public.users(id) on delete cascade,
   type       text not null check (type in (
                'monthly_summary','spending_alert','savings_suggestion',

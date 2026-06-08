@@ -1,6 +1,6 @@
 'use client';
 import { useQuery } from '@tanstack/react-query';
-import { getCurrentUser } from '@/features/auth/api';
+import { getCurrentUser } from '@/features/auth/bak.api';
 
 export function useUser() {
   const { data, isLoading, error } = useQuery({

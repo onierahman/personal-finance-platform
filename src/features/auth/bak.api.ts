@@ -14,7 +14,25 @@ export async function loginWithEmail(
 
   if (error) return { data: null, error: error.message };
 
-  return upsertAndReturnProfile(supabase, data.user);
+  const { data: profile } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', data.user.id)
+    .single();
+
+  if (!profile) return { data: null, error: 'Profile not found' };
+
+  return {
+    data: {
+      id:        profile.id,
+      email:     profile.email,
+      name:      profile.name,
+      avatarUrl: profile.avatar_url,
+      currency:  profile.currency,
+      timezone:  profile.timezone,
+    },
+    error: null,
+  };
 }
 
 export async function registerWithEmail(
@@ -43,35 +61,13 @@ export async function getCurrentUser(): Promise<ApiResponse<User>> {
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) return { data: null, error: 'Not authenticated' };
 
-  return upsertAndReturnProfile(supabase, user);
-}
-
-/** Upsert public.users profile (handles cases where trigger missed) then return User */
-async function upsertAndReturnProfile(
-  supabase: ReturnType<typeof getSupabaseBrowserClient>,
-  authUser: { id: string; email?: string; user_metadata?: Record<string, string> },
-): Promise<ApiResponse<User>> {
-  const fallbackName = authUser.user_metadata?.name
-    ?? authUser.email?.split('@')[0]
-    ?? 'User';
-
-  // upsert so missing profile rows are created on next login
-  const { data: profile, error } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from('users')
-    .upsert(
-      {
-        id:       authUser.id,
-        email:    authUser.email ?? '',
-        name:     fallbackName,
-        currency: 'USD',
-        timezone: 'UTC',
-      },
-      { onConflict: 'id', ignoreDuplicates: false },
-    )
-    .select()
+    .select('*')
+    .eq('id', user.id)
     .single();
 
-  if (error || !profile) return { data: null, error: error?.message ?? 'Profile error' };
+  if (profileError || !profile) return { data: null, error: 'Profile not found' };
 
   return {
     data: {
