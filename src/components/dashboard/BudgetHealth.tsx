@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { useUiStore }   from '@/stores/uiStore';
-import { formatCurrency, monthStart } from '@/lib/formatters';
+import { formatCurrency } from '@/lib/formatters';
 import { getCategoryMeta } from '@/lib/constants';
 import { budgetHealthStatus } from '@/lib/utils';
 import { TransactionSkeleton } from '@/components/shared/LoadingSkeleton';
@@ -14,11 +14,25 @@ import { useUser }      from '@/hooks/useUser';
 
 async function fetchBudgetsWithSpent(month: string) {
   const supabase = getSupabaseBrowserClient();
+  
+  // 1. Safely calculate the boundary strings for the active month selection
+  const [yearStr, monthStr] = month.split('-');
+  const year = parseInt(yearStr, 10);
+  const nextMonthNum = parseInt(monthStr, 10) + 1;
+  
+  const nextMonthStr = nextMonthNum > 12 ? '01' : String(nextMonthNum).padStart(2, '0');
+  const nextYearStr = nextMonthNum > 12 ? String(year + 1) : String(year);
+  
+  const startOfCurrentMonth = `${yearStr}-${monthStr}-01`;
+  const startOfNextMonth = `${nextYearStr}-${nextMonthStr}-01`;
+
+  // 2. Query any budget rows created inside this month's window
   const { data, error } = await supabase
     .from('budgets')
     .select('*')
     .eq('period', 'monthly')
-    .lte('start_date', monthStart(month))
+    .gte('start_date', startOfCurrentMonth) // On or after June 1st
+    .lt('start_date', startOfNextMonth)    // Strictly before July 1st
     .order('start_date', { ascending: false });
 
   if (error) throw new Error(error.message);
