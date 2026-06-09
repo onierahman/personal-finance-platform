@@ -25,7 +25,7 @@ export default function LoginPage() {
     if (res.error) {
       setApiError(res.error);
     } else {
-      router.push('/');
+      router.push('/dashboard');
       router.refresh();
     }
   }

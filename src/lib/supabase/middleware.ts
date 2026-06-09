@@ -26,13 +26,12 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
-  // Refresh session token — do NOT remove this call
   const { data: { user } } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
   const isPublicRoute = PUBLIC_ROUTES.some(r => pathname.startsWith(r));
 
-  // Redirect unauthenticated users to login
+  // 1. Redirect unauthenticated users to login
   if (!user && !isPublicRoute && pathname !== '/') {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
@@ -40,12 +39,14 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Redirect authenticated users away from auth pages
+  // hooks are executing a brief state verification check.
+  
   if (user && isPublicRoute) {
     const url = request.nextUrl.clone();
-    url.pathname = '/';
+    url.pathname = '/dashboard';
     return NextResponse.redirect(url);
   }
+  
 
   return supabaseResponse;
 }

@@ -1,22 +1,22 @@
 'use client';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AnimatePresence, motion } from 'framer-motion';
 import { X, ChevronDown } from 'lucide-react';
 
-import { useUiStore }          from '@/stores/uiStore';
-import { useAccounts }         from '@/features/accounts/api';
+import { useUiStore }           from '@/stores/uiStore';
+import { useAccounts }          from '@/features/accounts/api';
 import { useCreateTransaction } from '@/features/transactions/hooks';
 import { transactionSchema, type TransactionFormValues } from '@/features/transactions/schema';
-import { CategoryPicker }      from './CategoryPicker';
-import { useToast }            from '@/components/ui/toaster';
-import { todayIso }            from '@/lib/formatters';
-import { cn }                  from '@/lib/utils';
+import { CategoryPicker }       from './CategoryPicker';
+import { useToast }             from '@/components/ui/toaster';
+import { todayIso }             from '@/lib/formatters';
+import { cn }                   from '@/lib/utils';
 
 export function QuickAdd() {
   const { quickAddOpen, quickAddType, closeQuickAdd, openQuickAdd } = useUiStore();
-  const { data: accountsRes } = useAccounts();
+  const { data: accountsRes, isLoading: accountsLoading } = useAccounts();
   const accounts = accountsRes?.data ?? [];
   const createTxn = useCreateTransaction();
   const { success, error: showError } = useToast();
@@ -28,15 +28,22 @@ export function QuickAdd() {
   } = useForm<TransactionFormValues>({
     resolver: zodResolver(transactionSchema),
     defaultValues: {
-      type:     quickAddType,
-      date:     todayIso(),
-      category: '',
+      type:       quickAddType,
+      date:       todayIso(),
+      category:   '',
+      account_id: '', // must be present so Zod sees the field; overwritten once accounts load
     },
   });
 
-  const selectedType = watch('type');
 
-  // Auto-focus amount on open
+  
+  const selectedType = watch('type');
+  const selectedAccountId = watch('account_id'); // <-- Add this tracker
+  // Register amount once — calling register() twice produces two separate field
+  // registrations; RHF only tracks the last ref, so the value is lost on submit.
+  const amountReg = register('amount', { valueAsNumber: true });
+
+  // Sync type + clear category whenever the sheet opens or type changes
   useEffect(() => {
     if (quickAddOpen) {
       setValue('type', quickAddType);
@@ -45,31 +52,51 @@ export function QuickAdd() {
     }
   }, [quickAddOpen, quickAddType, setValue]);
 
-  // Set first account as default
-  useEffect(() => {
-    if (accounts.length > 0) setValue('account_id', accounts[0].id);
-  }, [accounts, setValue]);
+  // Set first account as default as soon as accounts are available
+ // useEffect(() => {
+  //  if (accounts.length > 0) {
+  //    setValue('account_id', accounts[0].id, { shouldValidate: false });
+  //  }
+  //}, [accounts, setValue]);
+  
+// Ensure the internal form state always matches a valid account belonging to the active user session
+useEffect(() => {
+  if (accounts.length > 0) {
+    const isCurrentAccountValid = accounts.some(acc => acc.id === selectedAccountId);
+    
+    // If the tracked ID doesn't exist in the current user's accounts array, force-reset it
+    if (!isCurrentAccountValid) {
+      setValue('account_id', accounts[0].id, { shouldValidate: false });
+    }
+  }
+}, [accounts, selectedAccountId, setValue]);
 
   async function onSubmit(values: TransactionFormValues) {
-    const res = await createTxn.mutateAsync({
-      account_id:  values.account_id,
-      amount:      values.amount,
-      type:        values.type,
-      category:    values.category,
-      subcategory: values.subcategory,
-      merchant:    values.merchant,
-      date:        values.date,
-      note:        values.note,
-      receipt_url: values.receipt_url || undefined,
-      recurring_id: null,
-    });
+    try {
+      const res = await createTxn.mutateAsync({
+        account_id:  values.account_id,
+        amount:      values.amount,
+        type:        values.type,
+        category:    values.category,
+        subcategory: values.subcategory,
+        merchant:    values.merchant,
+        date:        values.date,
+        note:        values.note,
+        receipt_url: values.receipt_url || undefined,
+        recurring_id: null,
+      });
 
-    if (res.error) {
-      showError('Failed to save', res.error);
-    } else {
+      if (res.error) {
+        showError('Failed to save', res.error);
+        return;
+      }
+
       success('Transaction saved', `${values.category} · $${values.amount.toFixed(2)}`);
       reset({ type: selectedType, date: todayIso(), category: '', account_id: accounts[0]?.id });
       closeQuickAdd();
+    } catch (err) {
+      showError('Failed to save', err instanceof Error ? err.message : 'Unexpected error — check console');
+      console.error('[QuickAdd] createTransaction error:', err);
     }
   }
 
@@ -131,15 +158,21 @@ export function QuickAdd() {
                 ))}
               </div>
 
-              <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <form
+                onSubmit={handleSubmit(onSubmit, (validationErrors) => {
+                  // Visible in DevTools during development — remove before prod
+                  console.warn('[QuickAdd] Zod validation failed:', validationErrors);
+                })}
+                className="space-y-4"
+              >
                 {/* Amount — most prominent */}
                 <div>
                   <div className="flex items-center gap-2 border-2 border-slate-200 rounded-lg px-4 py-3 focus-within:border-primary-500 transition-colors">
                     <span className="text-2xl font-medium text-slate-400">$</span>
                     <input
-                      {...register('amount', { valueAsNumber: true })}
+                      {...amountReg}
                       ref={e => {
-                        register('amount', { valueAsNumber: true }).ref(e);
+                        amountReg.ref(e);
                         (amountRef as React.MutableRefObject<HTMLInputElement | null>).current = e;
                       }}
                       type="number"
@@ -194,23 +227,31 @@ export function QuickAdd() {
                   </div>
                 </div>
 
-                {/* Account selector */}
-                {accounts.length > 1 && (
-                  <div>
-                    <label className="text-xs font-medium text-slate-500">Account</label>
-                    <div className="relative mt-1">
-                      <select
-                        {...register('account_id')}
-                        className="w-full px-3 py-2 text-sm border border-slate-200 rounded-md outline-none focus:border-primary-500 appearance-none transition-colors bg-white"
-                      >
-                        {accounts.map(a => (
-                          <option key={a.id} value={a.id}>{a.name}</option>
-                        ))}
-                      </select>
-                      <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
-                    </div>
+                {/* Account selector — always render so RHF registers the field */}
+                <div>
+                  <label className="text-xs font-medium text-slate-500">Account</label>
+                  <div className="relative mt-1">
+                    <select
+                      {...register('account_id')}
+                      disabled={accountsLoading || accounts.length === 0}
+                      className="w-full px-3 py-2 text-sm border border-slate-200 rounded-md outline-none focus:border-primary-500 appearance-none transition-colors bg-white disabled:opacity-50"
+                    >
+                      {accountsLoading && (
+                        <option value="">Loading accounts…</option>
+                      )}
+                      {!accountsLoading && accounts.length === 0 && (
+                        <option value="">No accounts found — add one first</option>
+                      )}
+                      {accounts.map(a => (
+                        <option key={a.id} value={a.id}>{a.name}</option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
                   </div>
-                )}
+                  {errors.account_id && (
+                    <p className="text-xs text-danger-500 mt-1">{errors.account_id.message}</p>
+                  )}
+                </div>
 
                 {/* Note */}
                 <div>

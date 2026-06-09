@@ -46,41 +46,66 @@ export async function getCurrentUser(): Promise<ApiResponse<User>> {
   return upsertAndReturnProfile(supabase, user);
 }
 
-/** Upsert public.users profile (handles cases where trigger missed) then return User */
+/** Safe fetch with auto-profile insert if missing */
 async function upsertAndReturnProfile(
   supabase: ReturnType<typeof getSupabaseBrowserClient>,
-  authUser: { id: string; email?: string; user_metadata?: Record<string, string> },
+  authUser: any,
 ): Promise<ApiResponse<User>> {
+  
+  // 1. Try an explicit select read first
+  const { data: profile, error: selectError } = await supabase
+    .from('users')
+    .select('*')
+    .eq('id', authUser.id)
+    .maybeSingle(); // Prevents throwing hard 406/PGRST116 errors if missing
+
+  // 2. If it exists, return it immediately
+  if (profile && !selectError) {
+    return {
+      data: {
+        id:        profile.id,
+        email:     profile.email,
+        name:      profile.name,
+        avatarUrl: profile.avatar_url,
+        currency:  profile.currency,
+        timezone:  profile.timezone,
+      },
+      error: null,
+    };
+  }
+
+  // 3. Fallback: If it truly is missing, perform a dedicated baseline creation insert
   const fallbackName = authUser.user_metadata?.name
+    ?? authUser.raw_user_meta_data?.name
     ?? authUser.email?.split('@')[0]
     ?? 'User';
 
-  // upsert so missing profile rows are created on next login
-  const { data: profile, error } = await supabase
+  const { data: newProfile, error: insertError } = await supabase
     .from('users')
-    .upsert(
-      {
-        id:       authUser.id,
-        email:    authUser.email ?? '',
-        name:     fallbackName,
-        currency: 'USD',
-        timezone: 'UTC',
-      },
-      { onConflict: 'id', ignoreDuplicates: false },
-    )
+    .insert({
+      id:       authUser.id,
+      email:    authUser.email ?? '',
+      name:     fallbackName,
+      currency: 'USD',
+      timezone: 'UTC'
+    })
     .select()
     .single();
 
-  if (error || !profile) return { data: null, error: error?.message ?? 'Profile error' };
+  if (insertError || !newProfile) {
+    // Console log this temporarily so you can see the EXACT database error in your browser console
+    console.error("Database Insert Rejection Reason:", insertError);
+    return { data: null, error: insertError?.message ?? 'Profile could not be generated' };
+  }
 
   return {
     data: {
-      id:        profile.id,
-      email:     profile.email,
-      name:      profile.name,
-      avatarUrl: profile.avatar_url,
-      currency:  profile.currency,
-      timezone:  profile.timezone,
+      id:        newProfile.id,
+      email:     newProfile.email,
+      name:      newProfile.name,
+      avatarUrl: newProfile.avatar_url,
+      currency:  newProfile.currency,
+      timezone:  newProfile.timezone,
     },
     error: null,
   };

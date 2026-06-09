@@ -1,4 +1,4 @@
-import "./globals.css"; // 👈 Make sure this line exists!
+//import "./globals.css"; // 👈 Make sure this line exists!
 import { Inter } from "next/font/google";
 import { Sidebar }   from '@/components/layout/Sidebar';
 import { TopBar }    from '@/components/layout/TopBar';

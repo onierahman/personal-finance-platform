@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
-import { Providers } from './providers';
+import { Providers } from './providers';   // ← direct import, no wrapper needed
 
 export const metadata: Metadata = {
   title:       'FinanceOS — Personal Finance Dashboard',

@@ -1,5 +1,5 @@
 'use client';
-import { useState, useEffect, createContext, useContext, useCallback } from 'react';
+import { useState, useCallback, createContext, useContext } from 'react';
 import { cn } from '@/lib/utils';
 import { X, CheckCircle2, AlertCircle, Info } from 'lucide-react';
 
@@ -13,7 +13,7 @@ interface Toast {
 }
 
 interface ToastContextValue {
-  toast: (t: Omit<Toast, 'id'>) => void;
+  toast:   (t: Omit<Toast, 'id'>) => void;
   success: (title: string, message?: string) => void;
   error:   (title: string, message?: string) => void;
   info:    (title: string, message?: string) => void;
@@ -27,7 +27,8 @@ export function useToast() {
   return ctx;
 }
 
-export function Toaster() {
+// This is now the provider — wraps children AND renders the toast list
+export function Toaster({ children }: { children: React.ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   const dismiss = useCallback((id: string) => {
@@ -55,6 +56,7 @@ export function Toaster() {
 
   return (
     <ToastContext.Provider value={value}>
+      {children}
       <div className="fixed bottom-4 right-4 z-[200] flex flex-col gap-2 w-80">
         {toasts.map(t => (
           <div
