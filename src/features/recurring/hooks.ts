@@ -40,10 +40,12 @@ export function useCreateRecurring() {
         .insert([
           {
             user_id: session.user.id,
+            account_id: values.account_id,
             merchant: values.merchant,
             amount: values.amount,
             frequency: values.frequency,
             type: values.type,
+            start_date: values.start_date,
             next_due: values.next_due,
             category: values.category,
             is_active: true,

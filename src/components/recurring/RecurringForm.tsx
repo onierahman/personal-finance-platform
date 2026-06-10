@@ -2,6 +2,8 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useQuery } from '@tanstack/react-query';
+import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { recurringSchema } from '@/features/recurring/schema';
 import { useCreateRecurring } from '@/features/recurring/hooks';
 import { todayIso } from '@/lib/formatters';
@@ -10,17 +12,39 @@ import { z } from 'zod';
 type RecurringValues = z.infer<typeof recurringSchema>;
 
 export function RecurringForm({ onSuccess }: { onSuccess?: () => void }) {
+  const supabase = getSupabaseBrowserClient();
   const { mutate: createRecurring, isPending } = useCreateRecurring();
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<RecurringValues>({
+// 1. Change 'data: accounts = []' to 'data: accountsData'
+  const { data: accountsData, isLoading: isLoadingAccounts } = useQuery({
+    queryKey: ['accounts', 'list'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('accounts')
+        .select('id, name')
+        .order('name', { ascending: true });
+        
+      if (error) throw new Error(error.message);
+      return data ?? [];
+    }
+  });
+
+  // 2. Add this right below the useQuery block to safely handle the null hydration state
+  const accounts = Array.isArray(accountsData) ? accountsData : [];
+
+
+
+  const { register, handleSubmit, reset, fontState, formState: { errors } } = useForm<RecurringValues>({
     resolver: zodResolver(recurringSchema),
     defaultValues: {
       merchant: '',
       amount: 0,
       frequency: 'monthly',
       type: 'expense',
+      start_date: todayIso(), // Set automatically to present day timeline initialization
       next_due: todayIso(),
       category: 'Subscriptions',
+      account_id: '',
     }
   });
 
@@ -75,9 +99,12 @@ export function RecurringForm({ onSuccess }: { onSuccess?: () => void }) {
         <div>
           <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Frequency</label>
           <select {...register('frequency')} className="w-full text-sm rounded-md border border-slate-200 bg-white p-2.5 text-slate-700">
+            <option value="daily">Daily</option>
             <option value="weekly">Weekly</option>
+            <option value="biweekly">Bi-Weekly</option>
             <option value="monthly">Monthly</option>
-            <option value="annual">Annually</option>
+            <option value="quarterly">Quarterly</option>
+            <option value="yearly">Annually</option>
           </select>
         </div>
         <div>
@@ -93,15 +120,37 @@ export function RecurringForm({ onSuccess }: { onSuccess?: () => void }) {
       </div>
 
       <div>
+        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
+          Target Payment Account
+        </label>
+        <select 
+          {...register('account_id')} 
+          disabled={isLoadingAccounts}
+          className="w-full text-sm rounded-md border border-slate-200 bg-white p-2.5 text-slate-700 disabled:opacity-50"
+        >
+          <option value="">-- Choose Account --</option>
+          {accounts.map(acc => (
+            <option key={acc.id} value={acc.id}>
+              {acc.name}
+            </option>
+          ))}
+        </select>
+        {errors.account_id && <p className="text-xs font-medium text-danger-600 mt-1">{errors.account_id.message}</p>}
+      </div>
+
+      <div>
         <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">Next Settlement Date</label>
         <input type="date" {...register('next_due')} className="w-full text-sm rounded-md border border-slate-200 p-2.5 text-slate-800" />
         {errors.next_due && <p className="text-xs font-medium text-danger-600 mt-1">{errors.next_due.message}</p>}
       </div>
 
+      {/* Hidden baseline input tracking date initialization */}
+      <input type="hidden" {...register('start_date')} />
+
       <button
         type="submit"
-        disabled={isPending}
-        className="w-full rounded-md bg-primary-600 py-2.5 text-sm font-semibold text-white hover:bg-primary-700 transition-colors"
+        disabled={isPending || isLoadingAccounts}
+        className="w-full rounded-md bg-primary-600 py-2.5 text-sm font-semibold text-white hover:bg-primary-700 transition-colors disabled:bg-slate-300"
       >
         {isPending ? 'Deploying...' : 'Register Automated Profile'}
       </button>
