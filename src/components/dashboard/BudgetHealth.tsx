@@ -8,9 +8,10 @@ import { getCategoryMeta } from '@/lib/constants';
 import { budgetHealthStatus } from '@/lib/utils';
 import { TransactionSkeleton } from '@/components/shared/LoadingSkeleton';
 import { EmptyState }   from '@/components/shared/EmptyState';
-import { PieChart, ChevronRight } from 'lucide-react';
+import { PieChart, ChevronRight, Trash2 } from 'lucide-react'; // Added Trash2 Icon
 import { cn }           from '@/lib/utils';
 import { useUser }      from '@/hooks/useUser';
+import { useDeleteBudget } from '@/features/budgets/hooks'; // Imported our new delete hook
 
 async function fetchBudgetsWithSpent(month: string) {
   const supabase = getSupabaseBrowserClient();
@@ -43,12 +44,21 @@ export function BudgetHealth() {
   const { activeMonth } = useUiStore();
   const { user }        = useUser();
   const currency        = user?.currency ?? 'USD';
+  
+  // Initialize the delete mutation hook
+  const { mutate: deleteBudget, isPending: isDeleting } = useDeleteBudget();
 
   const { data: budgets = [], isLoading } = useQuery({
     queryKey: ['budgets', 'dashboard', activeMonth],
     queryFn:  () => fetchBudgetsWithSpent(activeMonth),
     staleTime: 60_000,
   });
+
+  const handleDelete = (id: string) => {
+    if (confirm('Are you sure you want to remove this budget allocation cap?')) {
+      deleteBudget(id);
+    }
+  };
 
   const colorMap = {
     safe:    'bg-success-500',
@@ -65,9 +75,9 @@ export function BudgetHealth() {
   };
 
   return (
-    <div className="card p-5">
+    <div className="card p-5 bg-white border border-slate-100 rounded-xl shadow-sm">
       <div className="flex items-center justify-between mb-4">
-        <p className="section-title text-base">Budget Health</p>
+        <p className="section-title text-base font-semibold text-slate-800">Budget Health</p>
         <Link href="/budgets" className="text-xs text-primary-600 hover:underline flex items-center gap-0.5">
           All <ChevronRight className="w-3 h-3" />
         </Link>
@@ -92,21 +102,35 @@ export function BudgetHealth() {
             const pct  = Math.min(ratio * 100, 100);
 
             return (
-              <li key={b.id}>
+              <li key={b.id} className="group">
                 <div className="flex items-center justify-between mb-1.5">
                   <div className="flex items-center gap-2">
                     <span className="text-base leading-none">{meta.icon}</span>
                     <span className="text-sm font-medium text-slate-700">{b.category}</span>
                   </div>
-                  <div className="text-right">
-                    <span className={cn('text-xs font-medium', textColorMap[status])}>
-                      {formatCurrency(Number(b.spent_amount), currency)}
-                    </span>
-                    <span className="text-xs text-slate-400">
-                      {' / '}{formatCurrency(Number(b.limit_amount), currency)}
-                    </span>
+                  
+                  {/* Container wrapping text numbers alongside the action delete trigger */}
+                  <div className="flex items-center gap-3">
+                    <div className="text-right">
+                      <span className={cn('text-xs font-medium', textColorMap[status])}>
+                        {formatCurrency(Number(b.spent_amount), currency)}
+                      </span>
+                      <span className="text-xs text-slate-400">
+                        {' / '}{formatCurrency(Number(b.limit_amount), currency)}
+                      </span>
+                    </div>
+                    
+                    <button
+                      onClick={() => handleDelete(b.id)}
+                      disabled={isDeleting}
+                      title="Delete budget cap"
+                      className="text-slate-300 hover:text-danger-500 p-1 rounded-md hover:bg-slate-50 transition-all opacity-0 group-hover:opacity-100 disabled:opacity-30"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
                   </div>
                 </div>
+                
                 <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
                   <div
                     className={cn('h-full rounded-full transition-all duration-500', colorMap[status])}

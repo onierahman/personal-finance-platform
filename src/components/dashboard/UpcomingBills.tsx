@@ -24,7 +24,7 @@ export function UpcomingBills() {
       <div className="flex items-center justify-between mb-4">
         <p className="section-title text-base">Upcoming Bills & Subscriptions</p>
         <Link href="/recurring" className="text-xs text-primary-600 hover:underline flex items-center gap-0.5">
-          Manage <ChevronRight className="w-3 h-3" />
+          All <ChevronRight className="w-3 h-3" />
         </Link>
       </div>
 

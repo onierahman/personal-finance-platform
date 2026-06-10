@@ -48,3 +48,24 @@ export function useCreateBudget() {
     },
   });
 }
+
+export function useDeleteBudget() {
+  const supabase = getSupabaseBrowserClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('budgets')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw new Error(error.message);
+      return id;
+    },
+    onSuccess: () => {
+      // Automatically refreshes any components listening to the budget list query
+      queryClient.invalidateQueries({ queryKey: ['budgets'] });
+    },
+  });
+}

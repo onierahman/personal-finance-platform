@@ -1,17 +1,19 @@
 'use client';
 
-import { useGoals, useAddContribution } from '@/features/goals/hooks';
+import Link from 'next/link';
+import { useGoals, useAddContribution, useDeleteGoal } from '@/features/goals/hooks';
 import { formatCurrency, formatPercent } from '@/lib/formatters';
 import { suggestedMonthlyContribution } from '@/lib/utils';
 import { useUser } from '@/hooks/useUser';
 import { EmptyState } from '@/components/shared/EmptyState';
-import { Target, Plus } from 'lucide-react';
+import { Target, Plus, Trash2, ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 export function SavingsGoalsList() {
   const { data: goals = [], isLoading } = useGoals();
   const { mutate: addContribution } = useAddContribution();
+  const { mutate: deleteGoal, isPending: isDeleting } = useDeleteGoal();
   const { user } = useUser();
   const currency = user?.currency ?? 'USD';
 
@@ -21,6 +23,12 @@ export function SavingsGoalsList() {
     const amount = parseFloat(amountStr);
     if (!isNaN(amount) && amount > 0) {
       addContribution({ goalId, amount });
+    }
+  };
+
+  const handleDelete = (id: string, name: string) => {
+    if (confirm(`Clear savings target goal for "${name}"?`)) {
+      deleteGoal(id);
     }
   };
 
@@ -38,7 +46,13 @@ export function SavingsGoalsList() {
   if (activeGoals.length === 0) {
     return (
       <div className="card p-5 flex flex-col justify-between h-[280px]">
-        <p className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Savings Goals</p>
+        <div className="flex items-center justify-between mb-2">
+          {/* Matched text weight, capitalization, and baseline size from recurring list */}
+          <p className="section-title text-base">Savings Goals</p>
+          <Link href="/goals" className="text-xs text-primary-600 hover:underline flex items-center gap-0.5">
+            All <ChevronRight className="w-3 h-3" />
+          </Link>
+        </div>
         <EmptyState
           icon={Target}
           title="No active targets"
@@ -53,10 +67,13 @@ export function SavingsGoalsList() {
       <div>
         <div className="flex items-center justify-between mb-4">
           <div className="space-y-0.5">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Savings Goals</p>
+            {/* Matched text weight, capitalization, and baseline size from recurring list */}
+            <p className="section-title text-base">Savings Goals</p>
             <p className="text-xs text-slate-500 font-medium">{activeGoals.length} Active Targets</p>
           </div>
-          <Target className="w-4 h-4 text-slate-300 group-hover:text-primary-500 transition-colors" />
+          <Link href="/goals" className="text-xs text-primary-600 hover:underline flex items-center gap-0.5">
+            All <ChevronRight className="w-3 h-3" />
+          </Link>
         </div>
 
         <div className="space-y-4 max-h-[220px] overflow-y-auto pr-1">
@@ -80,15 +97,26 @@ export function SavingsGoalsList() {
                     </span>
                   </div>
                   
-                  <div className="flex items-center gap-2">
-                    <span className="amount text-xs font-bold text-slate-900">
+                  <div className="flex items-center gap-1.5">
+                    <span className="amount text-xs font-bold text-slate-900 mr-0.5">
                       {formatCurrency(Number(goal.current_amount), currency)}
                     </span>
+                    
                     <button
                       onClick={() => handleQuickSave(goal.id)}
+                      title="Quick Deposit"
                       className="p-1 rounded bg-white border border-slate-200 hover:border-slate-300 text-slate-500 transition-colors"
                     >
                       <Plus className="w-3 h-3" />
+                    </button>
+
+                    <button
+                      onClick={() => handleDelete(goal.id, goal.name)}
+                      disabled={isDeleting}
+                      title="Delete target goal"
+                      className="p-1.5 rounded border text-slate-400 hover:text-danger-600 hover:bg-danger-50 bg-white transition-colors disabled:opacity-40"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>

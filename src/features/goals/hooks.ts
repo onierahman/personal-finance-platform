@@ -97,3 +97,25 @@ export function useAddContribution() {
     },
   });
 }
+
+// 4. Delete a target savings horizon goal completely
+export function useDeleteGoal() {
+  const supabase = getSupabaseBrowserClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase
+        .from('goals')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw new Error(error.message);
+      return id;
+    },
+    onSuccess: () => {
+      // Invalidate and refetch goals list cache smoothly
+      queryClient.invalidateQueries({ queryKey: ['goals'] });
+    },
+  });
+}
