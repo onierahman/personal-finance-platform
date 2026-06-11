@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useUser } from '@/hooks/useUser';
 import { useUpdateProfile, useChangePassword } from '@/features/settings/hooks';
 import {
@@ -632,7 +632,7 @@ function DangerZoneTab({ onError }: { onError: (msg: string) => void }) {
 }
 
 // ── Page ────────────────────────────────────────────────────────
-export default function SettingsPage() {
+function SettingsPageContent() {
   const searchParams               = useSearchParams();
   const [activeTab, setActiveTab]  = useState<Tab>('profile');
   const [toast, setToast]          = useState<{ message: string; type: 'success' | 'error' } | null>(null);
@@ -724,5 +724,13 @@ export default function SettingsPage() {
 
       {toast && <Toast message={toast.message} type={toast.type} />}
     </div>
+  );
+}
+
+export default function SettingsPage() {
+  return (
+    <Suspense fallback={null}>
+      <SettingsPageContent />
+    </Suspense>
   );
 }
