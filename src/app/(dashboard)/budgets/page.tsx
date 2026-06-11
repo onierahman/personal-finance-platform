@@ -185,7 +185,7 @@ export default function BudgetsPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
           {/* Period tabs */}
-          <div className="flex gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg w-fit">
+          <div className="flex gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
             {tabs.map(tab => (
               <button
                 key={tab.key}

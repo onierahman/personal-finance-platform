@@ -146,9 +146,11 @@ export default function RecurringPage() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Recurring Transactions</h1>
-        <p className="text-sm text-slate-500 dark:text-slate-400">Manage ongoing bills, subscriptions, and income streams.</p>
+      <div className="flex flex-col gap-1 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Recurring</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Manage ongoing bills, subscriptions, and income streams.</p>
+        </div>
       </div>
 
       {/* PRD: summary header — monthly committed outflow, active counts, upcoming bills */}
@@ -180,7 +182,7 @@ export default function RecurringPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
           {/* Expense / Income type filter tabs */}
-          <div className="flex gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg w-fit">
+          <div className="flex gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg">
             {tabs.map(tab => (
               <button
                 key={tab.key}
@@ -228,7 +230,7 @@ export default function RecurringPage() {
                   <thead>
                     <tr className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-100 dark:border-slate-700 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                       <th className="p-3">Merchant</th>
-                      <th className="p-3">Frequency</th>
+                      <th className="p-3 hidden sm:table-cell">Frequency</th>
                       <th className="p-3">Next Due</th>
                       <th className="p-3 text-right">Amount</th>
                       <th className="p-3 text-center">Actions</th>
@@ -256,7 +258,7 @@ export default function RecurringPage() {
                                 {item.category}
                               </span>
                             </td>
-                            <td className="p-3 text-slate-500 dark:text-slate-400 font-medium capitalize">
+                            <td className="p-3 text-slate-500 dark:text-slate-400 font-medium capitalize hidden sm:table-cell">
                               {FREQUENCY_LABELS[item.frequency] ?? item.frequency}
                             </td>
                             <td className="p-3">

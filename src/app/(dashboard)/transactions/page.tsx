@@ -52,9 +52,9 @@ export default function TransactionsPage() {
   return (
     <div className="space-y-4">
       {/* Page header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Transactions</h1>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 self-end sm:self-auto">
           <TransactionExportButton
             month={activeMonth}
             type={typeFilter || undefined}

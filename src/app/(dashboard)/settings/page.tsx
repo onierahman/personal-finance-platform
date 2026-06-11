@@ -661,9 +661,35 @@ function SettingsPageContent() {
         <p className="text-sm text-slate-500 dark:text-slate-400">Manage your profile, preferences, and account.</p>
       </div>
 
+      {/* Mobile: horizontal scrollable pill tabs */}
+      <div className="flex gap-2 overflow-x-auto pb-1 lg:hidden scrollbar-hide">
+        {TABS.map(tab => {
+          const Icon = tab.icon;
+          const active = activeTab === tab.key;
+          return (
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setActiveTab(tab.key)}
+              className={cn(
+                'flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium whitespace-nowrap flex-shrink-0 transition-colors',
+                active
+                  ? 'bg-primary-600 text-white'
+                  : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300',
+                tab.key === 'danger' && !active && 'bg-danger-50 dark:bg-danger-500/10 text-danger-600',
+                tab.key === 'danger' && active && 'bg-danger-600 text-white',
+              )}
+            >
+              <Icon className="w-3.5 h-3.5 flex-shrink-0" />
+              {tab.label}
+            </button>
+          );
+        })}
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        {/* Sidebar nav */}
-        <nav className="lg:col-span-1">
+        {/* Sidebar nav — desktop only */}
+        <nav className="lg:col-span-1 hidden lg:block">
           <ul className="space-y-0.5">
             {TABS.map(tab => {
               const Icon = tab.icon;

@@ -257,14 +257,14 @@ export default function InvestmentsPage() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-xl font-bold text-slate-900 dark:text-white">Investments</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Track your portfolio performance</p>
         </div>
         <button
           onClick={() => { setShowForm(true); setEditingId(null); }}
-          className="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+          className="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors self-end sm:self-auto"
         >
           <Plus className="w-4 h-4" /> Add Investment
         </button>
