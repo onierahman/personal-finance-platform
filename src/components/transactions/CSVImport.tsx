@@ -118,6 +118,15 @@ export function CSVImport({
     const skipped  = rows.length - validPayloads.length;
     setImportSummary({ imported, skipped });
 
+    if (imported > 0) {
+      const source = detectedBankName ? 'bank-statement' : 'csv';
+      fetch('/api/notifications/trigger/import-complete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imported, skipped, source }),
+      }).catch(() => {});
+    }
+
     // Switch the active month to the month of the imported transactions so they
     // appear immediately in the transaction list (imported dates may differ from
     // the currently viewed month).

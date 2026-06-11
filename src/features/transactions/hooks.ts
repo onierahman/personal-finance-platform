@@ -52,12 +52,17 @@ export function useCategoryBreakdown(month?: string, type: 'expense' | 'income' 
   });
 }
 
+function triggerBudgetCheck() {
+  fetch('/api/notifications/trigger/budget-check', { method: 'POST' }).catch(() => {});
+}
+
 export function useCreateTransaction() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (payload: InsertTransaction) => createTransaction(payload),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: transactionKeys.all });
+      triggerBudgetCheck();
     },
   });
 }
@@ -68,6 +73,7 @@ export function useBulkCreateTransactions() {
     mutationFn: (payloads: InsertTransaction[]) => bulkCreateTransactions(payloads),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: transactionKeys.all });
+      triggerBudgetCheck();
     },
   });
 }

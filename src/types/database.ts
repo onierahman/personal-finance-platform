@@ -26,7 +26,9 @@ export type NotificationType =
   | 'goal_achieved'
   | 'low_balance'
   | 'recurring_generated'
-  | 'insight_ready';
+  | 'insight_ready'
+  | 'import_complete'
+  | 'weekly_digest';
 export type InsightType =
   | 'monthly_summary'
   | 'spending_alert'
@@ -161,7 +163,19 @@ export interface DbNotification {
   body: string;
   data: Record<string, unknown> | null;
   is_read: boolean;
+  email_sent: boolean;
   created_at: string;
+}
+
+export interface DbGmailToken {
+  id: string;
+  user_id: string;
+  email: string;
+  access_token: string;
+  refresh_token: string;
+  expires_at: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface DbAiInsight {
@@ -206,6 +220,7 @@ export type Database = {
       investments:            { Row: DbInvestment;            Insert: InsertInvestment;        Update: UpdateInvestment };
       recurring_transactions: { Row: DbRecurringTransaction;  Insert: InsertRecurring;         Update: UpdateRecurring };
       notifications:          { Row: DbNotification;          Insert: Omit<DbNotification,'id'|'created_at'>; Update: Partial<DbNotification> };
+      gmail_tokens:           { Row: DbGmailToken;            Insert: Omit<DbGmailToken,'id'|'created_at'>;   Update: Partial<DbGmailToken> };
       ai_insights:            { Row: DbAiInsight;             Insert: Omit<DbAiInsight,'id'|'created_at'>;    Update: Partial<DbAiInsight> };
     };
   };

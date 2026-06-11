@@ -9,12 +9,15 @@ import {
   deleteAccount,
   type NotificationPreferences,
 } from '@/features/settings/api';
+import { useGmailConnection, useDisconnectGmail, useSendTestEmail, useNotifications } from '@/features/notifications/hooks';
 import { CURRENCIES } from '@/lib/constants';
 import { cn } from '@/lib/utils';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { formatDistanceToNow } from 'date-fns';
 import {
   User, Lock, Bell, Trash2, Check, AlertTriangle,
   ChevronRight, Globe, DollarSign, Eye, EyeOff,
+  Mail, Loader2, ExternalLink, Unlink, History, Send,
 } from 'lucide-react';
 
 // ── Timezones ──────────────────────────────────────────────────
@@ -321,8 +324,110 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
   );
 }
 
+// ── Gmail Connect Panel ────────────────────────────────────────
+function GmailConnectPanel({ onSaved, onError }: { onSaved: (msg: string) => void; onError: (msg: string) => void }) {
+  const { data: gmail, isLoading }                         = useGmailConnection();
+  const { mutate: disconnect, isPending: isDisconnecting } = useDisconnectGmail();
+  const { mutate: sendTest,   isPending: isSending }       = useSendTestEmail();
+  const [confirmDisconnect, setConfirmDisconnect]          = useState(false);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center gap-2 text-slate-400 text-sm py-3">
+        <Loader2 className="w-4 h-4 animate-spin" />
+        Checking Gmail status…
+      </div>
+    );
+  }
+
+  return (
+    <div className="rounded-xl border border-slate-200 dark:border-slate-700 p-4 space-y-4">
+      <div className="flex items-start gap-3">
+        <div className="w-9 h-9 rounded-lg bg-red-50 dark:bg-red-900/20 flex items-center justify-center flex-shrink-0">
+          <Mail className="w-4 h-4 text-red-500" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">Gmail Email Delivery</p>
+          {gmail?.connected ? (
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Connected as <span className="font-medium text-slate-700 dark:text-slate-300">{gmail.email}</span>
+            </p>
+          ) : (
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+              Connect your Gmail to receive budget alerts, bill reminders, and weekly digests by email.
+            </p>
+          )}
+        </div>
+        {gmail?.connected && (
+          <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-success-100 dark:bg-success-900/30 text-success-700 dark:text-success-400 flex-shrink-0">
+            Connected
+          </span>
+        )}
+      </div>
+
+      {gmail?.connected ? (
+        confirmDisconnect ? (
+          <div className="rounded-lg bg-danger-50 dark:bg-danger-500/10 border border-danger-200 dark:border-danger-500/30 p-3 space-y-2">
+            <p className="text-xs text-danger-700 dark:text-danger-400 font-medium">
+              Revoke Gmail access? You'll stop receiving email notifications.
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => disconnect(undefined, {
+                  onSuccess: () => { setConfirmDisconnect(false); onSaved('Gmail access revoked.'); },
+                  onError:   (e) => { setConfirmDisconnect(false); onError(e.message); },
+                })}
+                disabled={isDisconnecting}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg bg-danger-600 text-white hover:bg-danger-700 disabled:opacity-50 transition-colors"
+              >
+                {isDisconnecting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Unlink className="w-3 h-3" />}
+                Yes, revoke
+              </button>
+              <button
+                onClick={() => setConfirmDisconnect(false)}
+                className="px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => sendTest(undefined, {
+                onSuccess: (res) => res.ok ? onSaved('Test email sent! Check your inbox.') : onError(res.error ?? 'Send failed'),
+                onError:   (e)   => onError(e.message),
+              })}
+              disabled={isSending}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50 transition-colors"
+            >
+              {isSending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
+              Send test email
+            </button>
+            <button
+              onClick={() => setConfirmDisconnect(true)}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-lg border border-danger-200 dark:border-danger-500/30 text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-500/10 transition-colors"
+            >
+              <Unlink className="w-3.5 h-3.5" />
+              Revoke access
+            </button>
+          </div>
+        )
+      ) : (
+        <a
+          href="/api/auth/gmail"
+          className="inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg bg-primary-600 text-white hover:bg-primary-700 transition-colors"
+        >
+          <ExternalLink className="w-3.5 h-3.5" />
+          Connect Gmail
+        </a>
+      )}
+    </div>
+  );
+}
+
 // ── Notifications Tab ──────────────────────────────────────────
-function NotificationsTab({ onSaved }: { onSaved: (msg: string) => void }) {
+function NotificationsTab({ onSaved, onError }: { onSaved: (msg: string) => void; onError: (msg: string) => void }) {
   const [prefs, setPrefs] = useState<NotificationPreferences>(getNotificationPreferences);
 
   const toggle = (key: keyof NotificationPreferences) => {
@@ -343,21 +448,88 @@ function NotificationsTab({ onSaved }: { onSaved: (msg: string) => void }) {
 
   return (
     <div className="space-y-6">
-      <p className="text-sm text-slate-500">
-        Choose which in-app alerts you want to receive. Preferences are saved instantly.
-      </p>
+      <GmailConnectPanel onSaved={onSaved} onError={onError} />
 
-      <ul className="divide-y divide-slate-100 dark:divide-slate-800">
-        {items.map(item => (
-          <li key={item.key} className="flex items-center justify-between py-4 gap-4">
-            <div className="min-w-0">
-              <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{item.label}</p>
-              <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{item.description}</p>
-            </div>
-            <Toggle checked={prefs[item.key]} onChange={() => toggle(item.key)} />
-          </li>
-        ))}
-      </ul>
+      <div>
+        <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">In-app alerts</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400 mb-4">
+          Choose which alerts appear in the notification bell. When Gmail is connected, enabled alerts also send email.
+        </p>
+        <ul className="divide-y divide-slate-100 dark:divide-slate-800">
+          {items.map(item => (
+            <li key={item.key} className="flex items-center justify-between py-4 gap-4">
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{item.label}</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{item.description}</p>
+              </div>
+              <Toggle checked={prefs[item.key]} onChange={() => toggle(item.key)} />
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <DeliveryLog />
+    </div>
+  );
+}
+
+// ── Delivery Log ───────────────────────────────────────────────
+function DeliveryLog() {
+  const { data: notifications = [], isLoading } = useNotifications();
+  const [expanded, setExpanded]                 = useState(false);
+
+  const logs = notifications.slice(0, expanded ? 20 : 5);
+
+  return (
+    <div>
+      <div className="flex items-center gap-2 mb-3">
+        <History className="w-3.5 h-3.5 text-slate-400" />
+        <p className="text-sm font-medium text-slate-700 dark:text-slate-300">Delivery log</p>
+        <span className="text-xs text-slate-400">({notifications.length} total)</span>
+      </div>
+
+      {isLoading ? (
+        <div className="flex items-center gap-2 text-slate-400 text-xs py-2">
+          <Loader2 className="w-3.5 h-3.5 animate-spin" />
+          Loading…
+        </div>
+      ) : notifications.length === 0 ? (
+        <p className="text-xs text-slate-400">No notifications sent yet.</p>
+      ) : (
+        <div className="rounded-xl border border-slate-100 dark:border-slate-800 overflow-hidden">
+          <ul className="divide-y divide-slate-50 dark:divide-slate-800">
+            {logs.map(n => (
+              <li key={n.id} className="flex items-start gap-3 px-3 py-2.5">
+                <div className="flex-shrink-0 mt-0.5">
+                  {n.emailSent
+                    ? <Send className="w-3 h-3 text-success-500" />
+                    : <Bell className="w-3 h-3 text-slate-400" />
+                  }
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-medium text-slate-700 dark:text-slate-300 truncate">{n.title}</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5">
+                    {formatDistanceToNow(new Date(n.createdAt), { addSuffix: true })}
+                    {n.emailSent && <span className="ml-2 text-success-600 dark:text-success-400">· email sent</span>}
+                    {!n.emailSent && <span className="ml-2 text-slate-400">· in-app only</span>}
+                  </p>
+                </div>
+                {!n.isRead && (
+                  <span className="flex-shrink-0 w-1.5 h-1.5 rounded-full bg-primary-500 mt-1.5" />
+                )}
+              </li>
+            ))}
+          </ul>
+          {notifications.length > 5 && (
+            <button
+              onClick={() => setExpanded(v => !v)}
+              className="w-full px-3 py-2 text-[11px] text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors border-t border-slate-100 dark:border-slate-800"
+            >
+              {expanded ? 'Show less' : `Show all ${notifications.length}`}
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
@@ -461,13 +633,26 @@ function DangerZoneTab({ onError }: { onError: (msg: string) => void }) {
 
 // ── Page ────────────────────────────────────────────────────────
 export default function SettingsPage() {
-  const [activeTab, setActiveTab] = useState<Tab>('profile');
-  const [toast, setToast]         = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const searchParams               = useSearchParams();
+  const [activeTab, setActiveTab]  = useState<Tab>('profile');
+  const [toast, setToast]          = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
   const showToast = (message: string, type: 'success' | 'error') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 3500);
   };
+
+  // Handle Gmail OAuth redirect back to this page
+  useEffect(() => {
+    const tab = searchParams.get('tab');
+    if (tab === 'notifications') setActiveTab('notifications');
+
+    const gmailConnected = searchParams.get('gmail_connected');
+    const gmailError     = searchParams.get('gmail_error');
+    if (gmailConnected) showToast('Gmail connected successfully!', 'success');
+    if (gmailError)     showToast(`Gmail connection failed: ${gmailError.replace(/_/g, ' ')}`, 'error');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="space-y-6">
@@ -526,6 +711,7 @@ export default function SettingsPage() {
           {activeTab === 'notifications' && (
             <NotificationsTab
               onSaved={(msg) => showToast(msg, 'success')}
+              onError={(msg) => showToast(msg, 'error')}
             />
           )}
           {activeTab === 'danger' && (

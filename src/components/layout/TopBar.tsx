@@ -3,6 +3,7 @@ import { Menu, Plus, ChevronLeft, ChevronRight, Sun, Moon } from 'lucide-react';
 import { useUiStore } from '@/stores/uiStore';
 import { formatMonth, currentYearMonth } from '@/lib/formatters';
 import { cn } from '@/lib/utils';
+import { NotificationBell } from '@/components/notifications/NotificationBell';
 
 function prevMonth(ym: string): string {
   const [y, m] = ym.split('-').map(Number);
@@ -62,8 +63,9 @@ export function TopBar() {
         </div>
       </div>
 
-      {/* Right: theme toggle + quick-add */}
+      {/* Right: notifications + theme toggle + quick-add */}
       <div className="flex items-center gap-2">
+        <NotificationBell />
         <button
           onClick={toggleTheme}
           className="p-2 rounded-md text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"

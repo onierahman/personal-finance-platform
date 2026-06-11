@@ -2,7 +2,15 @@ import { createServerClient } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
 import type { Database } from '@/types/database';
 
-const PUBLIC_ROUTES = ['/login', '/register', '/forgot-password'];
+const PUBLIC_ROUTES = [
+  '/login',
+  '/register',
+  '/forgot-password',
+  '/unsubscribe',
+  '/api/cron/',
+  '/api/auth/gmail/callback',
+  '/api/auth/gmail/unsubscribe',
+];
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
