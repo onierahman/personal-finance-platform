@@ -79,10 +79,13 @@ function buildRawEmail(opts: {
   subject: string;
   html: string;
 }): string {
+  // Strip CR/LF from header values to prevent email header injection.
+  const h = (v: string) => String(v).replace(/[\r\n]+/g, ' ').trim();
+
   const msg = [
-    `From: Personal Tracker <${opts.from}>`,
-    `To: ${opts.to}`,
-    `Subject: ${opts.subject}`,
+    `From: Personal Tracker <${h(opts.from)}>`,
+    `To: ${h(opts.to)}`,
+    `Subject: ${h(opts.subject)}`,
     'MIME-Version: 1.0',
     'Content-Type: text/html; charset=utf-8',
     '',

@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseServerClient } from '@/lib/supabase/server';
 import { sendGmailMessage, refreshAccessToken } from '@/lib/gmail';
+import { encryptSecret, decryptSecret } from '@/lib/crypto';
 
 export async function POST() {
    
@@ -22,15 +23,15 @@ export async function POST() {
   }
 
   // Refresh token if expired
-  let accessToken = tokenRow.access_token;
+  let accessToken = decryptSecret(tokenRow.access_token);
   if (new Date(tokenRow.expires_at) <= new Date()) {
     try {
-      const refreshed = await refreshAccessToken(tokenRow.refresh_token);
+      const refreshed = await refreshAccessToken(decryptSecret(tokenRow.refresh_token));
       accessToken = refreshed.access_token;
       const expiresAt = new Date(Date.now() + refreshed.expires_in * 1000).toISOString();
       await supabase
         .from('gmail_tokens')
-        .update({ access_token: accessToken, expires_at: expiresAt, updated_at: new Date().toISOString() })
+        .update({ access_token: encryptSecret(accessToken), expires_at: expiresAt, updated_at: new Date().toISOString() })
         .eq('user_id', user.id);
     } catch {
       return NextResponse.json({ error: 'Token refresh failed — please reconnect Gmail.' }, { status: 400 });
@@ -72,6 +73,7 @@ export async function POST() {
 
     return NextResponse.json({ ok: true });
   } catch (err) {
-    return NextResponse.json({ error: String(err) }, { status: 500 });
+    console.error('[send-test] error:', err);
+    return NextResponse.json({ error: 'Failed to send test email. Please try again.' }, { status: 500 });
   }
 }

@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseServiceClient } from '@/lib/supabase/server';
 import { exchangeCodeForTokens } from '@/lib/gmail';
+import { verifyPayload, encryptSecret } from '@/lib/crypto';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -19,13 +20,12 @@ export async function GET(req: Request) {
     return NextResponse.redirect(`${baseUrl}/settings?tab=notifications&gmail_error=missing_params`);
   }
 
-  let userId: string;
-  try {
-    const decoded = JSON.parse(Buffer.from(state, 'base64url').toString());
-    userId = decoded.userId;
-  } catch {
+  // Verify the HMAC-signed state — rejects forged/replayed/expired values.
+  const decoded = verifyPayload<{ userId?: string; exp?: number }>(state, 'gmail-oauth-state');
+  if (!decoded?.userId || typeof decoded.exp !== 'number' || Date.now() > decoded.exp) {
     return NextResponse.redirect(`${baseUrl}/settings?tab=notifications&gmail_error=invalid_state`);
   }
+  const userId = decoded.userId;
 
   try {
     const tokens = await exchangeCodeForTokens(code);
@@ -42,8 +42,8 @@ export async function GET(req: Request) {
         {
           user_id:       userId,
           email:         tokens.email,
-          access_token:  tokens.access_token,
-          refresh_token: tokens.refresh_token,
+          access_token:  encryptSecret(tokens.access_token),
+          refresh_token: encryptSecret(tokens.refresh_token),
           expires_at:    expiresAt,
           updated_at:    new Date().toISOString(),
         },

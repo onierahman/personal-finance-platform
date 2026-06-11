@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseServerClient } from '@/lib/supabase/server';
 import { revokeToken } from '@/lib/gmail';
+import { decryptSecret } from '@/lib/crypto';
 
 export async function DELETE() {
    
@@ -19,7 +20,7 @@ export async function DELETE() {
 
   if (tokenRow?.access_token) {
     // Best-effort revoke — don't fail if Google returns an error
-    try { await revokeToken(tokenRow.access_token); } catch { /* ignore */ }
+    try { await revokeToken(decryptSecret(tokenRow.access_token)); } catch { /* ignore */ }
   }
 
   await supabase

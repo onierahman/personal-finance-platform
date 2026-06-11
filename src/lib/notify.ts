@@ -2,6 +2,7 @@
 // Creates a notification row + optionally sends a Gmail email
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { sendGmailMessage, refreshAccessToken } from './gmail';
+import { signPayload, verifyPayload, encryptSecret, decryptSecret, escapeHtml } from './crypto';
 import type { NotificationType } from '@/types/database';
 
 // Max emails per user per hour — safety cap to prevent notification storms
@@ -61,14 +62,14 @@ export async function notify(opts: NotifyOptions): Promise<void> {
     if ((count ?? 0) >= EMAIL_RATE_LIMIT_PER_HOUR) return; // drop email, keep in-app
 
     // ── Refresh token if needed ───────────────────────────────
-    let accessToken: string = tokenRow.access_token;
+    let accessToken: string = decryptSecret(tokenRow.access_token);
     if (new Date(tokenRow.expires_at) <= new Date()) {
-      const refreshed = await refreshAccessToken(tokenRow.refresh_token);
+      const refreshed = await refreshAccessToken(decryptSecret(tokenRow.refresh_token));
       accessToken = refreshed.access_token;
       const expiresAt = new Date(Date.now() + refreshed.expires_in * 1000).toISOString();
       await supabase
         .from('gmail_tokens')
-        .update({ access_token: accessToken, expires_at: expiresAt, updated_at: new Date().toISOString() })
+        .update({ access_token: encryptSecret(accessToken), expires_at: expiresAt, updated_at: new Date().toISOString() })
         .eq('user_id', userId);
     }
 
@@ -104,28 +105,24 @@ export async function notify(opts: NotifyOptions): Promise<void> {
   }
 }
 
-// ── Unsubscribe token (base64url userId + 30-day expiry) ──────
+// ── Unsubscribe token (HMAC-signed userId + 30-day expiry) ────
+// Signed so the userId/exp cannot be forged by an attacker.
 export function makeUnsubscribeToken(userId: string): string {
-  const payload = { uid: userId, exp: Date.now() + 30 * 24 * 60 * 60 * 1000 };
-  return Buffer.from(JSON.stringify(payload)).toString('base64url');
+  return signPayload({ uid: userId, exp: Date.now() + 30 * 24 * 60 * 60 * 1000 }, 'unsubscribe');
 }
 
 export function verifyUnsubscribeToken(token: string): string | null {
-  try {
-    const { uid, exp } = JSON.parse(Buffer.from(token, 'base64url').toString());
-    if (!uid || Date.now() > exp) return null;
-    return uid as string;
-  } catch {
-    return null;
-  }
+  const payload = verifyPayload<{ uid?: string; exp?: number }>(token, 'unsubscribe');
+  if (!payload?.uid || typeof payload.exp !== 'number' || Date.now() > payload.exp) return null;
+  return payload.uid;
 }
 
 function defaultEmailHtml({ title, body }: { title: string; body: string }): string {
   return `
     <div style="font-family:sans-serif;max-width:480px;margin:0 auto;padding:24px">
       <h2 style="color:#6366f1;margin-bottom:8px;font-size:18px">Personal Tracker</h2>
-      <h3 style="color:#374151;font-size:15px;margin:0 0 8px">${title}</h3>
-      <p style="color:#6b7280;font-size:14px;margin:0">${body}</p>
+      <h3 style="color:#374151;font-size:15px;margin:0 0 8px">${escapeHtml(title)}</h3>
+      <p style="color:#6b7280;font-size:14px;margin:0">${escapeHtml(body)}</p>
     </div>
   `;
 }

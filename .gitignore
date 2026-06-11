@@ -1,8 +1,10 @@
 node_modules
 PRD
 .next/
-.env.local
-.env*.local
+# All env files — never commit secrets (allow example templates)
+.env
+.env.*
+!.env.example
 
 # Local Claude Code / preview config (machine-specific)
 .claude/

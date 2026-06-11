@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseServerClient } from '@/lib/supabase/server';
 import { getGmailAuthUrl } from '@/lib/gmail';
+import { signPayload } from '@/lib/crypto';
 
 export async function GET() {
    
@@ -19,8 +20,12 @@ export async function GET() {
     );
   }
 
-  // Encode user ID in state so we know who to attach the token to on callback
-  const state = Buffer.from(JSON.stringify({ userId: user.id })).toString('base64url');
+  // Sign the state so the callback can trust the userId and reject forged/replayed
+  // values (CSRF / account-linking protection). 15-minute validity window.
+  const state = signPayload(
+    { userId: user.id, exp: Date.now() + 15 * 60 * 1000 },
+    'gmail-oauth-state',
+  );
   const url = getGmailAuthUrl(state);
 
   return NextResponse.redirect(url);

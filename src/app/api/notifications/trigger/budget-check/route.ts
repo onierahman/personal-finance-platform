@@ -4,6 +4,7 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseServerClient } from '@/lib/supabase/server';
 import { notify } from '@/lib/notify';
+import { escapeHtml } from '@/lib/crypto';
 
 export async function POST(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -100,7 +101,7 @@ export async function POST(req: Request) {
               ${isOver ? '⚠️ Budget Exceeded' : '⚡ Budget Alert'}
             </h3>
             <p style="color:#374151;font-size:14px;margin:0 0 8px">
-              <strong>${budget.category}</strong>: $${budget.spent_amount.toFixed(2)} spent of $${budget.limit_amount.toFixed(2)} limit (${pctLabel}%)
+              <strong>${escapeHtml(budget.category)}</strong>: $${budget.spent_amount.toFixed(2)} spent of $${budget.limit_amount.toFixed(2)} limit (${pctLabel}%)
             </p>
             <div style="background:#e5e7eb;border-radius:4px;height:8px;overflow:hidden">
               <div style="background:${pct >= 1 ? '#dc2626' : '#f97316'};height:100%;width:${Math.min(pct * 100, 100)}%"></div>

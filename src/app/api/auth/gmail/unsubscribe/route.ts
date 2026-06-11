@@ -3,6 +3,7 @@ import { NextResponse } from 'next/server';
 import { getSupabaseServiceClient } from '@/lib/supabase/server';
 import { verifyUnsubscribeToken } from '@/lib/notify';
 import { revokeToken } from '@/lib/gmail';
+import { decryptSecret } from '@/lib/crypto';
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
@@ -28,7 +29,7 @@ export async function GET(req: Request) {
     .single();
 
   if (tokenRow?.access_token) {
-    try { await revokeToken(tokenRow.access_token); } catch { /* ignore */ }
+    try { await revokeToken(decryptSecret(tokenRow.access_token)); } catch { /* ignore */ }
   }
 
   await supabase

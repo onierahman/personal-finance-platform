@@ -3,6 +3,7 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseServiceClient } from '@/lib/supabase/server';
 import { notify } from '@/lib/notify';
+import { escapeHtml } from '@/lib/crypto';
 
 export const runtime = 'nodejs';
 
@@ -25,12 +26,12 @@ function weekRange(): { start: string; end: string } {
 
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
-  const debug = searchParams.get('debug') === 'true';
   const force = searchParams.get('force') === 'true'; // bypass zero-spend skip
 
-  // Verify Vercel Cron secret
+  // Verify Vercel Cron secret. Fail CLOSED: if the secret isn't configured the
+  // endpoint is unusable rather than world-open.
   const cronSecret = req.headers.get('authorization');
-  if (process.env.CRON_SECRET && cronSecret !== `Bearer ${process.env.CRON_SECRET}`) {
+  if (!process.env.CRON_SECRET || cronSecret !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
@@ -42,18 +43,9 @@ export async function GET(req: Request) {
   const supabase = await getSupabaseServiceClient() as any;
   const { start, end } = weekRange();
 
-  const { data: tokens, error: tokensError } = await supabase
+  const { data: tokens } = await supabase
     .from('gmail_tokens')
     .select('user_id, email');
-
-  if (debug) {
-    return NextResponse.json({
-      week: { start, end },
-      tokenCount: tokens?.length ?? 0,
-      tokensError: tokensError?.message ?? null,
-      tokens: tokens?.map((t: { user_id: string; email: string }) => t.email) ?? [],
-    });
-  }
 
   if (!tokens?.length) return NextResponse.json({ ok: true, sent: 0, reason: 'no gmail tokens found' });
 
@@ -94,7 +86,7 @@ export async function GET(req: Request) {
       const categoryRows = topCategories.length > 0
         ? topCategories.map(([cat, amt]) =>
           `<tr>
-            <td style="padding:6px 0;color:#374151;font-size:14px">${cat}</td>
+            <td style="padding:6px 0;color:#374151;font-size:14px">${escapeHtml(cat)}</td>
             <td style="padding:6px 0;color:#374151;font-size:14px;text-align:right">$${amt.toFixed(2)}</td>
           </tr>`,
         ).join('')

@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import Anthropic from '@anthropic-ai/sdk';
 import { getSupabaseServerClient } from '@/lib/supabase/server';
+import { rateLimit } from '@/lib/rateLimit';
+
+const ALLOWED_MEDIA_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'] as const;
+type AllowedMediaType = (typeof ALLOWED_MEDIA_TYPES)[number];
 
 const RECEIPT_PROMPT = `Extract transaction details from this receipt image. Return ONLY valid JSON with these exact keys:
 {
@@ -31,6 +35,15 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // Per-user rate limit — each call is a paid model request; cap abuse/cost.
+    const limit = rateLimit(`ocr:${user.id}`, 20, 60 * 1000);
+    if (!limit.ok) {
+      return NextResponse.json(
+        { error: 'Too many requests. Please wait a moment and try again.' },
+        { status: 429, headers: { 'Retry-After': String(Math.ceil(limit.retryAfterMs / 1000)) } },
+      );
+    }
+
     const formData = await req.formData();
     const image = formData.get('image') as File | null;
     const mode  = formData.get('mode') as 'receipt' | 'bank-statement-pdf' | null;
@@ -43,9 +56,13 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Image too large (max 10MB)' }, { status: 413 });
     }
 
+    const mediaType = (image.type || 'image/jpeg') as AllowedMediaType;
+    if (!ALLOWED_MEDIA_TYPES.includes(mediaType)) {
+      return NextResponse.json({ error: 'Unsupported image type' }, { status: 415 });
+    }
+
     const buffer  = await image.arrayBuffer();
     const base64  = Buffer.from(buffer).toString('base64');
-    const mediaType = (image.type || 'image/jpeg') as 'image/jpeg' | 'image/png' | 'image/gif' | 'image/webp';
 
     const client = new Anthropic();
     const message = await client.messages.create({
