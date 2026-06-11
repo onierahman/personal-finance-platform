@@ -43,6 +43,9 @@ const DATE_FORMATS = [
   'MMM dd yyyy',
   'dd MMM yy',
   'yyyy/MM/dd',
+  'yy-MM-dd',
+  'dd/MM/yy',
+  'MM/dd/yy',
 ];
 
 export function normalizeDate(raw: string): string | null {
@@ -56,9 +59,10 @@ export function normalizeDate(raw: string): string | null {
     try {
       const parsed = parse(trimmed, fmt, refDate);
       if (isValid(parsed)) {
-        const yyyy = parsed.getFullYear();
-        const mm   = String(parsed.getMonth() + 1).padStart(2, '0');
-        const dd   = String(parsed.getDate()).padStart(2, '0');
+        let yyyy = parsed.getFullYear();
+        if (yyyy < 100) yyyy += 2000;
+        const mm = String(parsed.getMonth() + 1).padStart(2, '0');
+        const dd = String(parsed.getDate()).padStart(2, '0');
         return `${yyyy}-${mm}-${dd}`;
       }
     } catch {

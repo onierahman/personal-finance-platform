@@ -101,12 +101,19 @@ export function saveNotificationPreferences(
   localStorage.setItem(NOTIF_PREFS_KEY, JSON.stringify(prefs));
 }
 
-export async function deleteAccount(): Promise<ApiResponse<null>> {
+export async function deleteAccount(password: string): Promise<ApiResponse<null>> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = getSupabaseBrowserClient() as any;
 
   const { data: { user: authUser } } = await supabase.auth.getUser();
   if (!authUser) return { data: null, error: 'Not authenticated' };
+
+  // Re-authenticate with the provided password before allowing deletion
+  const { error: authError } = await supabase.auth.signInWithPassword({
+    email:    authUser.email,
+    password,
+  });
+  if (authError) return { data: null, error: 'Incorrect password. Please try again.' };
 
   // Soft-delete the profile row
   const { error } = await supabase

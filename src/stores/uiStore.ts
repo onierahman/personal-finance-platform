@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 import { currentYearMonth } from '@/lib/formatters';
 import type { TransactionFormValues } from '@/features/transactions/schema';
 
@@ -42,34 +43,42 @@ interface UiStore {
   setReceiptPrefill: (data: Partial<TransactionFormValues> | null) => void;
 }
 
-export const useUiStore = create<UiStore>((set) => ({
-  theme: 'light',
-  toggleTheme: () => set((s) => ({ theme: s.theme === 'light' ? 'dark' : 'light' })),
+export const useUiStore = create<UiStore>()(
+  persist(
+    (set) => ({
+      theme: 'light',
+      toggleTheme: () => set((s) => ({ theme: s.theme === 'light' ? 'dark' : 'light' })),
 
-  quickAddOpen:  false,
-  quickAddType:  'expense',
-  openQuickAdd:  (type = 'expense') => set({ quickAddOpen: true, quickAddType: type }),
-  closeQuickAdd: () => set({ quickAddOpen: false }),
+      quickAddOpen:  false,
+      quickAddType:  'expense',
+      openQuickAdd:  (type = 'expense') => set({ quickAddOpen: true, quickAddType: type }),
+      closeQuickAdd: () => set({ quickAddOpen: false }),
 
-  activeMonth:    currentYearMonth(),
-  setActiveMonth: (month) => set({ activeMonth: month }),
+      activeMonth:    currentYearMonth(),
+      setActiveMonth: (month) => set({ activeMonth: month }),
 
-  sidebarOpen:   false,
-  setSidebarOpen: (open) => set({ sidebarOpen: open }),
-  toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
+      sidebarOpen:   false,
+      setSidebarOpen: (open) => set({ sidebarOpen: open }),
+      toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
 
-  sidebarCollapsed:       false,
-  toggleSidebarCollapsed: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
+      sidebarCollapsed:       false,
+      toggleSidebarCollapsed: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
 
-  editTransactionId:    null,
-  openEditTransaction:  (id) => set({ editTransactionId: id }),
-  closeEditTransaction: () => set({ editTransactionId: null }),
+      editTransactionId:    null,
+      openEditTransaction:  (id) => set({ editTransactionId: id }),
+      closeEditTransaction: () => set({ editTransactionId: null }),
 
-  importOpen: false,
-  importMode: null,
-  openImport:  (mode) => set({ importOpen: true, importMode: mode }),
-  closeImport: () => set({ importOpen: false, importMode: null }),
+      importOpen: false,
+      importMode: null,
+      openImport:  (mode) => set({ importOpen: true, importMode: mode }),
+      closeImport: () => set({ importOpen: false, importMode: null }),
 
-  receiptPrefill:    null,
-  setReceiptPrefill: (data) => set({ receiptPrefill: data }),
-}));
+      receiptPrefill:    null,
+      setReceiptPrefill: (data) => set({ receiptPrefill: data }),
+    }),
+    {
+      name: 'ui-theme',
+      partialize: (s) => ({ theme: s.theme }),
+    },
+  ),
+);

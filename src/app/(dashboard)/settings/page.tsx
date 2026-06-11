@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';
 import {
   User, Lock, Bell, Trash2, Check, AlertTriangle,
-  ChevronRight, Globe, DollarSign,
+  ChevronRight, Globe, DollarSign, Eye, EyeOff,
 } from 'lucide-react';
 
 // ── Timezones ──────────────────────────────────────────────────
@@ -365,14 +365,15 @@ function NotificationsTab({ onSaved }: { onSaved: (msg: string) => void }) {
 // ── Danger Zone Tab ────────────────────────────────────────────
 function DangerZoneTab({ onError }: { onError: (msg: string) => void }) {
   const router  = useRouter();
-  const [step, setStep]         = useState<'idle' | 'confirm'>('idle');
-  const [confirm, setConfirm]   = useState('');
+  const [step, setStep]           = useState<'idle' | 'confirm'>('idle');
+  const [password, setPassword]   = useState('');
+  const [showPw, setShowPw]       = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
-    if (confirm !== 'DELETE') return;
+    if (!password) return;
     setIsDeleting(true);
-    const result = await deleteAccount();
+    const result = await deleteAccount(password);
     setIsDeleting(false);
     if (result.error) {
       onError(result.error);
@@ -381,14 +382,20 @@ function DangerZoneTab({ onError }: { onError: (msg: string) => void }) {
     }
   };
 
+  const handleCancel = () => {
+    setStep('idle');
+    setPassword('');
+    setShowPw(false);
+  };
+
   return (
     <div className="space-y-6 max-w-lg">
       <div className="rounded-xl border border-danger-200 dark:border-danger-500/30 bg-danger-50 dark:bg-danger-500/10 p-5">
         <div className="flex items-start gap-3">
           <AlertTriangle className="w-5 h-5 text-danger-600 flex-shrink-0 mt-0.5" />
           <div>
-            <h3 className="text-sm font-semibold text-danger-800">Delete Account</h3>
-            <p className="text-xs text-danger-600 mt-1">
+            <h3 className="text-sm font-semibold text-danger-800 dark:text-danger-400">Delete Account</h3>
+            <p className="text-xs text-danger-600 dark:text-danger-400 mt-1">
               This will permanently delete your profile and all associated data — transactions, budgets, goals, accounts, and investments. This action cannot be undone.
             </p>
           </div>
@@ -404,28 +411,42 @@ function DangerZoneTab({ onError }: { onError: (msg: string) => void }) {
           </button>
         ) : (
           <div className="mt-4 space-y-3">
-            <p className="text-xs font-medium text-danger-700">
-              Type <span className="font-mono font-bold">DELETE</span> to confirm:
-            </p>
-            <input
-              type="text"
-              value={confirm}
-              onChange={e => setConfirm(e.target.value)}
-              placeholder="DELETE"
-              className="w-full border border-danger-300 dark:border-danger-500 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-danger-400 bg-white dark:bg-slate-800"
-            />
+            <div>
+              <p className="text-xs font-medium text-danger-700 dark:text-danger-400 mb-1.5">
+                Enter your current password to confirm deletion:
+              </p>
+              <div className="relative">
+                <input
+                  type={showPw ? 'text' : 'password'}
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  onKeyDown={e => e.key === 'Enter' && password && handleDelete()}
+                  placeholder="Current password"
+                  autoFocus
+                  className="w-full border border-danger-300 dark:border-danger-500 rounded-lg px-3 py-2 pr-10 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-danger-400 bg-white dark:bg-slate-800 placeholder:text-slate-400"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPw(v => !v)}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                  tabIndex={-1}
+                >
+                  {showPw ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+            </div>
             <div className="flex gap-2">
               <button
                 type="button"
                 onClick={handleDelete}
-                disabled={confirm !== 'DELETE' || isDeleting}
+                disabled={!password || isDeleting}
                 className="px-4 py-2 bg-danger-600 text-white text-sm font-medium rounded-lg hover:bg-danger-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                {isDeleting ? 'Deleting…' : 'Permanently Delete'}
+                {isDeleting ? 'Verifying…' : 'Permanently Delete'}
               </button>
               <button
                 type="button"
-                onClick={() => { setStep('idle'); setConfirm(''); }}
+                onClick={handleCancel}
                 className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
               >
                 Cancel

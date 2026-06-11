@@ -8,6 +8,7 @@ import { useAccounts } from '@/features/accounts/api';
 import { autoDetectColumns, parseAndMapRows } from '@/lib/import';
 import type { ColumnMapping, ParsedRow, ImportResult } from '@/lib/import';
 import type { InsertTransaction } from '@/types/database';
+import { useUiStore } from '@/stores/uiStore';
 import { cn } from '@/lib/utils';
 
 const FIELD_OPTIONS: { value: string; label: string }[] = [
@@ -45,6 +46,7 @@ export function CSVImport({
   const bulkCreate   = useBulkCreateTransactions();
   const { data: accountsRes } = useAccounts();
   const accounts = accountsRes?.data ?? [];
+  const { setActiveMonth } = useUiStore();
 
   const [step, setStep]             = useState<Step>(skipToStep);
   const [headers, setHeaders]       = useState<string[]>(initialHeaders ?? []);
@@ -115,6 +117,21 @@ export function CSVImport({
     const imported = res.data?.length ?? 0;
     const skipped  = rows.length - validPayloads.length;
     setImportSummary({ imported, skipped });
+
+    // Switch the active month to the month of the imported transactions so they
+    // appear immediately in the transaction list (imported dates may differ from
+    // the currently viewed month).
+    const months = validPayloads
+      .map(p => (p.date as string)?.slice(0, 7))
+      .filter(Boolean);
+    if (months.length) {
+      const freq = months.reduce<Record<string, number>>((acc, m) => {
+        acc[m] = (acc[m] ?? 0) + 1;
+        return acc;
+      }, {});
+      const dominantMonth = Object.entries(freq).sort((a, b) => b[1] - a[1])[0][0];
+      setActiveMonth(dominantMonth);
+    }
   }
 
   const totalRows = importResult?.rows.length ?? externalPreviewRows?.length ?? 0;
