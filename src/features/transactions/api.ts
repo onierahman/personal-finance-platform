@@ -29,7 +29,7 @@ function toTransaction(row: Record<string, unknown>): Transaction {
 export async function fetchTransactions(
   filters: TransactionFilters = {},
 ): Promise<ApiResponse<Transaction[]>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
   const {
     month = currentYearMonth(),
@@ -70,7 +70,7 @@ export async function fetchTransactions(
 export async function fetchAllTransactions(
   filters: Omit<TransactionFilters, 'page' | 'pageSize'> = {},
 ): Promise<ApiResponse<Transaction[]>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
   const { month = currentYearMonth(), type, category, accountId } = filters;
 
@@ -94,7 +94,7 @@ export async function fetchAllTransactions(
 export async function createTransaction(
   payload: InsertTransaction,
 ): Promise<ApiResponse<Transaction>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
 
   const { data, error } = await supabase
@@ -110,7 +110,7 @@ export async function createTransaction(
 export async function bulkCreateTransactions(
   payloads: InsertTransaction[],
 ): Promise<ApiResponse<Transaction[]>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
 
   const { data, error } = await supabase
@@ -129,7 +129,7 @@ export async function updateTransaction(
   id: string,
   payload: UpdateTransaction,
 ): Promise<ApiResponse<Transaction>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
 
   const { data, error } = await supabase
@@ -146,7 +146,7 @@ export async function updateTransaction(
 export async function softDeleteTransaction(
   id: string,
 ): Promise<ApiResponse<null>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
 
   const { error } = await supabase
@@ -162,7 +162,7 @@ export async function softDeleteTransaction(
 export async function fetchMonthlySummary(
   month: string = currentYearMonth(),
 ): Promise<ApiResponse<MonthlySummary>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
 
   const { data, error } = await supabase
@@ -201,7 +201,7 @@ export async function fetchCategoryBreakdown(
   month: string = currentYearMonth(),
   type: 'expense' | 'income' = 'expense',
 ): Promise<ApiResponse<MonthlyCategoryBreakdown[]>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
 
   const { data, error } = await supabase

@@ -1,6 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Plus, Search, X } from 'lucide-react';
+import { PullToRefresh } from '@/components/shared/PullToRefresh';
 import { TransactionList }          from '@/components/transactions/TransactionList';
 import { TransactionExportButton }  from '@/components/transactions/TransactionExportButton';
 import { ImportMenu }               from '@/components/transactions/ImportMenu';
@@ -21,6 +23,7 @@ const TYPE_FILTERS: { label: string; value: TypeFilterValue }[] = [
 
 export default function TransactionsPage() {
   const { openQuickAdd, activeMonth, importOpen, importMode, closeImport } = useUiStore();
+  const queryClient = useQueryClient();
   const [typeFilter, setTypeFilter]         = useState<TypeFilterValue>('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [searchInput, setSearchInput]       = useState('');
@@ -50,6 +53,7 @@ export default function TransactionsPage() {
   }
 
   return (
+    <PullToRefresh onRefresh={() => queryClient.invalidateQueries({ queryKey: ['transactions'] })}>
     <div className="space-y-4">
       {/* Page header */}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -136,5 +140,6 @@ export default function TransactionsPage() {
       {importOpen && importMode === 'csv'     && <CSVImport onClose={closeImport} />}
       {importOpen && importMode === 'bank'    && <BankStatementImport onClose={closeImport} />}
     </div>
+    </PullToRefresh>
   );
 }

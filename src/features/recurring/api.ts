@@ -2,7 +2,7 @@ import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { RecurringTransaction, CreateRecurringInput } from './types';
 type UpdateRecurringInput = Partial<CreateRecurringInput> & { id: string };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const supabase = getSupabaseBrowserClient() as any;
 
 export const recurringApi = {

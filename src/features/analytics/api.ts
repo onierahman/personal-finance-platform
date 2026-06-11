@@ -29,7 +29,7 @@ function monthEnd(ym: string) {
 export async function fetchMultiMonthSummary(
   months = 6,
 ): Promise<ApiResponse<MonthSummary[]>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
   const range    = getMonthRange(months);
   const from     = monthStart(range[0]);
@@ -70,7 +70,7 @@ export async function fetchCategoryTrends(
   months = 6,
   type: 'expense' | 'income' = 'expense',
 ): Promise<ApiResponse<CategoryTrend[]>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
   const range    = getMonthRange(months);
   const from     = monthStart(range[0]);
@@ -129,7 +129,7 @@ export async function fetchCategoryTrends(
 export async function fetchBudgetPerformance(
   months = 6,
 ): Promise<ApiResponse<BudgetPerformance[]>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
   const range    = getMonthRange(months);
   const from     = monthStart(range[0]);
@@ -191,7 +191,7 @@ export async function fetchTopMerchants(
   months = 1,
   limit  = 10,
 ): Promise<ApiResponse<MerchantSummary[]>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
   const range    = getMonthRange(months);
   const from     = monthStart(range[0]);

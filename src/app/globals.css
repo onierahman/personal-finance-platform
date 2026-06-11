@@ -113,6 +113,42 @@
 @layer utilities {
   .text-balance { text-wrap: balance; }
 
+  /* ── Safe-area inset (iOS home indicator) for the fixed bottom nav ── */
+  .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+  /* ── Frosted glass (iOS navigation / sheet material) ─────────── */
+  .glass {
+    background-color: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+  }
+  .dark .glass {
+    background-color: rgba(15, 23, 42, 0.72); /* slate-900 @ 72% */
+  }
+  /* Lighter scrim used behind modal sheets */
+  .glass-scrim {
+    backdrop-filter: blur(2px);
+    -webkit-backdrop-filter: blur(2px);
+  }
+
+  /* Minimum 44×44pt touch target per Apple HIG */
+  .tap-target { min-width: 44px; min-height: 44px; }
+}
+
+/* ── Respect reduced-motion globally ──────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@layer utilities {
+
   /* Subtle hover lift for interactive cards */
   .hover-lift {
     @apply transition-all duration-200;

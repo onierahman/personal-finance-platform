@@ -198,7 +198,7 @@ export function BankStatementImport({ onClose }: Props) {
                 <div className="flex items-start gap-2 p-2.5 bg-blue-50 border border-blue-200 rounded-lg w-full">
                   <Info className="w-3.5 h-3.5 text-blue-500 shrink-0 mt-0.5" />
                   <p className="text-xs text-blue-700">
-                    PDF import is disabled (offline mode). Export your statement as CSV from your bank's website.
+                    PDF import is disabled (offline mode). Export your statement as CSV from your bank&apos;s website.
                   </p>
                 </div>
               )}

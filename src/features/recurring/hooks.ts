@@ -9,7 +9,7 @@ import type { RecurringTransaction } from './types';
 type RecurringFormValues = z.infer<typeof recurringSchema>;
 
 export function useRecurring() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
 
   return useQuery({
@@ -27,7 +27,7 @@ export function useRecurring() {
 }
 
 export function useCreateRecurring() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
   const queryClient = useQueryClient();
 
@@ -65,7 +65,7 @@ export function useCreateRecurring() {
 }
 
 export function useUpdateRecurring() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
   const queryClient = useQueryClient();
 
@@ -91,7 +91,7 @@ export function useUpdateRecurring() {
 }
 
 export function useToggleRecurringStatus() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
   const queryClient = useQueryClient();
 
@@ -114,7 +114,7 @@ export function useToggleRecurringStatus() {
 }
 
 export function useDeleteRecurring() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
   const queryClient = useQueryClient();
 

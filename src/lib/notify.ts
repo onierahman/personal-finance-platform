@@ -8,7 +8,7 @@ import type { NotificationType } from '@/types/database';
 const EMAIL_RATE_LIMIT_PER_HOUR = 10;
 
 interface NotifyOptions {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   supabase: SupabaseClient<any>;
   userId: string;
   type: NotificationType;

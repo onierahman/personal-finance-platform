@@ -1,16 +1,23 @@
 'use client';
+import { useRef, useState } from 'react';
 import Link from 'next/link';
-import { Trash2, ChevronRight, ArrowLeftRight } from 'lucide-react';
+import { motion, AnimatePresence, useAnimationControls } from 'framer-motion';
+import { Trash2, ChevronRight, ArrowLeftRight, Pencil } from 'lucide-react';
 import { useTransactions, useDeleteTransaction } from '@/features/transactions/hooks';
 import { useUiStore }    from '@/stores/uiStore';
 import { formatCurrency, formatDateShort } from '@/lib/formatters';
 import { groupBy }       from '@/lib/utils';
+import { haptic }        from '@/lib/haptics';
 import { TransactionSkeleton } from '@/components/shared/LoadingSkeleton';
 import { EmptyState }    from '@/components/shared/EmptyState';
 import { useToast }      from '@/components/ui/toaster';
 import { useUser }       from '@/hooks/useUser';
 import { cn }            from '@/lib/utils';
 import type { Transaction } from '@/types';
+
+const SWIPE_OPEN   = -80; // resting x once the delete action is revealed
+const SWIPE_COMMIT = -52; // drag past this (or fast flick) to reveal/commit
+const LONG_PRESS_MS = 450;
 
 interface TransactionRowProps {
   txn:       Transaction;
@@ -57,6 +64,117 @@ function TransactionRow({ txn, currency, onDelete }: TransactionRowProps) {
           </button>
         )}
       </div>
+    </div>
+  );
+}
+
+// ── Swipeable / long-pressable row (mobile gestures) ──────────
+interface SwipeableRowProps {
+  txn:      Transaction;
+  currency: string;
+  onDelete: (id: string) => void;
+  onEdit:   (id: string) => void;
+}
+
+/**
+ * Wraps a transaction row with iOS-style interactions:
+ *  • Swipe left to reveal a Delete action (flick fast to commit immediately).
+ *  • Long-press to open an Edit / Delete context menu.
+ * Desktop keeps the hover-to-delete affordance on the inner row.
+ */
+function SwipeableRow({ txn, currency, onDelete, onEdit }: SwipeableRowProps) {
+  const controls            = useAnimationControls();
+  const [open, setOpen]     = useState(false);
+  const [menuOpen, setMenu] = useState(false);
+  const pressTimer          = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const draggingRef         = useRef(false);
+
+  function settle(toOpen: boolean) {
+    setOpen(toOpen);
+    controls.start({ x: toOpen ? SWIPE_OPEN : 0 });
+  }
+
+  function clearPress() {
+    if (pressTimer.current) {
+      clearTimeout(pressTimer.current);
+      pressTimer.current = null;
+    }
+  }
+
+  function onPointerDown() {
+    clearPress();
+    pressTimer.current = setTimeout(() => {
+      if (!draggingRef.current) {
+        haptic('medium');
+        setMenu(true);
+      }
+    }, LONG_PRESS_MS);
+  }
+
+  return (
+    <div className="relative overflow-hidden">
+      {/* Delete action revealed behind the row */}
+      <button
+        onClick={() => { haptic('warning'); onDelete(txn.id); }}
+        className="absolute inset-y-0 right-0 w-20 flex items-center justify-center bg-danger-500 text-white"
+        aria-label="Delete transaction"
+        tabIndex={open ? 0 : -1}
+      >
+        <Trash2 className="w-4 h-4" />
+      </button>
+
+      <motion.div
+        drag="x"
+        dragConstraints={{ left: SWIPE_OPEN, right: 0 }}
+        dragElastic={0.08}
+        animate={controls}
+        onDragStart={() => { draggingRef.current = true; clearPress(); }}
+        onDragEnd={(_, info) => {
+          draggingRef.current = false;
+          const shouldOpen = info.offset.x < SWIPE_COMMIT || info.velocity.x < -500;
+          if (shouldOpen && !open) haptic('light');
+          settle(shouldOpen);
+        }}
+        onPointerDown={onPointerDown}
+        onPointerUp={clearPress}
+        onPointerCancel={clearPress}
+        // Tapping an open row closes it instead of triggering anything else.
+        onClickCapture={(e) => {
+          if (open) { e.stopPropagation(); settle(false); }
+        }}
+        className="relative bg-white dark:bg-slate-900 touch-pan-y"
+      >
+        <TransactionRow txn={txn} currency={currency} onDelete={onDelete} />
+      </motion.div>
+
+      {/* Long-press context menu */}
+      <AnimatePresence>
+        {menuOpen && (
+          <>
+            <div className="fixed inset-0 z-40" onClick={() => setMenu(false)} aria-hidden="true" />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.85, y: -6 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 26 }}
+              className="absolute right-3 top-2 z-50 w-36 origin-top-right rounded-xl bg-white dark:bg-slate-800 shadow-dropdown border border-slate-100 dark:border-slate-700 overflow-hidden"
+            >
+              <button
+                onClick={() => { setMenu(false); onEdit(txn.id); }}
+                className="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700/60 transition-colors"
+              >
+                <Pencil className="w-3.5 h-3.5" /> Edit
+              </button>
+              <button
+                onClick={() => { setMenu(false); haptic('warning'); onDelete(txn.id); }}
+                className="w-full flex items-center gap-2.5 px-3 py-2.5 text-sm text-danger-600 dark:text-danger-400 hover:bg-danger-50 dark:hover:bg-danger-500/10 transition-colors border-t border-slate-100 dark:border-slate-700"
+              >
+                <Trash2 className="w-3.5 h-3.5" /> Delete
+              </button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -112,7 +230,7 @@ interface TransactionListProps {
 }
 
 export function TransactionList({ month, accountId, category, type, search }: TransactionListProps) {
-  const { activeMonth } = useUiStore();
+  const { activeMonth, openEditTransaction } = useUiStore();
   const { user }        = useUser();
   const currency        = user?.currency ?? 'USD';
   const { success, error: showError } = useToast();
@@ -167,7 +285,13 @@ export function TransactionList({ month, accountId, category, type, search }: Tr
           </p>
           <div className="divide-y divide-slate-50 dark:divide-slate-800/60">
             {grouped[date].map(txn => (
-              <TransactionRow key={txn.id} txn={txn} currency={currency} onDelete={handleDelete} />
+              <SwipeableRow
+                key={txn.id}
+                txn={txn}
+                currency={currency}
+                onDelete={handleDelete}
+                onEdit={openEditTransaction}
+              />
             ))}
           </div>
         </div>

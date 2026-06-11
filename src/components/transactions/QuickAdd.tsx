@@ -1,8 +1,8 @@
 'use client';
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, useDragControls } from 'framer-motion';
 import { X, ChevronDown } from 'lucide-react';
 
 import { useUiStore }           from '@/stores/uiStore';
@@ -10,7 +10,10 @@ import { useAccounts }          from '@/features/accounts/api';
 import { useCreateTransaction } from '@/features/transactions/hooks';
 import { transactionSchema, type TransactionFormValues } from '@/features/transactions/schema';
 import { CategoryPicker }       from './CategoryPicker';
+import { SuccessCheck }         from '@/components/shared/SuccessCheck';
 import { useToast }             from '@/components/ui/toaster';
+import { useKeyboardInset }     from '@/hooks/useKeyboardInset';
+import { haptic }               from '@/lib/haptics';
 import { todayIso }             from '@/lib/formatters';
 import { cn }                   from '@/lib/utils';
 
@@ -21,6 +24,10 @@ export function QuickAdd() {
   const createTxn = useCreateTransaction();
   const { success, error: showError } = useToast();
   const amountRef = useRef<HTMLInputElement>(null);
+
+  const dragControls   = useDragControls();
+  const keyboardInset  = useKeyboardInset(quickAddOpen);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   const {
     register, handleSubmit, control, reset, setValue, watch,
@@ -46,6 +53,7 @@ export function QuickAdd() {
   // Sync type + clear category whenever the sheet opens or type changes
   useEffect(() => {
     if (quickAddOpen) {
+      setShowSuccess(false);
       setValue('type', quickAddType);
       setValue('category', '');
       setTimeout(() => amountRef.current?.focus(), 100);
@@ -103,9 +111,11 @@ useEffect(() => {
         return;
       }
 
+      haptic('success');
       success('Transaction saved', `${values.category} · $${values.amount.toFixed(2)}`);
       reset({ type: selectedType, date: todayIso(), category: '', account_id: accounts[0]?.id });
-      closeQuickAdd();
+      // Show the confirmation checkmark; it dismisses the sheet on completion.
+      setShowSuccess(true);
     } catch (err) {
       showError('Failed to save', err instanceof Error ? err.message : 'Unexpected error — check console');
       console.error('[QuickAdd] createTransaction error:', err);
@@ -116,31 +126,46 @@ useEffect(() => {
     <AnimatePresence>
       {quickAddOpen && (
         <>
-          {/* Backdrop */}
+          {/* Backdrop — frosted glass scrim (iOS action-sheet material) */}
           <motion.div
             key="backdrop"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/20 z-[100]"
+            className="fixed inset-0 bg-black/30 glass-scrim z-[100]"
             onClick={closeQuickAdd}
           />
 
-          {/* Sheet */}
+          {/* Sheet — drag the handle down to dismiss */}
           <motion.div
             key="sheet"
             initial={{ y: '100%' }}
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 300 }}
+            drag="y"
+            dragControls={dragControls}
+            dragListener={false}
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={{ top: 0, bottom: 0.6 }}
+            onDragEnd={(_, info) => {
+              if (info.offset.y > 120 || info.velocity.y > 600) {
+                haptic('light');
+                closeQuickAdd();
+              }
+            }}
             className="fixed bottom-0 left-0 right-0 z-[110] bg-white dark:bg-slate-900 rounded-t-2xl shadow-dropdown max-h-[92vh] overflow-y-auto"
           >
-            {/* Handle */}
-            <div className="flex justify-center pt-3 pb-1">
-              <div className="w-10 h-1 bg-slate-200 dark:bg-slate-700 rounded-full" />
+            {/* Drag handle — grab here to pull the sheet down */}
+            <div
+              className="flex justify-center pt-3 pb-2 touch-none cursor-grab active:cursor-grabbing"
+              onPointerDown={(e) => dragControls.start(e)}
+            >
+              <div className="w-10 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full" />
             </div>
 
-            <div className="px-4 pb-8">
+            {/* Pad the scroll area so the keyboard never covers the active input */}
+            <div className="px-4 pb-8" style={{ paddingBottom: keyboardInset ? keyboardInset + 16 : undefined }}>
               {/* Header */}
               <div className="flex items-center justify-between py-3 mb-2">
                 <h2 className="text-base font-semibold text-slate-900 dark:text-white">Add Transaction</h2>
@@ -179,8 +204,8 @@ useEffect(() => {
               >
                 {/* Amount — most prominent */}
                 <div>
-                  <div className="flex items-center gap-2 border-2 border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 focus-within:border-primary-500 dark:focus-within:border-primary-400 transition-colors">
-                    <span className="text-2xl font-medium text-slate-400 dark:text-slate-500">$</span>
+                  <div className="flex items-center gap-2 border-2 border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3.5 focus-within:border-primary-500 dark:focus-within:border-primary-400 transition-colors">
+                    <span className="text-3xl font-medium text-slate-400 dark:text-slate-500">$</span>
                     <input
                       {...amountReg}
                       ref={e => {
@@ -191,7 +216,7 @@ useEffect(() => {
                       step="0.01"
                       min="0.01"
                       placeholder="0.00"
-                      className="flex-1 text-2xl font-semibold text-slate-900 dark:text-white bg-transparent outline-none amount placeholder:text-slate-300 dark:placeholder:text-slate-600"
+                      className="flex-1 w-full text-3xl font-semibold text-slate-900 dark:text-white bg-transparent outline-none amount placeholder:text-slate-300 dark:placeholder:text-slate-600"
                       inputMode="decimal"
                     />
                   </div>
@@ -289,6 +314,16 @@ useEffect(() => {
                 </button>
               </form>
             </div>
+
+            {/* Success confirmation — dismisses the sheet on completion */}
+            <AnimatePresence>
+              {showSuccess && (
+                <SuccessCheck
+                  label="Transaction saved"
+                  onComplete={() => { setShowSuccess(false); closeQuickAdd(); }}
+                />
+              )}
+            </AnimatePresence>
           </motion.div>
         </>
       )}

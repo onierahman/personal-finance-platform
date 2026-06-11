@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { getSupabaseServerClient } from '@/lib/supabase/server';
 
 export async function GET() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = await getSupabaseServerClient() as any;
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) {
@@ -21,7 +21,7 @@ export async function GET() {
 }
 
 export async function PATCH(req: Request) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = await getSupabaseServerClient() as any;
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) {
@@ -53,7 +53,7 @@ export async function PATCH(req: Request) {
 }
 
 export async function DELETE() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = await getSupabaseServerClient() as any;
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) {

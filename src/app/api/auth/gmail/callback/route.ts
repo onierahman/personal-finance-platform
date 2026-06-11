@@ -32,7 +32,7 @@ export async function GET(req: Request) {
     const expiresAt = new Date(Date.now() + tokens.expires_in * 1000).toISOString();
 
     // Use service client — session cookie is not present in OAuth redirect requests
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const supabase = await getSupabaseServiceClient() as any;
 
     // Upsert so reconnecting replaces the old token

@@ -3,3 +3,9 @@ PRD
 .next/
 .env.local
 .env*.local
+
+# Local Claude Code / preview config (machine-specific)
+.claude/
+
+# TS incremental build cache
+tsconfig.tsbuildinfo

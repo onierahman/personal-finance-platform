@@ -1,7 +1,7 @@
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import type { Notification, GmailConnection } from './types';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const supabase = () => getSupabaseBrowserClient() as any;
 
 // ── Notifications ────────────────────────────────────────────

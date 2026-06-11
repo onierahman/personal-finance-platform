@@ -34,7 +34,7 @@ const NOTIF_PREFS_KEY = 'pfm_notification_prefs';
 export async function updateUserProfile(
   values: ProfileUpdateValues,
 ): Promise<ApiResponse<User>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
 
   const { data: { user: authUser } } = await supabase.auth.getUser();
@@ -73,7 +73,7 @@ export async function updateUserProfile(
 export async function changePassword(
   values: PasswordChangeValues,
 ): Promise<ApiResponse<null>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
 
   const { error } = await supabase.auth.updateUser({
@@ -102,7 +102,7 @@ export function saveNotificationPreferences(
 }
 
 export async function deleteAccount(password: string): Promise<ApiResponse<null>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
 
   const { data: { user: authUser } } = await supabase.auth.getUser();

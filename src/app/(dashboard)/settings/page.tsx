@@ -369,7 +369,7 @@ function GmailConnectPanel({ onSaved, onError }: { onSaved: (msg: string) => voi
         confirmDisconnect ? (
           <div className="rounded-lg bg-danger-50 dark:bg-danger-500/10 border border-danger-200 dark:border-danger-500/30 p-3 space-y-2">
             <p className="text-xs text-danger-700 dark:text-danger-400 font-medium">
-              Revoke Gmail access? You'll stop receiving email notifications.
+              Revoke Gmail access? You&apos;ll stop receiving email notifications.
             </p>
             <div className="flex gap-2">
               <button

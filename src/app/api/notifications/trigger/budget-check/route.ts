@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   const { searchParams } = new URL(req.url);
   const debug = searchParams.get('debug') === 'true';
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = await getSupabaseServerClient() as any;
   const { data: { user }, error } = await supabase.auth.getUser();
 

@@ -44,7 +44,7 @@ function toComputed(row: DbInvestment): InvestmentWithComputed {
 
 // The manually-crafted Database type doesn't fully satisfy Supabase SDK generics;
 // cast to any to unblock type inference, consistent with the existing codebase pattern.
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 type AnyClient = any;
 
 export async function fetchInvestments(): Promise<InvestmentWithComputed[]> {

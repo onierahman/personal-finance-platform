@@ -3,7 +3,7 @@ import { getSupabaseServerClient } from '@/lib/supabase/server';
 import { sendGmailMessage, refreshAccessToken } from '@/lib/gmail';
 
 export async function POST() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = await getSupabaseServerClient() as any;
   const { data: { user }, error } = await supabase.auth.getUser();
 

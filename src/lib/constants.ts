@@ -109,6 +109,37 @@ export const NAV_ITEMS = [
   { href: '/analytics',     label: 'Analytics',    icon: 'LineChart'       },
 ] as const;
 
+// Routes that are conceptually "home" — the dashboard lives at /dashboard but
+// is also reachable via / (which redirects). Used for nav active-state + title.
+export const DASHBOARD_PATHS = ['/', '/dashboard'];
+
+// Extra titles for routes not present in the primary nav.
+const EXTRA_PAGE_TITLES: Record<string, string> = {
+  '/settings': 'Settings',
+};
+
+/**
+ * Human-readable title for the current route, used by the mobile large-title
+ * header. Falls back to the matching nav label, then an extras map.
+ */
+export function getPageTitle(pathname: string): string {
+  if (DASHBOARD_PATHS.includes(pathname)) return 'Dashboard';
+  const nav = NAV_ITEMS.find(i => i.href !== '/' && pathname.startsWith(i.href));
+  if (nav) return nav.label;
+  const extra = Object.keys(EXTRA_PAGE_TITLES).find(p => pathname.startsWith(p));
+  return extra ? EXTRA_PAGE_TITLES[extra] : 'FinanceOS';
+}
+
+/**
+ * Whether the mobile collapsing large title should render for this route.
+ * Only the dashboard lacks its own in-page heading, so it's the one screen
+ * that benefits from the large-title treatment — every other page already
+ * renders its own header, and showing both would duplicate the title.
+ */
+export function showsMobileLargeTitle(pathname: string): boolean {
+  return DASHBOARD_PATHS.includes(pathname);
+}
+
 // Pagination
 export const DEFAULT_PAGE_SIZE = 20;
 

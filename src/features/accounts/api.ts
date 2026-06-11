@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Account, ApiResponse } from '@/types';
 import type { DbAccount, InsertAccount, UpdateAccount } from '@/types/database';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 type AnyClient = any;
 
 function toAccount(row: DbAccount): Account {
@@ -64,7 +64,7 @@ export async function updateAccount(
   id: string,
   payload: UpdateAccount,
 ): Promise<ApiResponse<Account>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as AnyClient;
   const { data, error } = await supabase
     .from('accounts')

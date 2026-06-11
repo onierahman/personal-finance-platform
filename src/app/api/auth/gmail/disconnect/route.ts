@@ -3,7 +3,7 @@ import { getSupabaseServerClient } from '@/lib/supabase/server';
 import { revokeToken } from '@/lib/gmail';
 
 export async function DELETE() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = await getSupabaseServerClient() as any;
   const { data: { user }, error } = await supabase.auth.getUser();
 

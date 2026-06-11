@@ -2,7 +2,7 @@
 // ─── SWITCH OCR BACKEND HERE ──────────────────────────────────────────────────
 // 'tesseract'  free, runs in the browser, no API key needed
 // 'api'        Anthropic Claude Haiku Vision — more accurate, needs ANTHROPIC_API_KEY in .env.local
-// eslint-disable-next-line @typescript-eslint/no-inferrable-types
+ 
 export const OCR_BACKEND = 'tesseract' as 'tesseract' | 'api';
 // ─────────────────────────────────────────────────────────────────────────────
 

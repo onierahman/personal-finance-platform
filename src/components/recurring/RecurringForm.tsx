@@ -17,7 +17,7 @@ const input = 'w-full text-sm rounded-md border border-slate-200 dark:border-sla
 const select = 'w-full text-sm rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 p-2.5 outline-none focus:border-primary-500';
 
 export function RecurringForm({ onSuccess }: { onSuccess?: () => void }) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
   const { mutate: createRecurring, isPending, error } = useCreateRecurring();
 

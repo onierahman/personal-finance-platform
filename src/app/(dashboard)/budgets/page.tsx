@@ -16,7 +16,7 @@ import { cn } from '@/lib/utils';
 import type { DbBudget, BudgetPeriod } from '@/types/database';
 
 async function fetchAllBudgets(): Promise<DbBudget[]> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
   const { data, error } = await supabase
     .from('budgets')

@@ -38,7 +38,7 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: 'SUPABASE_SERVICE_ROLE_KEY is not set in environment variables.' }, { status: 500 });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = await getSupabaseServiceClient() as any;
   const { start, end } = weekRange();
 
@@ -145,7 +145,7 @@ export async function GET(req: Request) {
 }
 
 async function getUserAccountIds(
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   supabase: any,
   userId: string,
 ): Promise<string[]> {

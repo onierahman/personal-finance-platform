@@ -18,7 +18,7 @@ export async function GET(req: Request) {
     return NextResponse.redirect(`${appUrl}/unsubscribe?status=expired`);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = await getSupabaseServiceClient() as any;
 
   const { data: tokenRow } = await supabase

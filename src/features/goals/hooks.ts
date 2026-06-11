@@ -9,7 +9,7 @@ import { z } from 'zod';
 type GoalFormValues = z.infer<typeof savingsGoalSchema>;
 
 export function useGoals() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
 
   return useQuery({
@@ -27,7 +27,7 @@ export function useGoals() {
 }
 
 export function useCreateGoal() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
   const queryClient = useQueryClient();
 
@@ -63,7 +63,7 @@ export function useCreateGoal() {
 }
 
 export function useUpdateGoal() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
   const queryClient = useQueryClient();
 
@@ -86,7 +86,7 @@ export function useUpdateGoal() {
 }
 
 export function useAddContribution() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
   const queryClient = useQueryClient();
 
@@ -123,7 +123,7 @@ export function useAddContribution() {
 }
 
 export function useDeleteGoal() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
   const queryClient = useQueryClient();
 

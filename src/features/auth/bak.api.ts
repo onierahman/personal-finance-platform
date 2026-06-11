@@ -5,7 +5,7 @@ import type { LoginFormValues, RegisterFormValues } from './schema';
 export async function loginWithEmail(
   values: LoginFormValues,
 ): Promise<ApiResponse<User>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
 
   const { data, error } = await supabase.auth.signInWithPassword({
@@ -40,7 +40,7 @@ export async function loginWithEmail(
 export async function registerWithEmail(
   values: RegisterFormValues,
 ): Promise<ApiResponse<null>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
 
   const { error } = await supabase.auth.signUp({
@@ -54,13 +54,13 @@ export async function registerWithEmail(
 }
 
 export async function logout(): Promise<void> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
   await supabase.auth.signOut();
 }
 
 export async function getCurrentUser(): Promise<ApiResponse<User>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
 
   const { data: { user }, error: authError } = await supabase.auth.getUser();

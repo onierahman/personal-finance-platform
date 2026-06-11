@@ -9,9 +9,12 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor:   '#2563EB',
-  width:        'device-width',
-  initialScale: 1,
+  themeColor:    '#2563EB',
+  width:         'device-width',
+  initialScale:  1,
+  // Extend layout under the notch / home indicator so env(safe-area-inset-*)
+  // returns real values for our fixed bars and bottom sheets.
+  viewportFit:   'cover',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

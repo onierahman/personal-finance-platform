@@ -1,9 +1,11 @@
 import { Sidebar }           from '@/components/layout/Sidebar';
 import { SidebarAwareMain }  from '@/components/layout/SidebarAwareMain';
 import { TopBar }            from '@/components/layout/TopBar';
+import { MobileLargeTitle }  from '@/components/layout/MobileLargeTitle';
 import { MobileNav }         from '@/components/layout/MobileNav';
 import { MobileSidebar }     from '@/components/layout/MobileSidebar';
 import { ThemeApplier }      from '@/components/layout/ThemeApplier';
+import { PageTransition }    from '@/components/layout/PageTransition';
 import { QuickAdd }          from '@/components/transactions/QuickAdd';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -15,9 +17,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       <SidebarAwareMain>
         <TopBar />
-        <main className="flex-1 pb-20 lg:pb-8">
+        <MobileLargeTitle />
+        <main className="flex-1 pb-20 lg:pb-8 safe-area-bottom overflow-x-hidden">
           <div className="page-container">
-            {children}
+            <PageTransition>{children}</PageTransition>
           </div>
         </main>
       </SidebarAwareMain>

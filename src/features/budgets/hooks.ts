@@ -8,7 +8,7 @@ import { z } from 'zod';
 type BudgetFormValues = z.infer<typeof budgetSchema>;
 
 export function useCreateBudget() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
   const queryClient = useQueryClient();
 
@@ -48,7 +48,7 @@ export function useCreateBudget() {
 }
 
 export function useUpdateBudget() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
   const queryClient = useQueryClient();
 
@@ -71,7 +71,7 @@ export function useUpdateBudget() {
 }
 
 export function useDeleteBudget() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   const supabase = getSupabaseBrowserClient() as any;
   const queryClient = useQueryClient();
 

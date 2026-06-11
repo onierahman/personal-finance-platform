@@ -2,7 +2,7 @@
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { Budget, CreateBudgetInput, UpdateBudgetInput } from './types';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const supabase = getSupabaseBrowserClient() as any;
 
 export const budgetsApi = {

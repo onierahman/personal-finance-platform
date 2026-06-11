@@ -5,12 +5,14 @@ import { usePortfolioSummary } from '@/features/investments/hooks';
 import { useUiStore }        from '@/stores/uiStore';
 import { formatCurrency, formatPercent } from '@/lib/formatters';
 import { CardSkeleton }      from '@/components/shared/LoadingSkeleton';
+import { CountUp }           from '@/components/shared/CountUp';
 import { cn }                from '@/lib/utils';
 import { useUser }           from '@/hooks/useUser';
 
 interface StatCardProps {
   label:    string;
-  value:    string;
+  value:    number;
+  format:   (n: number) => string;
   sub?:     string;
   icon:     React.ElementType;
   iconBg:   string;
@@ -18,9 +20,12 @@ interface StatCardProps {
   trend?:   'up' | 'down' | 'neutral';
 }
 
-function StatCard({ label, value, sub, icon: Icon, iconBg, iconColor, trend }: StatCardProps) {
+function StatCard({ label, value, format, sub, icon: Icon, iconBg, iconColor, trend }: StatCardProps) {
+  // Size the type off the final formatted string so count-up never reflows.
+  const formattedLen = format(value).length;
+
   return (
-    <div className="card p-5 hover-lift">
+    <div className="card p-4 sm:p-5 hover-lift">
       <div className="flex items-start justify-between mb-3">
         <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center', iconBg)}>
           <Icon className={cn('w-5 h-5', iconColor)} />
@@ -37,10 +42,14 @@ function StatCard({ label, value, sub, icon: Icon, iconBg, iconColor, trend }: S
         )}
       </div>
       <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">{label}</p>
-      <p className={cn(
-        'amount font-semibold text-slate-900 dark:text-white mt-0.5',
-        value.length > 10 ? 'text-base' : value.length > 8 ? 'text-xl' : 'text-2xl',
-      )}>{value}</p>
+      <CountUp
+        value={value}
+        format={format}
+        className={cn(
+          'amount font-semibold text-slate-900 dark:text-white mt-0.5 block',
+          formattedLen > 10 ? 'text-base' : formattedLen > 8 ? 'text-xl' : 'text-2xl',
+        )}
+      />
       {sub && <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{sub}</p>}
     </div>
   );
@@ -61,6 +70,10 @@ export function SummaryCards() {
     );
   }
 
+  // Mobile: 2-up grid (Income/Expenses on row 1, Savings/Investments on row 2).
+  // Desktop: 4-up grid. No horizontal scrolling.
+  const containerClass = 'grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4';
+
   const summary = data?.data;
   const fmt = (n: number) => formatCurrency(n, currency);
 
@@ -72,10 +85,11 @@ export function SummaryCards() {
     : 'Portfolio value';
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div className={containerClass}>
       <StatCard
         label="Income"
-        value={fmt(summary?.income ?? 0)}
+        value={summary?.income ?? 0}
+        format={fmt}
         sub="This month"
         icon={TrendingUp}
         iconBg="bg-success-50"
@@ -84,7 +98,8 @@ export function SummaryCards() {
       />
       <StatCard
         label="Expenses"
-        value={fmt(summary?.expenses ?? 0)}
+        value={summary?.expenses ?? 0}
+        format={fmt}
         sub="This month"
         icon={TrendingDown}
         iconBg="bg-danger-50"
@@ -93,7 +108,8 @@ export function SummaryCards() {
       />
       <StatCard
         label="Savings"
-        value={fmt(summary?.savings ?? 0)}
+        value={summary?.savings ?? 0}
+        format={fmt}
         sub={summary ? `${formatPercent(summary.savingsRate)} rate` : undefined}
         icon={PiggyBank}
         iconBg="bg-primary-50"
@@ -102,7 +118,8 @@ export function SummaryCards() {
       />
       <StatCard
         label="Investments"
-        value={fmt(portfolioValue)}
+        value={portfolioValue}
+        format={fmt}
         sub={portfolioSub}
         icon={BarChart2}
         iconBg="bg-primary-50"
