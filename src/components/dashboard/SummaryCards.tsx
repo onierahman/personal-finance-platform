@@ -37,7 +37,10 @@ function StatCard({ label, value, sub, icon: Icon, iconBg, iconColor, trend }: S
         )}
       </div>
       <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">{label}</p>
-      <p className="amount text-2xl font-semibold text-slate-900 dark:text-white mt-0.5">{value}</p>
+      <p className={cn(
+        'amount font-semibold text-slate-900 dark:text-white mt-0.5',
+        value.length > 10 ? 'text-base' : value.length > 8 ? 'text-xl' : 'text-2xl',
+      )}>{value}</p>
       {sub && <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{sub}</p>}
     </div>
   );
