@@ -5,7 +5,10 @@ import { NextResponse } from 'next/server';
 import { getSupabaseServerClient } from '@/lib/supabase/server';
 import { notify } from '@/lib/notify';
 
-export async function POST() {
+export async function POST(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const debug = searchParams.get('debug') === 'true';
+
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = await getSupabaseServerClient() as any;
   const { data: { user }, error } = await supabase.auth.getUser();
@@ -14,13 +17,45 @@ export async function POST() {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  // Small wait to ensure the DB budget trigger has finished writing spent_amount
+  await new Promise(r => setTimeout(r, 300));
+
   // Fetch all budgets for this user
-  const { data: budgets } = await supabase
+  const { data: budgets, error: budgetsError } = await supabase
     .from('budgets')
-    .select('id, category, limit_amount, spent_amount')
+    .select('id, category, limit_amount, spent_amount, start_date, period')
     .eq('user_id', user.id);
 
-  if (!budgets?.length) return NextResponse.json({ ok: true, fired: 0 });
+  if (debug) {
+    const since24h = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    const { data: recentDebug } = await supabase
+      .from('notifications')
+      .select('type, data, created_at')
+      .eq('user_id', user.id)
+      .eq('type', 'budget_exceeded')
+      .gte('created_at', since24h);
+
+    return NextResponse.json({
+      userId: user.id,
+      budgetsError: budgetsError?.message ?? null,
+      budgets: (budgets ?? []).map((b: { category: string; limit_amount: number; spent_amount: number; start_date?: string; period?: string }) => ({
+        category:     b.category,
+        limit:        b.limit_amount,
+        spent:        b.spent_amount,
+        pct:          b.limit_amount > 0 ? Math.round((b.spent_amount / b.limit_amount) * 100) : 0,
+        wouldTrigger: b.limit_amount > 0 && b.spent_amount / b.limit_amount >= 0.9,
+        start_date:   b.start_date,
+        period:       b.period,
+      })),
+      recentBudgetAlerts: (recentDebug ?? []).map((n: { data: Record<string, unknown>; created_at: string }) => ({
+        category:   n.data?.category,
+        createdAt:  n.created_at,
+        blocked:    true,
+      })),
+    });
+  }
+
+  if (!budgets?.length) return NextResponse.json({ ok: true, fired: 0, reason: 'no budgets found' });
 
   // Fetch recently sent budget_exceeded notifications (last 24 hours) to avoid spam
   const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
