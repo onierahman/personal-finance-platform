@@ -18,29 +18,48 @@ export function useCreateBudget() {
 
       const { data, error } = await supabase
         .from('budgets')
-        .insert([
-          {
-            user_id: session.user.id,
-            category: values.category,
-            limit_amount: values.limit_amount,
-            period: values.period,
-            start_date: values.start_date,
-            spent_amount: 0,
-          },
-        ])
+        .insert([{
+          user_id: session.user.id,
+          category: values.category,
+          limit_amount: values.limit_amount,
+          period: values.period,
+          start_date: values.start_date,
+          spent_amount: 0,
+        }])
         .select()
         .single();
 
       if (error) {
-        // Intercept the database unique constraint violation code
         if (error.code === '23505') {
           throw new Error(
-            `A budget allocation for "${values.category}" already exists for this active cycle.`
+            `A budget for "${values.category}" already exists for this cycle.`
           );
         }
         throw new Error(error.message);
       }
-      
+
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['budgets'] });
+    },
+  });
+}
+
+export function useUpdateBudget() {
+  const supabase = getSupabaseBrowserClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, ...values }: Partial<BudgetFormValues> & { id: string }) => {
+      const { data, error } = await supabase
+        .from('budgets')
+        .update(values)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw new Error(error.message);
       return data;
     },
     onSuccess: () => {
@@ -64,7 +83,6 @@ export function useDeleteBudget() {
       return id;
     },
     onSuccess: () => {
-      // Automatically refreshes any components listening to the budget list query
       queryClient.invalidateQueries({ queryKey: ['budgets'] });
     },
   });

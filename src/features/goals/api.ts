@@ -1,15 +1,14 @@
-// Strict contract: Typed Supabase CRUD functions
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
-import { SavingsGoal, CreateGoalInput, UpdateGoalInput, GoalContribution } from './types';
+import { SavingsGoal, CreateGoalInput, UpdateGoalInput } from './types';
 
 const supabase = getSupabaseBrowserClient();
 
 export const goalsApi = {
   async getGoals(): Promise<SavingsGoal[]> {
     const { data, error } = await supabase
-      .from('savings_goals')
+      .from('goals')
       .select('*')
-      .order('target_date', { ascending: true });
+      .order('deadline', { ascending: true });
 
     if (error) throw new Error(error.message);
     return data ?? [];
@@ -17,7 +16,7 @@ export const goalsApi = {
 
   async createGoal(goal: CreateGoalInput): Promise<SavingsGoal> {
     const { data, error } = await supabase
-      .from('savings_goals')
+      .from('goals')
       .insert([goal])
       .select()
       .single();
@@ -28,7 +27,7 @@ export const goalsApi = {
 
   async updateGoal({ id, ...updates }: UpdateGoalInput): Promise<SavingsGoal> {
     const { data, error } = await supabase
-      .from('savings_goals')
+      .from('goals')
       .update(updates)
       .eq('id', id)
       .select()
@@ -39,18 +38,7 @@ export const goalsApi = {
   },
 
   async deleteGoal(id: string): Promise<void> {
-    const { error } = await supabase.from('savings_goals').delete().eq('id', id);
+    const { error } = await supabase.from('goals').delete().eq('id', id);
     if (error) throw new Error(error.message);
   },
-
-  async addContribution(goalId: string, amount: number): Promise<GoalContribution> {
-    const { data, error } = await supabase
-      .from('goal_contributions')
-      .insert([{ goal_id: goalId, amount }])
-      .select()
-      .single();
-
-    if (error) throw new Error(error.message);
-    return data;
-  }
 };

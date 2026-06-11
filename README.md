@@ -80,20 +80,6 @@ vercel
 # Follow prompts — set env vars when asked
 ```
 
-## Folder structure
-
-```
-src/
-├── app/             Next.js App Router pages
-├── components/      UI components (layout, dashboard, transactions, shared)
-├── features/        Domain logic (api + hooks + schema + types per feature)
-├── lib/             Supabase clients, constants, formatters, utils
-├── stores/          Zustand UI state
-├── types/           TypeScript types mirroring DB schema
-supabase/
-├── migrations/      PostgreSQL migrations (run in order)
-└── seed.sql         Default categories
-```
 
 ## Phase 2 (next)
 

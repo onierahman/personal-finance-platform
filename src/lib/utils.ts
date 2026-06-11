@@ -1,12 +1,10 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-/** shadcn/ui class merger */
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-/** Generate a random hex color */
 export function randomColor(): string {
   const palette = [
     '#6366F1','#8B5CF6','#EC4899','#EF4444','#F97316',
@@ -15,24 +13,20 @@ export function randomColor(): string {
   return palette[Math.floor(Math.random() * palette.length)];
 }
 
-/** Clamp a number between min and max */
 export function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
 }
 
-/** Deep equal for simple objects (avoids re-renders) */
 export function shallowEqual<T extends Record<string, unknown>>(a: T, b: T): boolean {
   const aKeys = Object.keys(a);
   if (aKeys.length !== Object.keys(b).length) return false;
   return aKeys.every(k => a[k] === b[k]);
 }
 
-/** Sleep for n milliseconds */
 export function sleep(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-/** Group array by key */
 export function groupBy<T>(arr: T[], key: (item: T) => string): Record<string, T[]> {
   return arr.reduce<Record<string, T[]>>((acc, item) => {
     const k = key(item);
@@ -42,17 +36,14 @@ export function groupBy<T>(arr: T[], key: (item: T) => string): Record<string, T
   }, {});
 }
 
-/** Sum an array by key */
 export function sumBy<T>(arr: T[], key: (item: T) => number): number {
   return arr.reduce((acc, item) => acc + key(item), 0);
 }
 
-/** Get YYYY-MM from a date string */
 export function toYearMonth(dateStr: string): string {
   return dateStr.slice(0, 7);
 }
 
-/** Suggested monthly contribution to reach a goal */
 export function suggestedMonthlyContribution(
   target: number,
   current: number,
@@ -68,16 +59,41 @@ export function suggestedMonthlyContribution(
   return Math.ceil((remaining / months) * 100) / 100;
 }
 
-/** Build budget health status from ratio */
 export function budgetHealthStatus(
   spent: number,
   limit: number,
 ): { ratio: number; status: 'safe' | 'warning' | 'danger' | 'over' } {
   const ratio = limit > 0 ? spent / limit : 0;
   let status: 'safe' | 'warning' | 'danger' | 'over';
-  if (ratio < 0.7)  status = 'safe';
-  else if (ratio < 0.9) status = 'warning';
-  else if (ratio < 1.0) status = 'danger';
-  else status = 'over';
+  if (ratio < 0.7)       status = 'safe';
+  else if (ratio < 0.9)  status = 'warning';
+  else if (ratio < 1.0)  status = 'danger';
+  else                   status = 'over';
   return { ratio, status };
+}
+
+/**
+ * Returns urgency level and days remaining for a goal deadline.
+ * Used to drive colour coding and deadline badges on goal cards.
+ */
+export function goalDeadlineUrgency(
+  deadlineIso: string | null,
+): { daysLeft: number | null; urgency: 'none' | 'low' | 'medium' | 'high' | 'overdue' } {
+  if (!deadlineIso) return { daysLeft: null, urgency: 'none' };
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const deadline = new Date(deadlineIso);
+  deadline.setHours(0, 0, 0, 0);
+
+  const daysLeft = Math.round((deadline.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+  let urgency: 'none' | 'low' | 'medium' | 'high' | 'overdue';
+  if (daysLeft < 0)        urgency = 'overdue';
+  else if (daysLeft <= 7)  urgency = 'high';
+  else if (daysLeft <= 30) urgency = 'medium';
+  else if (daysLeft <= 90) urgency = 'low';
+  else                     urgency = 'none';
+
+  return { daysLeft, urgency };
 }
