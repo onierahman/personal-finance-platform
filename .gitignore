@@ -1,3 +1,5 @@
 node_modules
 PRD
 .next/
+.env.local
+.env*.local
