@@ -27,10 +27,9 @@ export function CategoryPicker({ type, value, onChange }: CategoryPickerProps) {
                 : 'border-slate-100 hover:border-slate-200 hover:bg-slate-50',
             )}
             style={selected ? {
-              background:  cat.color + '18',
-              ringColor:   cat.color,
+              background:   cat.color + '18',
               outlineColor: cat.color,
-              outline: `2px solid ${cat.color}`,
+              outline:      `2px solid ${cat.color}`,
               outlineOffset: '1px',
             } : {}}
           >

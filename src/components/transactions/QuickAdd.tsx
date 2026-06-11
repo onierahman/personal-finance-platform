@@ -78,11 +78,11 @@ useEffect(() => {
         amount:      values.amount,
         type:        values.type,
         category:    values.category,
-        subcategory: values.subcategory,
-        merchant:    values.merchant,
+        subcategory: values.subcategory ?? null,
+        merchant:    values.merchant ?? null,
         date:        values.date,
-        note:        values.note,
-        receipt_url: values.receipt_url || undefined,
+        note:        values.note ?? null,
+        receipt_url: values.receipt_url ?? null,
         recurring_id: null,
       });
 

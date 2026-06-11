@@ -17,6 +17,10 @@ interface UiStore {
   setSidebarOpen: (open: boolean) => void;
   toggleSidebar: () => void;
 
+  // Desktop sidebar collapse
+  sidebarCollapsed: boolean;
+  toggleSidebarCollapsed: () => void;
+
   // Edit transaction modal
   editTransactionId: string | null;
   openEditTransaction: (id: string) => void;
@@ -35,6 +39,9 @@ export const useUiStore = create<UiStore>((set) => ({
   sidebarOpen:   false,
   setSidebarOpen: (open) => set({ sidebarOpen: open }),
   toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
+
+  sidebarCollapsed:       false,
+  toggleSidebarCollapsed: () => set((s) => ({ sidebarCollapsed: !s.sidebarCollapsed })),
 
   editTransactionId:    null,
   openEditTransaction:  (id) => set({ editTransactionId: id }),

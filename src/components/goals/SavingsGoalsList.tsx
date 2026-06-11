@@ -64,6 +64,14 @@ export function SavingsGoalsList() {
 
   const activeGoals = goals.filter(g => g.status === 'active');
 
+  const VISIBLE_LIMIT = 3;
+  const visible    = activeGoals.slice(0, VISIBLE_LIMIT);
+  const hiddenCount = activeGoals.length - VISIBLE_LIMIT;
+
+  const totalSaved = activeGoals.reduce(
+    (sum, g) => sum + Number(g.current_amount), 0,
+  );
+
   if (isLoading) {
     return (
       <div className="card p-5 space-y-4 animate-pulse">
@@ -79,7 +87,9 @@ export function SavingsGoalsList() {
         <div>
           <p className="text-base font-semibold text-slate-800">Savings Goals</p>
           {activeGoals.length > 0 && (
-            <p className="text-xs text-slate-500">{activeGoals.length} active</p>
+            <p className="text-xs text-slate-500">
+              {activeGoals.length} active · {formatCurrency(totalSaved, currency)} saved
+            </p>
           )}
         </div>
         <Link href="/goals" className="text-xs text-primary-600 hover:underline flex items-center gap-0.5">
@@ -99,8 +109,9 @@ export function SavingsGoalsList() {
           }
         />
       ) : (
+        <>
         <ul className="space-y-4">
-          {activeGoals.slice(0, 2).map(goal => {
+          {visible.map(goal => {
             const ratio = goal.target_amount > 0
               ? Number(goal.current_amount) / Number(goal.target_amount)
               : 0;
@@ -183,6 +194,16 @@ export function SavingsGoalsList() {
             );
           })}
         </ul>
+
+          {hiddenCount > 0 && (
+            <Link
+              href="/goals"
+              className="mt-4 block text-center text-xs text-primary-600 hover:underline"
+            >
+              +{hiddenCount} more goal{hiddenCount > 1 ? 's' : ''} → View all
+            </Link>
+          )}
+        </>
       )}
     </div>
   );

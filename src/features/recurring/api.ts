@@ -1,7 +1,9 @@
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
-import { RecurringTransaction, CreateRecurringInput, UpdateRecurringInput } from './types';
+import { RecurringTransaction, CreateRecurringInput } from './types';
+type UpdateRecurringInput = Partial<CreateRecurringInput> & { id: string };
 
-const supabase = getSupabaseBrowserClient();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const supabase = getSupabaseBrowserClient() as any;
 
 export const recurringApi = {
   async getRecurringTransactions(): Promise<RecurringTransaction[]> {

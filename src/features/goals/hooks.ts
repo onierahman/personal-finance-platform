@@ -3,12 +3,14 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { savingsGoalSchema } from './schema';
+import type { DbGoal } from '@/types/database';
 import { z } from 'zod';
 
 type GoalFormValues = z.infer<typeof savingsGoalSchema>;
 
 export function useGoals() {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
 
   return useQuery({
     queryKey: ['goals'],
@@ -19,13 +21,14 @@ export function useGoals() {
         .order('deadline', { ascending: true });
 
       if (error) throw new Error(error.message);
-      return data ?? [];
+      return (data ?? []) as DbGoal[];
     },
   });
 }
 
 export function useCreateGoal() {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -60,7 +63,8 @@ export function useCreateGoal() {
 }
 
 export function useUpdateGoal() {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -82,7 +86,8 @@ export function useUpdateGoal() {
 }
 
 export function useAddContribution() {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -118,7 +123,8 @@ export function useAddContribution() {
 }
 
 export function useDeleteGoal() {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
   const queryClient = useQueryClient();
 
   return useMutation({

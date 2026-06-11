@@ -3,15 +3,15 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
 import {
-  LayoutDashboard, ArrowLeftRight, PieChart, Target, LineChart,
+  LayoutDashboard, ArrowLeftRight, Landmark, PieChart, Target,
 } from 'lucide-react';
 
 const MOBILE_NAV = [
-  { href: '/',             label: 'Home',    Icon: LayoutDashboard  },
-  { href: '/transactions', label: 'Txns',    Icon: ArrowLeftRight   },
-  { href: '/budgets',      label: 'Budgets', Icon: PieChart         },
-  { href: '/goals',        label: 'Goals',   Icon: Target           },
-  { href: '/analytics',    label: 'Insights',Icon: LineChart        },
+  { href: '/',             label: 'Home',     Icon: LayoutDashboard },
+  { href: '/transactions', label: 'Txns',     Icon: ArrowLeftRight  },
+  { href: '/accounts',     label: 'Accounts', Icon: Landmark        },
+  { href: '/budgets',      label: 'Budgets',  Icon: PieChart        },
+  { href: '/goals',        label: 'Goals',    Icon: Target          },
 ];
 
 export function MobileNav() {

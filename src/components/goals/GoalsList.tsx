@@ -260,11 +260,12 @@ export function GoalsList() {
     : goals.filter(g => g.status === activeTab);
 
   // Count per tab for badges
-  const counts = {
+  const counts: Record<string, number> = {
     all:       goals.length,
     active:    goals.filter(g => g.status === 'active').length,
     completed: goals.filter(g => g.status === 'completed').length,
     paused:    goals.filter(g => g.status === 'paused').length,
+    cancelled: goals.filter(g => g.status === 'cancelled').length,
   };
 
   return (

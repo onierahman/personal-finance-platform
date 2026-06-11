@@ -3,6 +3,9 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import type { Account, ApiResponse } from '@/types';
 import type { DbAccount, InsertAccount, UpdateAccount } from '@/types/database';
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyClient = any;
+
 function toAccount(row: DbAccount): Account {
   return {
     id:       row.id,
@@ -18,7 +21,7 @@ function toAccount(row: DbAccount): Account {
 }
 
 export async function fetchAccounts(): Promise<ApiResponse<Account[]>> {
-  const supabase = getSupabaseBrowserClient();
+  const supabase = getSupabaseBrowserClient() as AnyClient;
   const { data, error } = await supabase
     .from('accounts')
     .select('*')
@@ -30,12 +33,15 @@ export async function fetchAccounts(): Promise<ApiResponse<Account[]>> {
 }
 
 export async function createAccount(
-  payload: InsertAccount,
+  payload: Omit<InsertAccount, 'user_id'>,
 ): Promise<ApiResponse<Account>> {
-  const supabase = getSupabaseBrowserClient();
+  const supabase = getSupabaseBrowserClient() as AnyClient;
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return { data: null, error: 'Not authenticated' };
+
   const { data, error } = await supabase
     .from('accounts')
-    .insert(payload)
+    .insert([{ ...payload, user_id: session.user.id }])
     .select()
     .single();
 
@@ -43,11 +49,23 @@ export async function createAccount(
   return { data: toAccount(data as DbAccount), error: null };
 }
 
+export async function deleteAccount(id: string): Promise<ApiResponse<null>> {
+  const supabase = getSupabaseBrowserClient() as AnyClient;
+  const { error } = await supabase
+    .from('accounts')
+    .update({ is_active: false })
+    .eq('id', id);
+
+  if (error) return { data: null, error: error.message };
+  return { data: null, error: null };
+}
+
 export async function updateAccount(
   id: string,
   payload: UpdateAccount,
 ): Promise<ApiResponse<Account>> {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as AnyClient;
   const { data, error } = await supabase
     .from('accounts')
     .update(payload)
@@ -77,7 +95,7 @@ export function useAccounts() {
 export function useCreateAccount() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: (payload: InsertAccount) => createAccount(payload),
+    mutationFn: (payload: Omit<InsertAccount, 'user_id'>) => createAccount(payload),
     onSuccess:  () => qc.invalidateQueries({ queryKey: accountKeys.all }),
   });
 }
@@ -88,5 +106,13 @@ export function useUpdateAccount() {
     mutationFn: ({ id, payload }: { id: string; payload: UpdateAccount }) =>
       updateAccount(id, payload),
     onSuccess: () => qc.invalidateQueries({ queryKey: accountKeys.all }),
+  });
+}
+
+export function useDeleteAccount() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (id: string) => deleteAccount(id),
+    onSuccess:  () => qc.invalidateQueries({ queryKey: accountKeys.all }),
   });
 }

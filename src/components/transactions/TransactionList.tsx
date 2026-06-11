@@ -158,10 +158,11 @@ export function TransactionList({ month, accountId, category, type, search }: Tr
   const sortedDates = Object.keys(grouped).sort((a, b) => b.localeCompare(a));
 
   return (
-    <div className="space-y-3">
-      {sortedDates.map(date => (
-        <div key={date} className="card p-4">
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1">
+    <div className="card p-4 space-y-1">
+      {sortedDates.map((date, idx) => (
+        <div key={date}>
+          {idx > 0 && <div className="border-t border-slate-100 mt-2 mb-1" />}
+          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide py-1.5">
             {formatDateShort(date)}
           </p>
           <div className="divide-y divide-slate-50">

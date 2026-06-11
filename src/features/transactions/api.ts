@@ -22,14 +22,15 @@ function toTransaction(row: Record<string, unknown>): Transaction {
     isDeleted:   Boolean(row.is_deleted),
     createdAt:   row.created_at as string,
     accountName: (row.accounts as Record<string, unknown>)?.name as string | undefined,
-    categoryMeta: getCategoryMeta(row.category as string),
+    categoryMeta: getCategoryMeta(row.category as string) as import('@/types').Category,
   };
 }
 
 export async function fetchTransactions(
   filters: TransactionFilters = {},
 ): Promise<ApiResponse<Transaction[]>> {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
   const {
     month = currentYearMonth(),
     type,
@@ -69,7 +70,8 @@ export async function fetchTransactions(
 export async function fetchAllTransactions(
   filters: Omit<TransactionFilters, 'page' | 'pageSize'> = {},
 ): Promise<ApiResponse<Transaction[]>> {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
   const { month = currentYearMonth(), type, category, accountId } = filters;
 
   let query = supabase
@@ -92,7 +94,8 @@ export async function fetchAllTransactions(
 export async function createTransaction(
   payload: InsertTransaction,
 ): Promise<ApiResponse<Transaction>> {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
 
   const { data, error } = await supabase
     .from('transactions')
@@ -108,7 +111,8 @@ export async function updateTransaction(
   id: string,
   payload: UpdateTransaction,
 ): Promise<ApiResponse<Transaction>> {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
 
   const { data, error } = await supabase
     .from('transactions')
@@ -124,7 +128,8 @@ export async function updateTransaction(
 export async function softDeleteTransaction(
   id: string,
 ): Promise<ApiResponse<null>> {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
 
   const { error } = await supabase
     .from('transactions')
@@ -139,7 +144,8 @@ export async function softDeleteTransaction(
 export async function fetchMonthlySummary(
   month: string = currentYearMonth(),
 ): Promise<ApiResponse<MonthlySummary>> {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
 
   const { data, error } = await supabase
     .from('transactions')
@@ -150,13 +156,10 @@ export async function fetchMonthlySummary(
 
   if (error) return { data: null, error: error.message };
 
-  const rows = data ?? [];
+  const rows = (data ?? []) as { amount: number; type: string; category: string }[];
   const income   = rows.filter(r => r.type === 'income').reduce((s, r) => s + Number(r.amount), 0);
   const expenses = rows.filter(r => r.type === 'expense').reduce((s, r) => s + Number(r.amount), 0);
 
-  // Investments: expense-type rows categorised as "Investments" (user manually
-  // logged an investment transfer). Phase 3 will replace this with the dedicated
-  // investments table once that module is built.
   const investments = rows
     .filter(r => r.type === 'expense' && r.category === 'Investments')
     .reduce((s, r) => s + Number(r.amount), 0);
@@ -180,7 +183,8 @@ export async function fetchCategoryBreakdown(
   month: string = currentYearMonth(),
   type: 'expense' | 'income' = 'expense',
 ): Promise<ApiResponse<MonthlyCategoryBreakdown[]>> {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
 
   const { data, error } = await supabase
     .from('transactions')
@@ -192,8 +196,8 @@ export async function fetchCategoryBreakdown(
 
   if (error) return { data: null, error: error.message };
 
-  const rows = data ?? [];
-  const total = rows.reduce((s, r) => s + Number(r.amount), 0);
+  const rows = (data ?? []) as { category: string; amount: number }[];
+  const total = rows.reduce((s: number, r) => s + Number(r.amount), 0);
 
   const map = new Map<string, { total: number; count: number }>();
   rows.forEach(r => {

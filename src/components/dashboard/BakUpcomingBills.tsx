@@ -12,7 +12,8 @@ import { useUser } from '@/hooks/useUser';
 import { todayIso } from '@/lib/formatters';
 
 async function fetchUpcomingBills() {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
   const today  = todayIso();
   const in30d  = new Date();
   in30d.setDate(in30d.getDate() + 30);
@@ -28,7 +29,7 @@ async function fetchUpcomingBills() {
     .limit(5);
 
   if (error) throw new Error(error.message);
-  return data ?? [];
+  return (data ?? []) as import('@/features/recurring/types').RecurringTransaction[];
 }
 
 export function UpcomingBills() {

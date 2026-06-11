@@ -1,7 +1,8 @@
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { SavingsGoal, CreateGoalInput, UpdateGoalInput } from './types';
 
-const supabase = getSupabaseBrowserClient();
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const supabase = getSupabaseBrowserClient() as any;
 
 export const goalsApi = {
   async getGoals(): Promise<SavingsGoal[]> {

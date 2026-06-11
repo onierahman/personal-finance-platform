@@ -100,6 +100,7 @@ export const FREQUENCY_LABELS: Record<string, string> = {
 export const NAV_ITEMS = [
   { href: '/',              label: 'Dashboard',    icon: 'LayoutDashboard' },
   { href: '/transactions',  label: 'Transactions', icon: 'ArrowLeftRight'  },
+  { href: '/accounts',      label: 'Accounts',     icon: 'Landmark'        },
   { href: '/budgets',       label: 'Budgets',      icon: 'PieChart'        },
   { href: '/goals',         label: 'Goals',        icon: 'Target'          },
   { href: '/investments',   label: 'Investments',  icon: 'TrendingUp'      },

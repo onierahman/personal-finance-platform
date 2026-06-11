@@ -4,11 +4,13 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { recurringSchema } from './schema';
 import { z } from 'zod';
+import type { RecurringTransaction } from './types';
 
 type RecurringFormValues = z.infer<typeof recurringSchema>;
 
 export function useRecurring() {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
 
   return useQuery({
     queryKey: ['recurring'],
@@ -19,13 +21,14 @@ export function useRecurring() {
         .order('next_due', { ascending: true });
 
       if (error) throw new Error(error.message);
-      return data ?? [];
+      return (data ?? []) as RecurringTransaction[];
     },
   });
 }
 
 export function useCreateRecurring() {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -62,7 +65,8 @@ export function useCreateRecurring() {
 }
 
 export function useUpdateRecurring() {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -87,7 +91,8 @@ export function useUpdateRecurring() {
 }
 
 export function useToggleRecurringStatus() {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -109,7 +114,8 @@ export function useToggleRecurringStatus() {
 }
 
 export function useDeleteRecurring() {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
   const queryClient = useQueryClient();
 
   return useMutation({

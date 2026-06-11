@@ -13,7 +13,8 @@ import { todayIso } from '@/lib/formatters';
 type RecurringFormValues = z.infer<typeof recurringSchema>;
 
 export function RecurringForm({ onSuccess }: { onSuccess?: () => void }) {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
   const { mutate: createRecurring, isPending, error } = useCreateRecurring();
 
   const { data: accountsData, isLoading: isLoadingAccounts } = useQuery({
@@ -25,7 +26,7 @@ export function RecurringForm({ onSuccess }: { onSuccess?: () => void }) {
         .order('name', { ascending: true });
 
       if (error) throw new Error(error.message);
-      return data ?? [];
+      return (data ?? []) as { id: string; name: string }[];
     },
   });
 

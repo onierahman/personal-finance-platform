@@ -11,11 +11,12 @@ export async function GET() {
     }
 
     // Fetch the detailed public profile record matching your database layout
-    const { data: profile } = await supabase
+    const { data: profileRaw } = await supabase
       .from('users')
       .select('*')
       .eq('id', authUser.id)
       .single();
+    const profile = profileRaw as import('@/types/database').DbUser | null;
 
     // Safely structure the full object structure using your application's type formatting
     return NextResponse.json({

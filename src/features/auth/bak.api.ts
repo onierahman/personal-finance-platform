@@ -5,7 +5,8 @@ import type { LoginFormValues, RegisterFormValues } from './schema';
 export async function loginWithEmail(
   values: LoginFormValues,
 ): Promise<ApiResponse<User>> {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
 
   const { data, error } = await supabase.auth.signInWithPassword({
     email:    values.email,
@@ -14,11 +15,12 @@ export async function loginWithEmail(
 
   if (error) return { data: null, error: error.message };
 
-  const { data: profile } = await supabase
+  const { data: profileRaw } = await (supabase as any)
     .from('users')
     .select('*')
     .eq('id', data.user.id)
     .single();
+  const profile = profileRaw as import('@/types/database').DbUser | null;
 
   if (!profile) return { data: null, error: 'Profile not found' };
 
@@ -38,7 +40,8 @@ export async function loginWithEmail(
 export async function registerWithEmail(
   values: RegisterFormValues,
 ): Promise<ApiResponse<null>> {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
 
   const { error } = await supabase.auth.signUp({
     email:    values.email,
@@ -51,21 +54,24 @@ export async function registerWithEmail(
 }
 
 export async function logout(): Promise<void> {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
   await supabase.auth.signOut();
 }
 
 export async function getCurrentUser(): Promise<ApiResponse<User>> {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
 
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) return { data: null, error: 'Not authenticated' };
 
-  const { data: profile, error: profileError } = await supabase
+  const { data: profileRaw2, error: profileError } = await (supabase as any)
     .from('users')
     .select('*')
     .eq('id', user.id)
     .single();
+  const profile = profileRaw2 as import('@/types/database').DbUser | null;
 
   if (profileError || !profile) return { data: null, error: 'Profile not found' };
 

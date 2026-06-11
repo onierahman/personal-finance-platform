@@ -1,6 +1,7 @@
 'use client';
-import { TrendingUp, TrendingDown, Landmark, PiggyBank } from 'lucide-react';
+import { TrendingUp, TrendingDown, BarChart2, PiggyBank } from 'lucide-react';
 import { useMonthlySummary } from '@/features/transactions/hooks';
+import { usePortfolioSummary } from '@/features/investments/hooks';
 import { useUiStore }        from '@/stores/uiStore';
 import { formatCurrency, formatPercent } from '@/lib/formatters';
 import { CardSkeleton }      from '@/components/shared/LoadingSkeleton';
@@ -46,9 +47,10 @@ export function SummaryCards() {
   const { activeMonth }    = useUiStore();
   const { user }           = useUser();
   const currency           = user?.currency ?? 'USD';
-  const { data, isLoading } = useMonthlySummary(activeMonth);
+  const { data, isLoading }        = useMonthlySummary(activeMonth);
+  const { data: portfolio, isLoading: portfolioLoading } = usePortfolioSummary();
 
-  if (isLoading) {
+  if (isLoading || portfolioLoading) {
     return (
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {Array.from({ length: 4 }).map((_, i) => <CardSkeleton key={i} />)}
@@ -58,6 +60,13 @@ export function SummaryCards() {
 
   const summary = data?.data;
   const fmt = (n: number) => formatCurrency(n, currency);
+
+  const portfolioValue   = portfolio?.totalValue    ?? 0;
+  const portfolioGainLoss = portfolio?.totalGainLoss ?? 0;
+  const gainLossSign     = portfolioGainLoss >= 0 ? '+' : '';
+  const portfolioSub     = portfolio
+    ? `${gainLossSign}${fmt(portfolioGainLoss)} total P&L`
+    : 'Portfolio value';
 
   return (
     <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
@@ -89,13 +98,13 @@ export function SummaryCards() {
         trend="neutral"
       />
       <StatCard
-        label="Remaining"
-        value={fmt(summary?.remaining ?? 0)}
-        sub="Available budget"
-        icon={Landmark}
-        iconBg="bg-warning-50"
-        iconColor="text-warning-600"
-        trend="neutral"
+        label="Investments"
+        value={fmt(portfolioValue)}
+        sub={portfolioSub}
+        icon={BarChart2}
+        iconBg="bg-primary-50"
+        iconColor="text-primary-700"
+        trend={portfolioGainLoss > 0 ? 'up' : portfolioGainLoss < 0 ? 'down' : 'neutral'}
       />
     </div>
   );

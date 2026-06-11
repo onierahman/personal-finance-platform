@@ -5,7 +5,8 @@ import type { LoginFormValues, RegisterFormValues } from './schema';
 export async function loginWithEmail(
   values: LoginFormValues,
 ): Promise<ApiResponse<User>> {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
 
   const { data, error } = await supabase.auth.signInWithPassword({
     email:    values.email,
@@ -20,7 +21,8 @@ export async function loginWithEmail(
 export async function registerWithEmail(
   values: RegisterFormValues,
 ): Promise<ApiResponse<null>> {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
 
   const { error } = await supabase.auth.signUp({
     email:    values.email,
@@ -33,12 +35,14 @@ export async function registerWithEmail(
 }
 
 export async function logout(): Promise<void> {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
   await supabase.auth.signOut();
 }
 
 export async function getCurrentUser(): Promise<ApiResponse<User>> {
-  const supabase = getSupabaseBrowserClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
 
   const { data: { user }, error: authError } = await supabase.auth.getUser();
   if (authError || !user) return { data: null, error: 'Not authenticated' };
@@ -53,11 +57,12 @@ async function upsertAndReturnProfile(
 ): Promise<ApiResponse<User>> {
   
   // 1. Try an explicit select read first
-  const { data: profile, error: selectError } = await supabase
+  const { data: profileRaw, error: selectError } = await (supabase as any)
     .from('users')
     .select('*')
     .eq('id', authUser.id)
     .maybeSingle(); // Prevents throwing hard 406/PGRST116 errors if missing
+  const profile = profileRaw as import('@/types/database').DbUser | null;
 
   // 2. If it exists, return it immediately
   if (profile && !selectError) {
@@ -80,7 +85,7 @@ async function upsertAndReturnProfile(
     ?? authUser.email?.split('@')[0]
     ?? 'User';
 
-  const { data: newProfile, error: insertError } = await supabase
+  const { data: newProfileRaw, error: insertError } = await (supabase as any)
     .from('users')
     .insert({
       id:       authUser.id,
@@ -91,6 +96,7 @@ async function upsertAndReturnProfile(
     })
     .select()
     .single();
+  const newProfile = newProfileRaw as import('@/types/database').DbUser | null;
 
   if (insertError || !newProfile) {
     // Console log this temporarily so you can see the EXACT database error in your browser console
