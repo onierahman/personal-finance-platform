@@ -1,4 +1,3 @@
-// Strict contract: Typed Supabase CRUD functions
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { RecurringTransaction, CreateRecurringInput, UpdateRecurringInput } from './types';
 
@@ -9,7 +8,7 @@ export const recurringApi = {
     const { data, error } = await supabase
       .from('recurring_transactions')
       .select('*')
-      .order('next_due_date', { ascending: true });
+      .order('next_due', { ascending: true });
 
     if (error) throw new Error(error.message);
     return data ?? [];
@@ -39,7 +38,11 @@ export const recurringApi = {
   },
 
   async deleteRecurring(id: string): Promise<void> {
-    const { error } = await supabase.from('recurring_transactions').delete().eq('id', id);
+    const { error } = await supabase
+      .from('recurring_transactions')
+      .delete()
+      .eq('id', id);
+
     if (error) throw new Error(error.message);
-  }
+  },
 };

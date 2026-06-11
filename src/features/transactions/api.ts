@@ -151,12 +151,23 @@ export async function fetchMonthlySummary(
   if (error) return { data: null, error: error.message };
 
   const rows = data ?? [];
-  const income     = rows.filter(r => r.type === 'income').reduce((s, r) => s + Number(r.amount), 0);
-  const expenses   = rows.filter(r => r.type === 'expense').reduce((s, r) => s + Number(r.amount), 0);
-  const investRows = rows.filter(r => r.category === 'Investments');
-  const investments = investRows.reduce((s, r) => s + Number(r.amount), 0);
-  const savings     = Math.max(0, income - expenses);
-  const remaining   = Math.max(0, income - expenses);
+  const income   = rows.filter(r => r.type === 'income').reduce((s, r) => s + Number(r.amount), 0);
+  const expenses = rows.filter(r => r.type === 'expense').reduce((s, r) => s + Number(r.amount), 0);
+
+  // Investments: expense-type rows categorised as "Investments" (user manually
+  // logged an investment transfer). Phase 3 will replace this with the dedicated
+  // investments table once that module is built.
+  const investments = rows
+    .filter(r => r.type === 'expense' && r.category === 'Investments')
+    .reduce((s, r) => s + Number(r.amount), 0);
+
+  // savings = income minus ALL expenses including investments, floored at 0
+  const savings = Math.max(0, income - expenses);
+
+  // remaining = cash left after non-investment expenses (spendable headroom)
+  const nonInvestExpenses = expenses - investments;
+  const remaining = Math.max(0, income - nonInvestExpenses);
+
   const savingsRate = income > 0 ? savings / income : 0;
 
   return {

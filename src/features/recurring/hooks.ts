@@ -7,7 +7,6 @@ import { z } from 'zod';
 
 type RecurringFormValues = z.infer<typeof recurringSchema>;
 
-// 1. Fetch all recurring contract entries
 export function useRecurring() {
   const supabase = getSupabaseBrowserClient();
 
@@ -25,7 +24,6 @@ export function useRecurring() {
   });
 }
 
-// 2. Create a new recurring transaction profile
 export function useCreateRecurring() {
   const supabase = getSupabaseBrowserClient();
   const queryClient = useQueryClient();
@@ -35,22 +33,22 @@ export function useCreateRecurring() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) throw new Error('No active authentication session found.');
 
+      // Ownership is derived via account_id → accounts.user_id — no user_id column on this table
       const { data, error } = await supabase
         .from('recurring_transactions')
-        .insert([
-          {
-            user_id: session.user.id,
-            account_id: values.account_id,
-            merchant: values.merchant,
-            amount: values.amount,
-            frequency: values.frequency,
-            type: values.type,
-            start_date: values.start_date,
-            next_due: values.next_due,
-            category: values.category,
-            is_active: true,
-          },
-        ])
+        .insert([{
+          account_id: values.account_id,
+          merchant:   values.merchant,
+          amount:     values.amount,
+          frequency:  values.frequency,
+          type:       values.type,
+          category:   values.category,
+          note:       values.note ?? null,
+          start_date: values.start_date,
+          next_due:   values.next_due,
+          end_date:   values.end_date ?? null,
+          is_active:  true,
+        }])
         .select()
         .single();
 
@@ -63,7 +61,31 @@ export function useCreateRecurring() {
   });
 }
 
-// 3. Toggle Pause / Active state
+export function useUpdateRecurring() {
+  const supabase = getSupabaseBrowserClient();
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      id,
+      ...updates
+    }: Partial<RecurringFormValues> & { id: string }) => {
+      const { data, error } = await supabase
+        .from('recurring_transactions')
+        .update(updates)
+        .eq('id', id)
+        .select()
+        .single();
+
+      if (error) throw new Error(error.message);
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['recurring'] });
+    },
+  });
+}
+
 export function useToggleRecurringStatus() {
   const supabase = getSupabaseBrowserClient();
   const queryClient = useQueryClient();
@@ -86,7 +108,6 @@ export function useToggleRecurringStatus() {
   });
 }
 
-// 4. Delete an item completely
 export function useDeleteRecurring() {
   const supabase = getSupabaseBrowserClient();
   const queryClient = useQueryClient();

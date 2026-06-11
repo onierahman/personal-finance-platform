@@ -65,17 +65,13 @@ export function budgetHealthStatus(
 ): { ratio: number; status: 'safe' | 'warning' | 'danger' | 'over' } {
   const ratio = limit > 0 ? spent / limit : 0;
   let status: 'safe' | 'warning' | 'danger' | 'over';
-  if (ratio < 0.7)       status = 'safe';
-  else if (ratio < 0.9)  status = 'warning';
-  else if (ratio < 1.0)  status = 'danger';
-  else                   status = 'over';
+  if (ratio < 0.7)      status = 'safe';
+  else if (ratio < 0.9) status = 'warning';
+  else if (ratio < 1.0) status = 'danger';
+  else                  status = 'over';
   return { ratio, status };
 }
 
-/**
- * Returns urgency level and days remaining for a goal deadline.
- * Used to drive colour coding and deadline badges on goal cards.
- */
 export function goalDeadlineUrgency(
   deadlineIso: string | null,
 ): { daysLeft: number | null; urgency: 'none' | 'low' | 'medium' | 'high' | 'overdue' } {
@@ -96,4 +92,29 @@ export function goalDeadlineUrgency(
   else                     urgency = 'none';
 
   return { daysLeft, urgency };
+}
+
+/**
+ * Calculates days until a recurring bill is due and returns an urgency level.
+ * Uses date arithmetic — not string comparison — so it is formatter-independent.
+ */
+export function recurringDueUrgency(nextDueIso: string): {
+  daysUntil: number;
+  urgency: 'overdue' | 'today' | 'soon' | 'upcoming' | 'future';
+} {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const due = new Date(nextDueIso);
+  due.setHours(0, 0, 0, 0);
+
+  const daysUntil = Math.round((due.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+
+  let urgency: 'overdue' | 'today' | 'soon' | 'upcoming' | 'future';
+  if (daysUntil < 0)       urgency = 'overdue';
+  else if (daysUntil === 0) urgency = 'today';
+  else if (daysUntil <= 3)  urgency = 'soon';
+  else if (daysUntil <= 7)  urgency = 'upcoming';
+  else                      urgency = 'future';
+
+  return { daysUntil, urgency };
 }

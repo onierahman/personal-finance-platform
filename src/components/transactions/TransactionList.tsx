@@ -107,9 +107,11 @@ interface TransactionListProps {
   month?:     string;
   accountId?: string;
   category?:  string;
+  type?:      'expense' | 'income';
+  search?:    string;
 }
 
-export function TransactionList({ month, accountId, category }: TransactionListProps) {
+export function TransactionList({ month, accountId, category, type, search }: TransactionListProps) {
   const { activeMonth } = useUiStore();
   const { user }        = useUser();
   const currency        = user?.currency ?? 'USD';
@@ -120,6 +122,8 @@ export function TransactionList({ month, accountId, category }: TransactionListP
     month:     month ?? activeMonth,
     accountId,
     category,
+    type,
+    search,
   });
 
   async function handleDelete(id: string) {
