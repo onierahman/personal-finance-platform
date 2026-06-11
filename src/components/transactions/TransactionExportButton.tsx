@@ -45,7 +45,7 @@ export function TransactionExportButton({ month, type, category, search }: Props
       <button
         onClick={() => setOpen(p => !p)}
         disabled={busy}
-        className="flex items-center gap-1.5 px-3 py-2 rounded-md border border-slate-200 bg-white text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors disabled:opacity-60"
+        className="flex items-center gap-1.5 px-3 py-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-60"
       >
         {busy
           ? <Loader2 className="w-4 h-4 animate-spin" />
@@ -61,13 +61,13 @@ export function TransactionExportButton({ month, type, category, search }: Props
           <div className="absolute right-0 top-full mt-1.5 z-20 w-44 card shadow-dropdown py-1.5">
             <button
               onClick={() => handleExport('csv')}
-              className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
             >
               <Sheet className="w-4 h-4 text-green-600" /> Export CSV
             </button>
             <button
               onClick={() => handleExport('pdf')}
-              className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
             >
               <FileText className="w-4 h-4 text-red-500" /> Export PDF
             </button>

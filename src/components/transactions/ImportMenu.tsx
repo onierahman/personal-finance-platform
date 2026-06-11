@@ -17,7 +17,7 @@ export function ImportMenu() {
     <div className="relative">
       <button
         onClick={() => setOpen(p => !p)}
-        className="flex items-center gap-1.5 px-3 py-2 rounded-md border border-slate-200 bg-white text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors"
+        className="flex items-center gap-1.5 px-3 py-2 rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
       >
         <Upload className="w-4 h-4" />
         Import
@@ -30,21 +30,21 @@ export function ImportMenu() {
           <div className="absolute right-0 top-full mt-1.5 z-20 w-52 card shadow-dropdown py-1.5">
             <button
               onClick={() => handleSelect('receipt')}
-              className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
             >
               <ScanLine className="w-4 h-4 text-blue-500" />
               Scan Receipt
             </button>
             <button
               onClick={() => handleSelect('csv')}
-              className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
             >
               <FileSpreadsheet className="w-4 h-4 text-green-600" />
               Import CSV
             </button>
             <button
               onClick={() => handleSelect('bank')}
-              className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 transition-colors"
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
             >
               <Building2 className="w-4 h-4 text-purple-600" />
               Bank Statement
