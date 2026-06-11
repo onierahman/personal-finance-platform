@@ -107,6 +107,24 @@ export async function createTransaction(
   return { data: toTransaction(data as Record<string, unknown>), error: null };
 }
 
+export async function bulkCreateTransactions(
+  payloads: InsertTransaction[],
+): Promise<ApiResponse<Transaction[]>> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const supabase = getSupabaseBrowserClient() as any;
+
+  const { data, error } = await supabase
+    .from('transactions')
+    .insert(payloads)
+    .select('*, accounts(name)');
+
+  if (error) return { data: null, error: error.message };
+  return {
+    data: (data ?? []).map((row: Record<string, unknown>) => toTransaction(row)),
+    error: null,
+  };
+}
+
 export async function updateTransaction(
   id: string,
   payload: UpdateTransaction,

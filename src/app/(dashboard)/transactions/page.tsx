@@ -1,8 +1,13 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { Plus, Search, X } from 'lucide-react';
-import { TransactionList } from '@/components/transactions/TransactionList';
-import { useUiStore }      from '@/stores/uiStore';
+import { TransactionList }          from '@/components/transactions/TransactionList';
+import { TransactionExportButton }  from '@/components/transactions/TransactionExportButton';
+import { ImportMenu }               from '@/components/transactions/ImportMenu';
+import { ReceiptScanner }           from '@/components/transactions/ReceiptScanner';
+import { CSVImport }                from '@/components/transactions/CSVImport';
+import { BankStatementImport }      from '@/components/transactions/BankStatementImport';
+import { useUiStore } from '@/stores/uiStore';
 import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 
@@ -15,7 +20,7 @@ const TYPE_FILTERS: { label: string; value: TypeFilterValue }[] = [
 ];
 
 export default function TransactionsPage() {
-  const { openQuickAdd } = useUiStore();
+  const { openQuickAdd, activeMonth, importOpen, importMode, closeImport } = useUiStore();
   const [typeFilter, setTypeFilter]         = useState<TypeFilterValue>('');
   const [categoryFilter, setCategoryFilter] = useState('');
   const [searchInput, setSearchInput]       = useState('');
@@ -49,12 +54,21 @@ export default function TransactionsPage() {
       {/* Page header */}
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-slate-900">Transactions</h1>
-        <button
-          onClick={() => openQuickAdd(typeFilter || 'expense')}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-md bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition-colors"
-        >
-          <Plus className="w-4 h-4" /> Add
-        </button>
+        <div className="flex items-center gap-2">
+          <TransactionExportButton
+            month={activeMonth}
+            type={typeFilter || undefined}
+            category={categoryFilter || undefined}
+            search={searchDebounced || undefined}
+          />
+          <ImportMenu />
+          <button
+            onClick={() => openQuickAdd(typeFilter || 'expense')}
+            className="flex items-center gap-1.5 px-3 py-2 rounded-md bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition-colors"
+          >
+            <Plus className="w-4 h-4" /> Add
+          </button>
+        </div>
       </div>
 
       {/* Filter bar */}
@@ -116,6 +130,11 @@ export default function TransactionsPage() {
         category={categoryFilter || undefined}
         search={searchDebounced || undefined}
       />
+
+      {/* Import modals */}
+      {importOpen && importMode === 'receipt' && <ReceiptScanner onClose={closeImport} />}
+      {importOpen && importMode === 'csv'     && <CSVImport onClose={closeImport} />}
+      {importOpen && importMode === 'bank'    && <BankStatementImport onClose={closeImport} />}
     </div>
   );
 }

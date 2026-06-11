@@ -15,7 +15,7 @@ import { todayIso }             from '@/lib/formatters';
 import { cn }                   from '@/lib/utils';
 
 export function QuickAdd() {
-  const { quickAddOpen, quickAddType, closeQuickAdd, openQuickAdd } = useUiStore();
+  const { quickAddOpen, quickAddType, closeQuickAdd, openQuickAdd, receiptPrefill, setReceiptPrefill } = useUiStore();
   const { data: accountsRes, isLoading: accountsLoading } = useAccounts();
   const accounts = accountsRes?.data ?? [];
   const createTxn = useCreateTransaction();
@@ -51,6 +51,18 @@ export function QuickAdd() {
       setTimeout(() => amountRef.current?.focus(), 100);
     }
   }, [quickAddOpen, quickAddType, setValue]);
+
+  // Apply OCR receipt prefill when sheet opens with prefill data
+  useEffect(() => {
+    if (quickAddOpen && receiptPrefill) {
+      (Object.entries(receiptPrefill) as [keyof TransactionFormValues, unknown][]).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          setValue(key, value as never);
+        }
+      });
+      setReceiptPrefill(null);
+    }
+  }, [quickAddOpen, receiptPrefill, setValue, setReceiptPrefill]);
 
   // Set first account as default as soon as accounts are available
  // useEffect(() => {

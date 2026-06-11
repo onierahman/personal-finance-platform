@@ -5,6 +5,7 @@ import {
   fetchMonthlySummary,
   fetchCategoryBreakdown,
   createTransaction,
+  bulkCreateTransactions,
   updateTransaction,
   softDeleteTransaction,
 } from './api';
@@ -55,6 +56,16 @@ export function useCreateTransaction() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: (payload: InsertTransaction) => createTransaction(payload),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: transactionKeys.all });
+    },
+  });
+}
+
+export function useBulkCreateTransactions() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (payloads: InsertTransaction[]) => bulkCreateTransactions(payloads),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: transactionKeys.all });
     },

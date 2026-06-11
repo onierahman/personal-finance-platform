@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { currentYearMonth } from '@/lib/formatters';
+import type { TransactionFormValues } from '@/features/transactions/schema';
 
 interface UiStore {
   // Quick-add transaction sheet
@@ -25,6 +26,16 @@ interface UiStore {
   editTransactionId: string | null;
   openEditTransaction: (id: string) => void;
   closeEditTransaction: () => void;
+
+  // Import modals
+  importOpen: boolean;
+  importMode: 'receipt' | 'csv' | 'bank' | null;
+  openImport: (mode: 'receipt' | 'csv' | 'bank') => void;
+  closeImport: () => void;
+
+  // Receipt OCR pre-fill for QuickAdd
+  receiptPrefill: Partial<TransactionFormValues> | null;
+  setReceiptPrefill: (data: Partial<TransactionFormValues> | null) => void;
 }
 
 export const useUiStore = create<UiStore>((set) => ({
@@ -46,4 +57,12 @@ export const useUiStore = create<UiStore>((set) => ({
   editTransactionId:    null,
   openEditTransaction:  (id) => set({ editTransactionId: id }),
   closeEditTransaction: () => set({ editTransactionId: null }),
+
+  importOpen: false,
+  importMode: null,
+  openImport:  (mode) => set({ importOpen: true, importMode: mode }),
+  closeImport: () => set({ importOpen: false, importMode: null }),
+
+  receiptPrefill:    null,
+  setReceiptPrefill: (data) => set({ receiptPrefill: data }),
 }));
