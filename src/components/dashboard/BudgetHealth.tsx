@@ -93,7 +93,7 @@ function InlineEditLimit({
         step="0.01"
         value={value}
         onChange={e => setValue(e.target.value)}
-        className="w-20 text-xs border border-primary-300 rounded px-1.5 py-0.5 text-slate-900 outline-none focus:border-primary-500"
+        className="w-20 text-xs border border-primary-300 dark:border-primary-500 rounded px-1.5 py-0.5 text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 outline-none focus:border-primary-500"
         autoFocus
       />
       <button
@@ -141,9 +141,9 @@ export function BudgetHealth() {
   const hiddenCount = budgets.length - VISIBLE_LIMIT;
 
   return (
-    <div className="card p-5 bg-white border border-slate-100 rounded-xl shadow-sm">
+    <div className="card p-5">
       <div className="flex items-center justify-between mb-4">
-        <p className="text-base font-semibold text-slate-800">Budget Health</p>
+        <p className="text-base font-semibold text-slate-800 dark:text-slate-100">Budget Health</p>
         <Link href="/budgets" className="text-xs text-primary-600 hover:underline flex items-center gap-0.5">
           All <ChevronRight className="w-3 h-3" />
         </Link>
@@ -167,24 +167,24 @@ export function BudgetHealth() {
       ) : (
         <>
           {/* PRD: Budget Health Card — Total Used / Available / Overbudget */}
-          <div className="grid grid-cols-3 gap-3 mb-5 p-3 bg-slate-50 rounded-lg">
+          <div className="grid grid-cols-3 gap-3 mb-5 p-3 bg-slate-50 dark:bg-slate-800/60 rounded-lg">
             <div>
-              <p className="text-xs text-slate-400 mb-0.5">Total Used</p>
-              <p className="text-sm font-semibold text-slate-800">
+              <p className="text-xs text-slate-400 dark:text-slate-500 mb-0.5">Total Used</p>
+              <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
                 {formatCurrency(totalSpent, currency)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-slate-400 mb-0.5">Available</p>
-              <p className="text-sm font-semibold text-success-600">
+              <p className="text-xs text-slate-400 dark:text-slate-500 mb-0.5">Available</p>
+              <p className="text-sm font-semibold text-success-600 dark:text-success-400">
                 {formatCurrency(available, currency)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-slate-400 mb-0.5">Over Budget</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 mb-0.5">Over Budget</p>
               <p className={cn(
                 'text-sm font-semibold',
-                overBudgetCount > 0 ? 'text-danger-600' : 'text-slate-800'
+                overBudgetCount > 0 ? 'text-danger-600 dark:text-danger-400' : 'text-slate-800 dark:text-slate-100'
               )}>
                 {overBudgetCount} {overBudgetCount === 1 ? 'category' : 'categories'}
               </p>
@@ -207,7 +207,7 @@ export function BudgetHealth() {
                     <div className="flex items-center gap-2">
                       <span className="text-base leading-none">{meta.icon}</span>
                       <div>
-                        <span className="text-sm font-medium text-slate-700">{b.category}</span>
+                        <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{b.category}</span>
                         {b.period === 'annual' && (
                           <span className="ml-1.5 text-xs text-slate-400 font-normal">annual</span>
                         )}
@@ -237,7 +237,7 @@ export function BudgetHealth() {
                           <button
                             onClick={() => setEditingId(b.id)}
                             title="Edit limit"
-                            className="text-slate-300 hover:text-primary-500 p-1 rounded-md hover:bg-slate-50 transition-colors"
+                            className="text-slate-300 hover:text-primary-500 p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
                           >
                             <Pencil className="w-3.5 h-3.5" />
                           </button>
@@ -245,7 +245,7 @@ export function BudgetHealth() {
                             onClick={() => handleDelete(b.id)}
                             disabled={isDeleting}
                             title="Delete budget"
-                            className="text-slate-300 hover:text-danger-500 p-1 rounded-md hover:bg-slate-50 transition-colors disabled:opacity-30"
+                            className="text-slate-300 hover:text-danger-500 p-1 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors disabled:opacity-30"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -254,7 +254,7 @@ export function BudgetHealth() {
                     </div>
                   </div>
 
-                  <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                  <div className="h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                     <div
                       className={cn('h-full rounded-full transition-all duration-500', COLOR_MAP[status])}
                       style={{ width: `${pct}%` }}

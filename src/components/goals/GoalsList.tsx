@@ -45,7 +45,7 @@ function InlineContribution({ goalId, onDone }: { goalId: string; onDone: () => 
   };
 
   return (
-    <div className="flex items-center gap-1.5 mt-2 p-2 bg-primary-50 rounded-lg">
+    <div className="flex items-center gap-1.5 mt-2 p-2 bg-primary-50 dark:bg-primary-500/10 rounded-lg">
       <span className="text-xs text-slate-500 font-medium">Add:</span>
       <span className="text-xs text-slate-400">$</span>
       <input
@@ -54,7 +54,7 @@ function InlineContribution({ goalId, onDone }: { goalId: string; onDone: () => 
         placeholder="0.00"
         value={value}
         onChange={e => setValue(e.target.value)}
-        className="w-24 text-xs border border-primary-300 rounded px-2 py-1 outline-none focus:border-primary-500 bg-white"
+        className="w-24 text-xs border border-primary-300 dark:border-primary-500 rounded px-2 py-1 outline-none focus:border-primary-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
         autoFocus
       />
       <button
@@ -109,7 +109,7 @@ function GoalCard({
   };
 
   return (
-    <div className="group p-4 bg-white border border-slate-100 rounded-xl shadow-sm space-y-3">
+    <div className="group p-4 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-xl shadow-sm space-y-3">
       {/* Header row */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2.5 min-w-0">
@@ -120,9 +120,9 @@ function GoalCard({
             {goal.icon || '🎯'}
           </span>
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-slate-800 truncate">{goal.name}</p>
+            <p className="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">{goal.name}</p>
             {goal.description && (
-              <p className="text-xs text-slate-400 truncate">{goal.description}</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 truncate">{goal.description}</p>
             )}
           </div>
         </div>
@@ -132,14 +132,14 @@ function GoalCard({
           <button
             onClick={() => setContributingOpen(v => !v)}
             title="Add contribution"
-            className="p-1.5 rounded-md border border-slate-200 hover:border-primary-300 text-slate-400 hover:text-primary-600 transition-colors"
+            className="p-1.5 rounded-md border border-slate-200 dark:border-slate-700 hover:border-primary-300 text-slate-400 hover:text-primary-600 transition-colors"
           >
             <Plus className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={handleStatusToggle}
             title={goal.status === 'active' ? 'Pause goal' : 'Resume goal'}
-            className="p-1.5 rounded-md border border-slate-200 hover:border-warning-300 text-slate-400 hover:text-warning-600 transition-colors"
+            className="p-1.5 rounded-md border border-slate-200 dark:border-slate-700 hover:border-warning-300 text-slate-400 hover:text-warning-600 transition-colors"
           >
             {goal.status === 'active' ? '⏸' : '▶'}
           </button>
@@ -148,7 +148,7 @@ function GoalCard({
               if (confirm(`Delete "${goal.name}"?`)) deleteGoal(goal.id);
             }}
             disabled={isDeleting}
-            className="p-1.5 rounded-md border border-slate-200 hover:border-danger-300 text-slate-400 hover:text-danger-500 transition-colors disabled:opacity-30"
+            className="p-1.5 rounded-md border border-slate-200 dark:border-slate-700 hover:border-danger-300 text-slate-400 hover:text-danger-500 transition-colors disabled:opacity-30"
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>
@@ -163,7 +163,7 @@ function GoalCard({
       )}
 
       {/* Progress bar */}
-      <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+      <div className="h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
         <motion.div
           className="h-full rounded-full"
           style={{ backgroundColor: goal.color || '#2563EB' }}
@@ -176,10 +176,10 @@ function GoalCard({
       {/* Stats row */}
       <div className="flex items-center justify-between text-xs">
         <div className="flex items-center gap-1.5">
-          <span className="font-semibold text-slate-800">
+          <span className="font-semibold text-slate-800 dark:text-slate-200">
             {formatCurrency(Number(goal.current_amount), currency)}
           </span>
-          <span className="text-slate-400">of</span>
+          <span className="text-slate-400 dark:text-slate-500">of</span>
 
           {/* Inline edit target amount */}
           {editingLimit ? (
@@ -190,7 +190,7 @@ function GoalCard({
                 step="0.01"
                 value={editValue}
                 onChange={e => setEditValue(e.target.value)}
-                className="w-20 text-xs border border-primary-300 rounded px-1.5 py-0.5 outline-none"
+                className="w-20 text-xs border border-primary-300 dark:border-primary-500 rounded px-1.5 py-0.5 outline-none bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                 autoFocus
               />
               <button onClick={handleSaveLimit} disabled={isUpdating} className="text-success-600 p-0.5">
@@ -203,15 +203,15 @@ function GoalCard({
           ) : (
             <button
               onClick={() => setEditingLimit(true)}
-              className="font-medium text-slate-500 hover:text-primary-600 flex items-center gap-0.5 transition-colors"
+              className="font-medium text-slate-500 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 flex items-center gap-0.5 transition-colors"
             >
               {formatCurrency(Number(goal.target_amount), currency)}
               <Pencil className="w-2.5 h-2.5 opacity-0 group-hover:opacity-60" />
             </button>
           )}
 
-          <span className="text-slate-400">·</span>
-          <span className="text-slate-500">{formatPercent(ratio)}</span>
+          <span className="text-slate-400 dark:text-slate-500">·</span>
+          <span className="text-slate-500 dark:text-slate-400">{formatPercent(ratio)}</span>
         </div>
 
         <div className="flex items-center gap-1.5">
@@ -271,7 +271,7 @@ export function GoalsList() {
   return (
     <div className="space-y-4">
       {/* Status tabs */}
-      <div className="flex gap-1 p-1 bg-slate-100 rounded-lg w-fit">
+      <div className="flex gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg w-fit">
         {STATUS_TABS.map(tab => (
           <button
             key={tab.key}
@@ -279,15 +279,15 @@ export function GoalsList() {
             className={cn(
               'flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-md transition-colors',
               activeTab === tab.key
-                ? 'bg-white text-slate-900 shadow-sm'
-                : 'text-slate-500 hover:text-slate-700',
+                ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm'
+                : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200',
             )}
           >
             {tab.label}
             {counts[tab.key] > 0 && (
               <span className={cn(
                 'text-xs px-1.5 rounded-full',
-                activeTab === tab.key ? 'bg-primary-100 text-primary-700' : 'bg-slate-200 text-slate-500',
+                activeTab === tab.key ? 'bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-400' : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400',
               )}>
                 {counts[tab.key]}
               </span>

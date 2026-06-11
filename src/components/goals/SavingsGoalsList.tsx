@@ -12,11 +12,11 @@ import { EmptyState } from '@/components/shared/EmptyState';
 import { cn } from '@/lib/utils';
 
 const URGENCY_CLASSES = {
-  overdue: 'text-danger-600 bg-danger-50',
-  high:    'text-danger-500 bg-danger-50',
-  medium:  'text-warning-600 bg-warning-50',
-  low:     'text-slate-500 bg-slate-100',
-  none:    'text-slate-400 bg-slate-100',
+  overdue: 'text-danger-600 bg-danger-50 dark:bg-danger-500/15',
+  high:    'text-danger-500 bg-danger-50 dark:bg-danger-500/15',
+  medium:  'text-warning-600 bg-warning-50 dark:bg-warning-500/15',
+  low:     'text-slate-500 bg-slate-100 dark:bg-slate-700',
+  none:    'text-slate-400 bg-slate-100 dark:bg-slate-700',
 } as const;
 
 function InlineContribution({ goalId, onDone }: { goalId: string; onDone: () => void }) {
@@ -39,7 +39,7 @@ function InlineContribution({ goalId, onDone }: { goalId: string; onDone: () => 
         placeholder="0.00"
         value={value}
         onChange={e => setValue(e.target.value)}
-        className="w-20 text-xs border border-primary-300 rounded px-1.5 py-1 outline-none focus:border-primary-500"
+        className="w-20 text-xs border border-primary-300 dark:border-primary-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded px-1.5 py-1 outline-none focus:border-primary-500"
         autoFocus
       />
       <button
@@ -75,19 +75,19 @@ export function SavingsGoalsList() {
   if (isLoading) {
     return (
       <div className="card p-5 space-y-4 animate-pulse">
-        <div className="h-4 bg-slate-200 rounded w-1/3" />
-        <div className="h-8 bg-slate-100 rounded w-full" />
+        <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-1/3" />
+        <div className="h-8 bg-slate-100 dark:bg-slate-800 rounded w-full" />
       </div>
     );
   }
 
   return (
-    <div className="card p-5 bg-white border border-slate-100 rounded-xl shadow-sm">
+    <div className="card p-5">
       <div className="flex items-center justify-between mb-4">
         <div>
-          <p className="text-base font-semibold text-slate-800">Savings Goals</p>
+          <p className="text-base font-semibold text-slate-800 dark:text-slate-100">Savings Goals</p>
           {activeGoals.length > 0 && (
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-500 dark:text-slate-400">
               {activeGoals.length} active · {formatCurrency(totalSaved, currency)} saved
             </p>
           )}
@@ -134,19 +134,19 @@ export function SavingsGoalsList() {
                     >
                       {goal.icon || '🎯'}
                     </span>
-                    <span className="text-xs font-semibold text-slate-700 truncate">
+                    <span className="text-xs font-semibold text-slate-700 dark:text-slate-300 truncate">
                       {goal.name}
                     </span>
                   </div>
 
                   <div className="flex items-center gap-1.5 flex-shrink-0">
-                    <span className="text-xs font-bold text-slate-900">
+                    <span className="text-xs font-bold text-slate-900 dark:text-white">
                       {formatCurrency(Number(goal.current_amount), currency)}
                     </span>
                     <button
                       onClick={() => setContributingId(isContributing ? null : goal.id)}
                       title="Add contribution"
-                      className="p-1 rounded border border-slate-200 hover:border-primary-300 text-slate-400 hover:text-primary-600 transition-colors"
+                      className="p-1 rounded border border-slate-200 dark:border-slate-700 hover:border-primary-300 text-slate-400 hover:text-primary-600 transition-colors"
                     >
                       <Plus className="w-3 h-3" />
                     </button>
@@ -160,7 +160,7 @@ export function SavingsGoalsList() {
                   />
                 )}
 
-                <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                <div className="h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                   <motion.div
                     className="h-full rounded-full"
                     style={{ backgroundColor: goal.color || '#2563EB' }}
@@ -171,7 +171,7 @@ export function SavingsGoalsList() {
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="text-xs text-slate-400">{formatPercent(ratio)} complete</span>
+                  <span className="text-xs text-slate-400 dark:text-slate-500">{formatPercent(ratio)} complete</span>
                   <div className="flex items-center gap-1.5">
                     {/* Deadline urgency badge */}
                     {daysLeft !== null && urgency !== 'none' && (

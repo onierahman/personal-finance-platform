@@ -32,19 +32,19 @@ export function Sidebar() {
 
   return (
     <aside className={cn(
-      'hidden lg:flex flex-col h-screen fixed left-0 top-0 bg-white border-r border-slate-100 z-50 transition-all duration-200',
+      'hidden lg:flex flex-col h-screen fixed left-0 top-0 bg-white dark:bg-slate-900 border-r border-slate-100 dark:border-slate-800 z-50 transition-all duration-200',
       sidebarCollapsed ? 'w-16' : 'w-60',
     )}>
       {/* Logo */}
       <div className={cn(
-        'flex items-center h-16 border-b border-slate-100 relative',
+        'flex items-center h-16 border-b border-slate-100 dark:border-slate-800 relative',
         sidebarCollapsed ? 'justify-center px-0' : 'gap-2.5 px-5',
       )}>
         <div className="w-8 h-8 rounded-lg bg-primary-600 flex items-center justify-center flex-shrink-0">
           <Wallet className="w-4 h-4 text-white" />
         </div>
         {!sidebarCollapsed && (
-          <span className="text-base font-semibold text-slate-900 tracking-tight">FinanceOS</span>
+          <span className="text-base font-semibold text-slate-900 dark:text-white tracking-tight">FinanceOS</span>
         )}
 
         {/* Collapse toggle */}
@@ -52,7 +52,7 @@ export function Sidebar() {
           onClick={toggleSidebarCollapsed}
           title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           className={cn(
-            'absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-white border border-slate-200 flex items-center justify-center text-slate-400 hover:text-slate-700 hover:border-slate-300 shadow-sm transition-colors',
+            'absolute -right-3 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 hover:border-slate-300 shadow-sm transition-colors',
           )}
         >
           {sidebarCollapsed
@@ -77,11 +77,11 @@ export function Sidebar() {
                     'flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium transition-colors',
                     sidebarCollapsed && 'justify-center px-0',
                     active
-                      ? 'bg-primary-50 text-primary-700'
-                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900',
+                      ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400'
+                      : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white',
                   )}
                 >
-                  <Icon className={cn('w-4 h-4 flex-shrink-0', active ? 'text-primary-600' : 'text-slate-400')} />
+                  <Icon className={cn('w-4 h-4 flex-shrink-0', active ? 'text-primary-600 dark:text-primary-400' : 'text-slate-400 dark:text-slate-500')} />
                   {!sidebarCollapsed && item.label}
                 </Link>
               </li>
@@ -91,16 +91,16 @@ export function Sidebar() {
       </nav>
 
       {/* Footer */}
-      <div className="border-t border-slate-100 p-2 space-y-0.5">
+      <div className="border-t border-slate-100 dark:border-slate-800 p-2 space-y-0.5">
         <Link
           href="/settings"
           title={sidebarCollapsed ? 'Settings' : undefined}
           className={cn(
-            'flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors',
+            'flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors',
             sidebarCollapsed && 'justify-center px-0',
           )}
         >
-          <Settings className="w-4 h-4 text-slate-400 flex-shrink-0" />
+          <Settings className="w-4 h-4 text-slate-400 dark:text-slate-500 flex-shrink-0" />
           {!sidebarCollapsed && 'Settings'}
         </Link>
 
@@ -108,35 +108,35 @@ export function Sidebar() {
           onClick={handleLogout}
           title={sidebarCollapsed ? 'Sign out' : undefined}
           className={cn(
-            'w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-colors',
+            'w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition-colors',
             sidebarCollapsed && 'justify-center px-0',
           )}
         >
-          <LogOut className="w-4 h-4 text-slate-400 flex-shrink-0" />
+          <LogOut className="w-4 h-4 text-slate-400 dark:text-slate-500 flex-shrink-0" />
           {!sidebarCollapsed && 'Sign out'}
         </button>
 
         {user && !sidebarCollapsed && (
-          <div className="flex items-center gap-2.5 px-3 pt-3 mt-1 border-t border-slate-100">
-            <div className="w-7 h-7 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
-              <span className="text-xs font-semibold text-primary-700">
+          <div className="flex items-center gap-2.5 px-3 pt-3 mt-1 border-t border-slate-100 dark:border-slate-800">
+            <div className="w-7 h-7 rounded-full bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center flex-shrink-0">
+              <span className="text-xs font-semibold text-primary-700 dark:text-primary-400">
                 {user.name.charAt(0).toUpperCase()}
               </span>
             </div>
             <div className="min-w-0">
-              <p className="text-xs font-medium text-slate-900 truncate">{user.name}</p>
-              <p className="text-xs text-slate-400 truncate">{user.email}</p>
+              <p className="text-xs font-medium text-slate-900 dark:text-white truncate">{user.name}</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 truncate">{user.email}</p>
             </div>
           </div>
         )}
 
         {user && sidebarCollapsed && (
-          <div className="flex justify-center pt-2 mt-1 border-t border-slate-100">
+          <div className="flex justify-center pt-2 mt-1 border-t border-slate-100 dark:border-slate-800">
             <div
               title={user.name}
-              className="w-7 h-7 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0"
+              className="w-7 h-7 rounded-full bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center flex-shrink-0"
             >
-              <span className="text-xs font-semibold text-primary-700">
+              <span className="text-xs font-semibold text-primary-700 dark:text-primary-400">
                 {user.name.charAt(0).toUpperCase()}
               </span>
             </div>

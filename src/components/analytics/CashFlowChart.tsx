@@ -18,7 +18,7 @@ function CustomTooltip({ active, payload }: TooltipProps) {
   const net = payload[0].payload.net;
   return (
     <div className="card px-3 py-2 text-xs shadow-dropdown">
-      <p className="font-semibold text-slate-700 mb-1">{payload[0].payload.name}</p>
+      <p className="font-semibold text-slate-700 dark:text-slate-300 mb-1">{payload[0].payload.name}</p>
       <p className={net >= 0 ? 'text-green-600 font-medium' : 'text-red-500 font-medium'}>
         {net >= 0 ? '+' : ''}${net.toFixed(2)} net
       </p>

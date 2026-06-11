@@ -49,23 +49,23 @@ export function CategoryTrendsChart({ months, type }: Props) {
               onClick={() => setSelected(t.category === selected ? null : t.category)}
               className={`w-full text-left rounded-lg px-3 py-2 transition-colors ${
                 (selected ?? trends[0].category) === t.category
-                  ? 'bg-blue-50 border border-blue-200'
-                  : 'hover:bg-slate-50'
+                  ? 'bg-blue-50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30'
+                  : 'hover:bg-slate-50 dark:hover:bg-slate-800'
               }`}
             >
               <div className="flex items-center justify-between mb-1">
                 <div className="flex items-center gap-2">
                   <span className="text-sm">{t.icon}</span>
-                  <span className="text-xs font-medium text-slate-700">{t.category}</span>
+                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300">{t.category}</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs amount font-medium text-slate-900">
+                  <span className="text-xs amount font-medium text-slate-900 dark:text-white">
                     {formatCurrency(t.total, currency)}
                   </span>
                   <TrendBadge change={t.change} />
                 </div>
               </div>
-              <div className="w-full bg-slate-100 rounded-full h-1.5 overflow-hidden">
+              <div className="w-full bg-slate-100 dark:bg-slate-700 rounded-full h-1.5 overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all"
                   style={{
@@ -81,7 +81,7 @@ export function CategoryTrendsChart({ months, type }: Props) {
         {/* Right: monthly trend for selected category */}
         {selectedTrend && (
           <div>
-            <p className="text-xs font-medium text-slate-500 mb-3">
+            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-3">
               {selectedTrend.icon} {selectedTrend.category} — monthly trend
             </p>
             <ResponsiveContainer width="100%" height={200}>

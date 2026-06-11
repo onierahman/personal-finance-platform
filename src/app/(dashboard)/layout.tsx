@@ -1,15 +1,17 @@
-//import "./globals.css"; // 👈 Make sure this line exists!
-import { Inter } from "next/font/google";
 import { Sidebar }           from '@/components/layout/Sidebar';
 import { SidebarAwareMain }  from '@/components/layout/SidebarAwareMain';
 import { TopBar }            from '@/components/layout/TopBar';
 import { MobileNav }         from '@/components/layout/MobileNav';
+import { MobileSidebar }     from '@/components/layout/MobileSidebar';
+import { ThemeApplier }      from '@/components/layout/ThemeApplier';
 import { QuickAdd }          from '@/components/transactions/QuickAdd';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background dark:bg-slate-950">
+      <ThemeApplier />
       <Sidebar />
+      <MobileSidebar />
 
       <SidebarAwareMain>
         <TopBar />

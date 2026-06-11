@@ -11,11 +11,11 @@ import { Calendar, ChevronRight, AlertCircle, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const URGENCY_ICON_CLASSES = {
-  overdue:  'bg-danger-50 text-danger-600',
-  today:    'bg-danger-50 text-danger-600',
-  soon:     'bg-warning-50 text-warning-600',
-  upcoming: 'bg-warning-50 text-warning-500',
-  future:   'bg-slate-100 text-slate-500',
+  overdue:  'bg-danger-50 dark:bg-danger-500/15 text-danger-600 dark:text-danger-400',
+  today:    'bg-danger-50 dark:bg-danger-500/15 text-danger-600 dark:text-danger-400',
+  soon:     'bg-warning-50 dark:bg-warning-500/15 text-warning-600 dark:text-warning-400',
+  upcoming: 'bg-warning-50 dark:bg-warning-500/15 text-warning-500 dark:text-warning-400',
+  future:   'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400',
 } as const;
 
 const URGENCY_DATE_CLASSES = {
@@ -54,9 +54,9 @@ export function UpcomingBills() {
   const hiddenCount = annotated.length - VISIBLE_LIMIT;
 
   return (
-    <div className="card p-5 bg-white border border-slate-100 rounded-xl shadow-sm">
+    <div className="card p-5">
       <div className="flex items-center justify-between mb-4">
-        <p className="text-base font-semibold text-slate-800">Upcoming Bills</p>
+        <p className="text-base font-semibold text-slate-800 dark:text-slate-100">Upcoming Bills</p>
         <Link href="/recurring" className="text-xs text-primary-600 hover:underline flex items-center gap-0.5">
           All <ChevronRight className="w-3 h-3" />
         </Link>
@@ -79,7 +79,7 @@ export function UpcomingBills() {
         />
       ) : (
         <>
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-slate-100 dark:divide-slate-800">
             {visible.map(bill => (
               <div
                 key={bill.id}
@@ -92,12 +92,11 @@ export function UpcomingBills() {
                       : <Clock className="w-4 h-4" />}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-medium text-slate-800 truncate">
+                    <p className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">
                       {bill.merchant ?? bill.category}
                     </p>
                     <div className="flex items-center gap-1.5 mt-0.5">
-                      {/* PRD: status/category badge */}
-                      <span className="text-[10px] bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded uppercase tracking-wider font-medium">
+                      <span className="text-[10px] bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 px-1.5 py-0.5 rounded uppercase tracking-wider font-medium">
                         {bill.category}
                       </span>
                       <span className={cn('text-xs font-medium', URGENCY_DATE_CLASSES[bill.urgency])}>
@@ -108,10 +107,10 @@ export function UpcomingBills() {
                 </div>
 
                 <div className="text-right flex-shrink-0 ml-3">
-                  <span className="text-sm font-semibold text-slate-900">
+                  <span className="text-sm font-semibold text-slate-900 dark:text-white">
                     {formatCurrency(Number(bill.amount), currency)}
                   </span>
-                  <p className="text-[10px] uppercase tracking-wider text-slate-400 font-medium">
+                  <p className="text-[10px] uppercase tracking-wider text-slate-400 dark:text-slate-500 font-medium">
                     {bill.frequency}
                   </p>
                 </div>

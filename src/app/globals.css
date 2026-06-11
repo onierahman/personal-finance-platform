@@ -15,7 +15,7 @@
 
 @layer base {
   * {
-    @apply border-slate-200;
+    @apply border-slate-200 dark:border-slate-700;
   }
 
   html {
@@ -25,7 +25,7 @@
   }
 
   body {
-    @apply bg-background text-slate-900;
+    @apply bg-background dark:bg-slate-950 text-slate-900 dark:text-slate-100;
     font-size: 15px;
     line-height: 1.6;
   }
@@ -40,7 +40,7 @@
 @layer components {
   /* Card base */
   .card {
-    @apply bg-white rounded-lg shadow-card border border-slate-100;
+    @apply bg-white dark:bg-slate-900 rounded-lg shadow-card border border-slate-100 dark:border-slate-800;
   }
 
   /* Currency amounts always use mono font */
@@ -61,8 +61,53 @@
   }
 
   .section-title {
-    @apply text-xl font-semibold text-slate-900 tracking-tight;
+    @apply text-xl font-semibold text-slate-900 dark:text-white tracking-tight;
   }
+
+  /* Form input — shared across all form elements */
+  .input {
+    @apply w-full px-3 py-2 text-sm border border-slate-200 rounded-md outline-none bg-white text-slate-900
+           focus:border-primary-500 transition-colors
+           dark:bg-slate-800 dark:border-slate-700 dark:text-slate-100 dark:placeholder:text-slate-500;
+  }
+  .dark .input:focus {
+    border-color: theme('colors.primary.400');
+  }
+
+  /* Subtle surface tint used inside cards */
+  .surface-muted {
+    @apply bg-slate-50 dark:bg-slate-800/60;
+  }
+}
+
+/* ── Dark mode CSS overrides ───────────────────────────────────────────── */
+/* These cover components that use hardcoded bg-white / text-slate-* so we
+   don't have to add dark: prefixes to every single Tailwind class. */
+
+/* Recharts tooltip & axes */
+.dark .recharts-cartesian-grid-horizontal line,
+.dark .recharts-cartesian-grid-vertical line {
+  stroke: #334155;
+}
+.dark .recharts-text {
+  fill: #64748b;
+}
+
+/* Skeleton pulse blocks */
+.dark .animate-pulse .bg-slate-100,
+.dark .bg-slate-100.animate-pulse {
+  background-color: #1e293b;
+}
+
+/* Select / date inputs that use native styling */
+.dark select,
+.dark input[type="date"],
+.dark input[type="number"],
+.dark input[type="text"],
+.dark input[type="email"],
+.dark input[type="password"],
+.dark textarea {
+  color-scheme: dark;
 }
 
 @layer utilities {

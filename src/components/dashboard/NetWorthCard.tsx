@@ -59,9 +59,9 @@ export function NetWorthCard() {
   }
 
   return (
-    <div className="card p-5 bg-white border border-slate-100 rounded-xl shadow-sm">
+    <div className="card p-5">
       <div className="flex items-center justify-between mb-4">
-        <p className="text-base font-semibold text-slate-800">Net Worth</p>
+        <p className="text-base font-semibold text-slate-800 dark:text-slate-100">Net Worth</p>
         <Link
           href="/net-worth"
           className="text-xs text-primary-600 hover:underline flex items-center gap-0.5"
@@ -72,14 +72,14 @@ export function NetWorthCard() {
 
       {/* Big net worth figure */}
       <div className="flex items-center gap-2 mb-5">
-        <div className="w-9 h-9 rounded-lg bg-primary-50 flex items-center justify-center">
-          <Wallet className="w-4.5 h-4.5 text-primary-600" />
+        <div className="w-9 h-9 rounded-lg bg-primary-50 dark:bg-primary-500/15 flex items-center justify-center">
+          <Wallet className="w-4.5 h-4.5 text-primary-600 dark:text-primary-400" />
         </div>
         <div>
-          <p className="text-xs text-slate-500 leading-none">Total Net Worth</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 leading-none">Total Net Worth</p>
           <p className={cn(
             'text-xl font-bold mt-0.5',
-            netWorth >= 0 ? 'text-slate-900' : 'text-danger-600',
+            netWorth >= 0 ? 'text-slate-900 dark:text-white' : 'text-danger-600 dark:text-danger-400',
           )}>
             {formatCurrency(netWorth, currency)}
           </p>
@@ -88,22 +88,22 @@ export function NetWorthCard() {
 
       {/* Assets / Liabilities breakdown */}
       <div className="grid grid-cols-2 gap-3">
-        <div className="p-3 bg-success-50 rounded-lg">
+        <div className="p-3 bg-success-50 dark:bg-success-500/10 rounded-lg">
           <div className="flex items-center gap-1.5 mb-1">
-            <TrendingUp className="w-3.5 h-3.5 text-success-600" />
-            <p className="text-xs text-success-700 font-medium">Assets</p>
+            <TrendingUp className="w-3.5 h-3.5 text-success-600 dark:text-success-400" />
+            <p className="text-xs text-success-700 dark:text-success-400 font-medium">Assets</p>
           </div>
-          <p className="text-sm font-bold text-success-800">
+          <p className="text-sm font-bold text-success-800 dark:text-success-300">
             {formatCurrency(totalAssets, currency)}
           </p>
         </div>
 
-        <div className="p-3 bg-danger-50 rounded-lg">
+        <div className="p-3 bg-danger-50 dark:bg-danger-500/10 rounded-lg">
           <div className="flex items-center gap-1.5 mb-1">
-            <TrendingDown className="w-3.5 h-3.5 text-danger-600" />
-            <p className="text-xs text-danger-700 font-medium">Liabilities</p>
+            <TrendingDown className="w-3.5 h-3.5 text-danger-600 dark:text-danger-400" />
+            <p className="text-xs text-danger-700 dark:text-danger-400 font-medium">Liabilities</p>
           </div>
-          <p className="text-sm font-bold text-danger-800">
+          <p className="text-sm font-bold text-danger-800 dark:text-danger-300">
             {formatCurrency(totalLiabilities, currency)}
           </p>
         </div>

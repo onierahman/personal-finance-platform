@@ -3,6 +3,10 @@ import { currentYearMonth } from '@/lib/formatters';
 import type { TransactionFormValues } from '@/features/transactions/schema';
 
 interface UiStore {
+  // Theme
+  theme: 'light' | 'dark';
+  toggleTheme: () => void;
+
   // Quick-add transaction sheet
   quickAddOpen: boolean;
   quickAddType: 'expense' | 'income';
@@ -39,6 +43,9 @@ interface UiStore {
 }
 
 export const useUiStore = create<UiStore>((set) => ({
+  theme: 'light',
+  toggleTheme: () => set((s) => ({ theme: s.theme === 'light' ? 'dark' : 'light' })),
+
   quickAddOpen:  false,
   quickAddType:  'expense',
   openQuickAdd:  (type = 'expense') => set({ quickAddOpen: true, quickAddType: type }),

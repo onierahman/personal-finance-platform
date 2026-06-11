@@ -10,6 +10,10 @@ import { todayIso } from '@/lib/formatters';
 
 type BudgetFormValues = z.infer<typeof budgetSchema>;
 
+const label = 'block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1';
+const input = 'w-full text-sm rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 p-2.5 outline-none focus:border-primary-500 dark:placeholder:text-slate-500';
+const select = 'w-full text-sm rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 p-2.5 outline-none focus:border-primary-500';
+
 export function BudgetForm({ onSuccess }: { onSuccess?: () => void }) {
   const { mutate: createBudget, isPending, error } = useCreateBudget();
 
@@ -37,19 +41,14 @@ export function BudgetForm({ onSuccess }: { onSuccess?: () => void }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 animate-fade-in">
       {error && (
-        <div className="p-3 text-xs font-semibold text-danger-700 bg-danger-50 border border-danger-100 rounded-md">
+        <div className="p-3 text-xs font-semibold text-danger-700 bg-danger-50 dark:bg-danger-500/10 border border-danger-100 dark:border-danger-500/20 rounded-md">
           ⚠️ {error.message}
         </div>
       )}
 
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
-          Expense Category
-        </label>
-        <select
-          {...register('category')}
-          className="w-full text-sm rounded-md border border-slate-200 bg-white p-2.5 text-slate-900 outline-none focus:border-primary-500"
-        >
+        <label className={label}>Expense Category</label>
+        <select {...register('category')} className={select}>
           <option value="">Select a category...</option>
           {EXPENSE_CATEGORIES.map(c => (
             <option key={c.name} value={c.name}>
@@ -63,7 +62,7 @@ export function BudgetForm({ onSuccess }: { onSuccess?: () => void }) {
       </div>
 
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
+        <label className={label}>
           {period === 'annual' ? 'Annual Ceiling' : 'Monthly Limit'}
         </label>
         <div className="relative">
@@ -72,7 +71,7 @@ export function BudgetForm({ onSuccess }: { onSuccess?: () => void }) {
             type="number"
             step="0.01"
             {...register('limit_amount')}
-            className="w-full text-sm rounded-md border border-slate-200 p-2.5 pl-7 text-slate-900 font-medium outline-none focus:border-primary-500"
+            className={`${input} pl-7 font-medium`}
           />
         </div>
         {errors.limit_amount && (
@@ -82,25 +81,20 @@ export function BudgetForm({ onSuccess }: { onSuccess?: () => void }) {
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
-            Period
-          </label>
-          <select
-            {...register('period')}
-            className="w-full text-sm rounded-md border border-slate-200 bg-white p-2.5"
-          >
+          <label className={label}>Period</label>
+          <select {...register('period')} className={select}>
             <option value="monthly">Monthly</option>
             <option value="annual">Annual</option>
           </select>
         </div>
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
+          <label className={label}>
             {period === 'annual' ? 'Fiscal Year Start' : 'Start Date'}
           </label>
           <input
             type="date"
             {...register('start_date')}
-            className="w-full text-sm rounded-md border border-slate-200 p-2.5 outline-none focus:border-primary-500"
+            className={input}
           />
           {errors.start_date && (
             <p className="text-xs font-medium text-danger-600 mt-1">{errors.start_date.message}</p>

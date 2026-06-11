@@ -94,7 +94,7 @@ function AccountForm({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {/* Name */}
       <div>
-        <label className="block text-xs font-medium text-slate-600 mb-1">Account Name</label>
+        <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Account Name</label>
         <input
           {...register('name')}
           placeholder="e.g. Chase Checking"
@@ -105,7 +105,7 @@ function AccountForm({
 
       {/* Type */}
       <div>
-        <label className="block text-xs font-medium text-slate-600 mb-1">Account Type</label>
+        <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Account Type</label>
         <select {...register('type')} className="input w-full">
           {ACCOUNT_TYPES.map(t => (
             <option key={t.value} value={t.value}>{t.label}</option>
@@ -116,7 +116,7 @@ function AccountForm({
       {/* Balance + Currency */}
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs font-medium text-slate-600 mb-1">
+          <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">
             {LIABILITY_TYPES.has(watch('type')) ? 'Outstanding Balance' : 'Current Balance'}
           </label>
           <input
@@ -129,7 +129,7 @@ function AccountForm({
           {errors.balance && <p className="text-xs text-danger-600 mt-0.5">{errors.balance.message}</p>}
         </div>
         <div>
-          <label className="block text-xs font-medium text-slate-600 mb-1">Currency</label>
+          <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-1">Currency</label>
           <select {...register('currency')} className="input w-full">
             {CURRENCIES.map(c => (
               <option key={c.code} value={c.code}>{c.code} — {c.name}</option>
@@ -140,7 +140,7 @@ function AccountForm({
 
       {/* Color */}
       <div>
-        <label className="block text-xs font-medium text-slate-600 mb-2">Color</label>
+        <label className="block text-xs font-medium text-slate-600 dark:text-slate-400 mb-2">Color</label>
         <div className="flex flex-wrap gap-2">
           {ACCOUNT_COLORS.map(color => (
             <button
@@ -170,7 +170,7 @@ function AccountForm({
         <button
           type="button"
           onClick={onCancel}
-          className="flex items-center gap-1.5 px-4 py-2 rounded-md border border-slate-200 text-slate-600 text-sm font-medium hover:bg-slate-50 transition-colors"
+          className="flex items-center gap-1.5 px-4 py-2 rounded-md border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
         >
           <X className="w-4 h-4" />
           Cancel
@@ -207,15 +207,15 @@ function AccountRow({
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-slate-800 truncate">{account.name}</p>
-        <p className="text-xs text-slate-400">{ACCOUNT_TYPE_LABELS[account.type] ?? account.type}</p>
+        <p className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">{account.name}</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500">{ACCOUNT_TYPE_LABELS[account.type] ?? account.type}</p>
       </div>
 
       <div className="text-right mr-2">
-        <p className={cn('text-sm font-semibold', isLiability ? 'text-danger-600' : 'text-slate-900')}>
+        <p className={cn('text-sm font-semibold', isLiability ? 'text-danger-600 dark:text-danger-400' : 'text-slate-900 dark:text-white')}>
           {isLiability ? '-' : ''}{formatCurrency(Math.abs(account.balance), currency)}
         </p>
-        <p className="text-xs text-slate-400">{account.currency}</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500">{account.currency}</p>
       </div>
 
       {/* Actions — visible on hover */}
@@ -230,7 +230,7 @@ function AccountRow({
             </button>
             <button
               onClick={() => setConfirmDelete(false)}
-              className="text-xs px-2 py-1 rounded border border-slate-200 text-slate-600 hover:bg-slate-50 transition-colors"
+              className="text-xs px-2 py-1 rounded border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
             >
               Cancel
             </button>
@@ -239,14 +239,14 @@ function AccountRow({
           <>
             <button
               onClick={onEdit}
-              className="p-1.5 rounded-md text-slate-400 hover:text-primary-600 hover:bg-primary-50 transition-colors"
+              className="p-1.5 rounded-md text-slate-400 hover:text-primary-600 hover:bg-primary-50 dark:hover:bg-primary-500/15 transition-colors"
               title="Edit"
             >
               <Pencil className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={() => setConfirmDelete(true)}
-              className="p-1.5 rounded-md text-slate-400 hover:text-danger-600 hover:bg-danger-50 transition-colors"
+              className="p-1.5 rounded-md text-slate-400 hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-500/15 transition-colors"
               title="Delete"
             >
               <Trash2 className="w-3.5 h-3.5" />
@@ -328,8 +328,8 @@ export default function AccountsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Accounts</h1>
-          <p className="text-sm text-slate-500 mt-0.5">Manage your bank accounts, cards, and loans</p>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-white">Accounts</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Manage your bank accounts, cards, and loans</p>
         </div>
         {!showForm && (
           <button
@@ -349,10 +349,10 @@ export default function AccountsPage() {
             <div className="w-10 h-10 rounded-lg bg-success-50 flex items-center justify-center">
               <TrendingUp className="w-5 h-5 text-success-600" />
             </div>
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Assets</p>
+            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Total Assets</p>
           </div>
-          <p className="text-2xl font-bold text-slate-900">{formatCurrency(totalAssets, currency)}</p>
-          <p className="text-xs text-slate-400 mt-1">{assetAccounts.length} account{assetAccounts.length !== 1 ? 's' : ''}</p>
+          <p className="text-2xl font-bold text-slate-900 dark:text-white">{formatCurrency(totalAssets, currency)}</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{assetAccounts.length} account{assetAccounts.length !== 1 ? 's' : ''}</p>
         </div>
 
         <div className="card p-5">
@@ -360,10 +360,10 @@ export default function AccountsPage() {
             <div className="w-10 h-10 rounded-lg bg-danger-50 flex items-center justify-center">
               <TrendingDown className="w-5 h-5 text-danger-600" />
             </div>
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Total Liabilities</p>
+            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Total Liabilities</p>
           </div>
-          <p className="text-2xl font-bold text-danger-600">{formatCurrency(totalLiabilities, currency)}</p>
-          <p className="text-xs text-slate-400 mt-1">{liabilityAccounts.length} account{liabilityAccounts.length !== 1 ? 's' : ''}</p>
+          <p className="text-2xl font-bold text-danger-600 dark:text-danger-400">{formatCurrency(totalLiabilities, currency)}</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{liabilityAccounts.length} account{liabilityAccounts.length !== 1 ? 's' : ''}</p>
         </div>
 
         <div className="card p-5">
@@ -371,12 +371,12 @@ export default function AccountsPage() {
             <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center', netWorth >= 0 ? 'bg-primary-50' : 'bg-danger-50')}>
               <Landmark className={cn('w-5 h-5', netWorth >= 0 ? 'text-primary-600' : 'text-danger-600')} />
             </div>
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">Net Worth</p>
+            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Net Worth</p>
           </div>
-          <p className={cn('text-2xl font-bold', netWorth >= 0 ? 'text-slate-900' : 'text-danger-600')}>
+          <p className={cn('text-2xl font-bold', netWorth >= 0 ? 'text-slate-900 dark:text-white' : 'text-danger-600 dark:text-danger-400')}>
             {formatCurrency(netWorth, currency)}
           </p>
-          <p className="text-xs text-slate-400 mt-1">{netWorth >= 0 ? 'Positive' : 'Negative'} net worth</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{netWorth >= 0 ? 'Positive' : 'Negative'} net worth</p>
         </div>
       </div>
 
@@ -390,7 +390,7 @@ export default function AccountsPage() {
             transition={{ duration: 0.2 }}
             className="card p-5"
           >
-            <p className="text-base font-semibold text-slate-800 mb-4">New Account</p>
+            <p className="text-base font-semibold text-slate-800 dark:text-slate-100 mb-4">New Account</p>
             {formError && (
               <p className="text-sm text-danger-600 bg-danger-50 px-3 py-2 rounded-md mb-4">{formError}</p>
             )}
@@ -406,9 +406,9 @@ export default function AccountsPage() {
       {/* Account lists */}
       {accounts.length === 0 && !showForm ? (
         <div className="card p-10 text-center">
-          <Wallet className="w-10 h-10 text-slate-300 mx-auto mb-3" />
-          <p className="text-sm font-medium text-slate-600">No accounts yet</p>
-          <p className="text-xs text-slate-400 mt-1">Add your first account to track balances and net worth</p>
+          <Wallet className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto mb-3" />
+          <p className="text-sm font-medium text-slate-600 dark:text-slate-300">No accounts yet</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Add your first account to track balances and net worth</p>
           <button
             onClick={() => setShowForm(true)}
             className="mt-4 inline-flex items-center gap-1.5 px-4 py-2 rounded-md bg-primary-600 text-white text-sm font-medium hover:bg-primary-700 transition-colors"
@@ -424,14 +424,14 @@ export default function AccountsPage() {
             <div className="card p-5">
               <div className="flex items-center gap-2 mb-1">
                 <TrendingUp className="w-4 h-4 text-success-600" />
-                <p className="text-base font-semibold text-slate-800">Assets</p>
-                <span className="ml-auto text-sm font-bold text-success-700">
+                <p className="text-base font-semibold text-slate-800 dark:text-slate-100">Assets</p>
+                <span className="ml-auto text-sm font-bold text-success-700 dark:text-success-400">
                   {formatCurrency(totalAssets, currency)}
                 </span>
               </div>
-              <p className="text-xs text-slate-400 mb-4">Checking, savings, cash, investments</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 mb-4">Checking, savings, cash, investments</p>
 
-              <div className="divide-y divide-slate-100">
+              <div className="divide-y divide-slate-100 dark:divide-slate-800">
                 {[...assetAccounts, ...otherAccounts].map(account => (
                   editingId === account.id ? (
                     <div key={account.id} className="py-3">
@@ -469,17 +469,17 @@ export default function AccountsPage() {
           <div className="card p-5">
             <div className="flex items-center gap-2 mb-1">
               <TrendingDown className="w-4 h-4 text-danger-600" />
-              <p className="text-base font-semibold text-slate-800">Liabilities</p>
-              <span className="ml-auto text-sm font-bold text-danger-700">
+              <p className="text-base font-semibold text-slate-800 dark:text-slate-100">Liabilities</p>
+              <span className="ml-auto text-sm font-bold text-danger-700 dark:text-danger-400">
                 {formatCurrency(totalLiabilities, currency)}
               </span>
             </div>
-            <p className="text-xs text-slate-400 mb-4">Credit cards and loans</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500 mb-4">Credit cards and loans</p>
 
             {liabilityAccounts.length === 0 ? (
-              <p className="text-sm text-slate-400 py-6 text-center">No liabilities — great financial health!</p>
+              <p className="text-sm text-slate-400 dark:text-slate-500 py-6 text-center">No liabilities — great financial health!</p>
             ) : (
-              <div className="divide-y divide-slate-100">
+              <div className="divide-y divide-slate-100 dark:divide-slate-800">
                 {liabilityAccounts.map(account => (
                   editingId === account.id ? (
                     <div key={account.id} className="py-3">

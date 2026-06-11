@@ -53,7 +53,7 @@ export default function TransactionsPage() {
     <div className="space-y-4">
       {/* Page header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-slate-900">Transactions</h1>
+        <h1 className="text-2xl font-semibold text-slate-900 dark:text-white">Transactions</h1>
         <div className="flex items-center gap-2">
           <TransactionExportButton
             month={activeMonth}
@@ -74,7 +74,7 @@ export default function TransactionsPage() {
       {/* Filter bar */}
       <div className="card p-3 flex flex-wrap gap-2 items-center">
         {/* Type filter tabs */}
-        <div className="flex rounded-md bg-slate-100 p-0.5 gap-0.5">
+        <div className="flex rounded-md bg-slate-100 dark:bg-slate-800 p-0.5 gap-0.5">
           {TYPE_FILTERS.map(f => (
             <button
               key={f.value}
@@ -82,8 +82,8 @@ export default function TransactionsPage() {
               className={cn(
                 'px-3 py-1.5 rounded text-xs font-medium transition-all',
                 typeFilter === f.value
-                  ? 'bg-white shadow-sm text-slate-900'
-                  : 'text-slate-500 hover:text-slate-700',
+                  ? 'bg-white dark:bg-slate-700 shadow-sm text-slate-900 dark:text-white'
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200',
               )}
             >
               {f.label}
@@ -95,7 +95,7 @@ export default function TransactionsPage() {
         <select
           value={categoryFilter}
           onChange={e => setCategoryFilter(e.target.value)}
-          className="px-3 py-1.5 text-xs border border-slate-200 rounded-md bg-white outline-none focus:border-primary-500 transition-colors"
+          className="px-3 py-1.5 text-xs border border-slate-200 dark:border-slate-700 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 outline-none focus:border-primary-500 transition-colors"
         >
           {categoryOptions.map(c => (
             <option key={c.value} value={c.value}>{c.name}</option>
@@ -104,13 +104,13 @@ export default function TransactionsPage() {
 
         {/* Search by merchant — debounced */}
         <div className="relative flex-1 min-w-[140px]">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 pointer-events-none" />
+          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 dark:text-slate-500 pointer-events-none" />
           <input
             type="text"
             placeholder="Search merchant…"
             value={searchInput}
             onChange={e => setSearchInput(e.target.value)}
-            className="w-full pl-8 pr-7 py-1.5 text-xs border border-slate-200 rounded-md bg-white outline-none focus:border-primary-500 transition-colors"
+            className="w-full pl-8 pr-7 py-1.5 text-xs border border-slate-200 dark:border-slate-700 rounded-md bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none focus:border-primary-500 transition-colors"
           />
           {searchInput && (
             <button

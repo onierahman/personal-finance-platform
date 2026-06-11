@@ -63,17 +63,17 @@ export function Toaster({ children }: { children: React.ReactNode }) {
             key={t.id}
             className={cn(
               'card flex items-start gap-3 p-4 animate-slide-up shadow-dropdown',
-              t.type === 'error' && 'border-danger-500/30 bg-danger-50',
+              t.type === 'error' && 'border-danger-500/30 bg-danger-50 dark:bg-danger-500/10',
             )}
           >
             <span className="mt-0.5 flex-shrink-0">{icons[t.type]}</span>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium text-slate-900">{t.title}</p>
-              {t.message && <p className="text-xs text-slate-500 mt-0.5">{t.message}</p>}
+              <p className="text-sm font-medium text-slate-900 dark:text-slate-100">{t.title}</p>
+              {t.message && <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{t.message}</p>}
             </div>
             <button
               onClick={() => dismiss(t.id)}
-              className="text-slate-400 hover:text-slate-600 transition-colors flex-shrink-0"
+              className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors flex-shrink-0"
             >
               <X className="w-3.5 h-3.5" />
             </button>

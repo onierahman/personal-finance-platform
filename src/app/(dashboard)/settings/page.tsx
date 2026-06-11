@@ -106,50 +106,50 @@ function ProfileTab({ onSaved }: { onSaved: (msg: string) => void; onError: (msg
           <span className="text-2xl font-bold text-primary-700">{initial}</span>
         </div>
         <div>
-          <p className="text-sm font-medium text-slate-800">{user?.name}</p>
-          <p className="text-xs text-slate-400">{user?.email}</p>
-          <p className="text-xs text-slate-400 mt-0.5">Avatar is auto-generated from your initials</p>
+          <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{user?.name}</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500">{user?.email}</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">Avatar is auto-generated from your initials</p>
         </div>
       </div>
 
-      <div className="h-px bg-slate-100" />
+      <div className="h-px bg-slate-100 dark:bg-slate-800" />
 
       {/* Name */}
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1.5">Display Name</label>
+        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Display Name</label>
         <input
           type="text"
           value={name}
           onChange={e => setName(e.target.value)}
           placeholder="Your name"
-          className="w-full max-w-sm border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          className="w-full max-w-sm border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
           required
         />
       </div>
 
       {/* Email (read-only) */}
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1.5">Email Address</label>
+        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Email Address</label>
         <input
           type="email"
           value={user?.email ?? ''}
           disabled
-          className="w-full max-w-sm border border-slate-100 rounded-lg px-3 py-2 text-sm text-slate-400 bg-slate-50 cursor-not-allowed"
+          className="w-full max-w-sm border border-slate-100 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-800/50 cursor-not-allowed"
         />
-        <p className="text-xs text-slate-400 mt-1">Email cannot be changed here.</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Email cannot be changed here.</p>
       </div>
 
-      <div className="h-px bg-slate-100" />
+      <div className="h-px bg-slate-100 dark:bg-slate-800" />
 
       {/* Currency */}
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1.5">
+        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
           <span className="flex items-center gap-1.5"><DollarSign className="w-3.5 h-3.5" /> Default Currency</span>
         </label>
         <select
           value={currency}
           onChange={e => setCurrency(e.target.value)}
-          className="w-full max-w-sm border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white"
+          className="w-full max-w-sm border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-slate-800"
         >
           {CURRENCIES.map(c => (
             <option key={c.code} value={c.code}>
@@ -157,24 +157,24 @@ function ProfileTab({ onSaved }: { onSaved: (msg: string) => void; onError: (msg
             </option>
           ))}
         </select>
-        <p className="text-xs text-slate-400 mt-1">Used for all amounts throughout the app.</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Used for all amounts throughout the app.</p>
       </div>
 
       {/* Timezone */}
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1.5">
+        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">
           <span className="flex items-center gap-1.5"><Globe className="w-3.5 h-3.5" /> Timezone</span>
         </label>
         <select
           value={timezone}
           onChange={e => setTimezone(e.target.value)}
-          className="w-full max-w-sm border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white"
+          className="w-full max-w-sm border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent bg-white dark:bg-slate-800"
         >
           {TIMEZONES.map(tz => (
             <option key={tz} value={tz}>{tz.replace(/_/g, ' ')}</option>
           ))}
         </select>
-        <p className="text-xs text-slate-400 mt-1">Affects date grouping and bill due date calculations.</p>
+        <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Affects date grouping and bill due date calculations.</p>
       </div>
 
       <div>
@@ -243,13 +243,13 @@ function SecurityTab({
   return (
     <form onSubmit={handleSubmit} className="space-y-6 max-w-sm">
       <div>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           Change your password. You are signed in via email — choose a strong password with at least 8 characters.
         </p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1.5">New Password</label>
+        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">New Password</label>
         <input
           type="password"
           value={newPassword}
@@ -257,20 +257,20 @@ function SecurityTab({
           placeholder="Minimum 8 characters"
           minLength={6}
           required
-          className="w-full border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+          className="w-full border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
         />
         {strength && (
           <div className="mt-2 space-y-1">
-            <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+            <div className="h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
               <div className={cn('h-full rounded-full transition-all', strength.color)} style={{ width: strength.width }} />
             </div>
-            <p className="text-xs text-slate-400">{strength.label}</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500">{strength.label}</p>
           </div>
         )}
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-slate-700 mb-1.5">Confirm New Password</label>
+        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5">Confirm New Password</label>
         <input
           type="password"
           value={confirmPassword}
@@ -278,10 +278,10 @@ function SecurityTab({
           placeholder="Repeat your new password"
           required
           className={cn(
-            'w-full border rounded-lg px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:border-transparent',
+            'w-full border rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:border-transparent',
             mismatch
               ? 'border-danger-300 focus:ring-danger-400'
-              : 'border-slate-200 focus:ring-primary-500',
+              : 'border-slate-200 dark:border-slate-700 focus:ring-primary-500',
           )}
         />
         {mismatch && <p className="text-xs text-danger-600 mt-1">Passwords do not match.</p>}
@@ -308,7 +308,7 @@ function Toggle({ checked, onChange }: { checked: boolean; onChange: (v: boolean
       onClick={() => onChange(!checked)}
       className={cn(
         'relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500',
-        checked ? 'bg-primary-600' : 'bg-slate-200',
+        checked ? 'bg-primary-600' : 'bg-slate-200 dark:bg-slate-700',
       )}
     >
       <span
@@ -347,12 +347,12 @@ function NotificationsTab({ onSaved }: { onSaved: (msg: string) => void }) {
         Choose which in-app alerts you want to receive. Preferences are saved instantly.
       </p>
 
-      <ul className="divide-y divide-slate-100">
+      <ul className="divide-y divide-slate-100 dark:divide-slate-800">
         {items.map(item => (
           <li key={item.key} className="flex items-center justify-between py-4 gap-4">
             <div className="min-w-0">
-              <p className="text-sm font-medium text-slate-800">{item.label}</p>
-              <p className="text-xs text-slate-400 mt-0.5">{item.description}</p>
+              <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{item.label}</p>
+              <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{item.description}</p>
             </div>
             <Toggle checked={prefs[item.key]} onChange={() => toggle(item.key)} />
           </li>
@@ -383,7 +383,7 @@ function DangerZoneTab({ onError }: { onError: (msg: string) => void }) {
 
   return (
     <div className="space-y-6 max-w-lg">
-      <div className="rounded-xl border border-danger-200 bg-danger-50 p-5">
+      <div className="rounded-xl border border-danger-200 dark:border-danger-500/30 bg-danger-50 dark:bg-danger-500/10 p-5">
         <div className="flex items-start gap-3">
           <AlertTriangle className="w-5 h-5 text-danger-600 flex-shrink-0 mt-0.5" />
           <div>
@@ -412,7 +412,7 @@ function DangerZoneTab({ onError }: { onError: (msg: string) => void }) {
               value={confirm}
               onChange={e => setConfirm(e.target.value)}
               placeholder="DELETE"
-              className="w-full border border-danger-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-danger-400 bg-white"
+              className="w-full border border-danger-300 dark:border-danger-500 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-danger-400 bg-white dark:bg-slate-800"
             />
             <div className="flex gap-2">
               <button
@@ -426,7 +426,7 @@ function DangerZoneTab({ onError }: { onError: (msg: string) => void }) {
               <button
                 type="button"
                 onClick={() => { setStep('idle'); setConfirm(''); }}
-                className="px-4 py-2 bg-white border border-slate-200 text-slate-600 text-sm font-medium rounded-lg hover:bg-slate-50 transition-colors"
+                className="px-4 py-2 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 text-sm font-medium rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
               >
                 Cancel
               </button>
@@ -451,8 +451,8 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Settings</h1>
-        <p className="text-sm text-slate-500">Manage your profile, preferences, and account.</p>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Settings</h1>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Manage your profile, preferences, and account.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
@@ -470,10 +470,10 @@ export default function SettingsPage() {
                     className={cn(
                       'w-full flex items-center justify-between gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-left',
                       active
-                        ? 'bg-primary-50 text-primary-700'
-                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900',
-                      tab.key === 'danger' && !active && 'text-danger-500 hover:bg-danger-50 hover:text-danger-700',
-                      tab.key === 'danger' && active && 'bg-danger-50 text-danger-700',
+                        ? 'bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400'
+                        : 'text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white',
+                      tab.key === 'danger' && !active && 'text-danger-500 hover:bg-danger-50 dark:hover:bg-danger-500/10 hover:text-danger-700',
+                      tab.key === 'danger' && active && 'bg-danger-50 dark:bg-danger-500/10 text-danger-700 dark:text-danger-400',
                     )}
                   >
                     <span className="flex items-center gap-2.5">
@@ -489,7 +489,7 @@ export default function SettingsPage() {
         </nav>
 
         {/* Content panel */}
-        <div className="lg:col-span-3 bg-white border border-slate-100 rounded-xl shadow-sm p-6">
+        <div className="lg:col-span-3 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-xl shadow-sm p-6">
           {activeTab === 'profile' && (
             <ProfileTab
               onSaved={(msg) => showToast(msg, 'success')}

@@ -28,17 +28,17 @@ function StatCard({ label, value, sub, icon: Icon, iconBg, iconColor, trend }: S
         {trend && (
           <span className={cn(
             'text-xs font-medium px-2 py-0.5 rounded-full',
-            trend === 'up'   ? 'bg-success-50 text-success-600' :
-            trend === 'down' ? 'bg-danger-50 text-danger-600'   :
-                               'bg-slate-100 text-slate-500',
+            trend === 'up'   ? 'bg-success-50 dark:bg-success-500/15 text-success-600 dark:text-success-400' :
+            trend === 'down' ? 'bg-danger-50 dark:bg-danger-500/15 text-danger-600 dark:text-danger-400'   :
+                               'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400',
           )}>
             {trend === 'up' ? '↑' : trend === 'down' ? '↓' : '—'}
           </span>
         )}
       </div>
-      <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">{label}</p>
-      <p className="amount text-2xl font-semibold text-slate-900 mt-0.5">{value}</p>
-      {sub && <p className="text-xs text-slate-400 mt-1">{sub}</p>}
+      <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">{label}</p>
+      <p className="amount text-2xl font-semibold text-slate-900 dark:text-white mt-0.5">{value}</p>
+      {sub && <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{sub}</p>}
     </div>
   );
 }

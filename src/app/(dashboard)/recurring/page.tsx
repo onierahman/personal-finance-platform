@@ -20,18 +20,18 @@ import type { RecurringTransaction } from '@/features/recurring/types';
 type TabType = 'expense' | 'income';
 
 const URGENCY_ROW_CLASSES = {
-  overdue:  'bg-danger-50 border-l-2 border-danger-400',
-  today:    'bg-warning-50 border-l-2 border-warning-400',
-  soon:     'bg-warning-50/50 border-l-2 border-warning-200',
+  overdue:  'bg-danger-50 dark:bg-danger-500/10 border-l-2 border-danger-400',
+  today:    'bg-warning-50 dark:bg-warning-500/10 border-l-2 border-warning-400',
+  soon:     'bg-warning-50/50 dark:bg-warning-500/5 border-l-2 border-warning-200',
   upcoming: '',
   future:   '',
 } as const;
 
 const URGENCY_BADGE_CLASSES = {
-  overdue:  'bg-danger-100 text-danger-700',
-  today:    'bg-warning-100 text-warning-700',
-  soon:     'bg-warning-50 text-warning-600',
-  upcoming: 'bg-slate-100 text-slate-500',
+  overdue:  'bg-danger-100 dark:bg-danger-500/20 text-danger-700 dark:text-danger-400',
+  today:    'bg-warning-100 dark:bg-warning-500/20 text-warning-700 dark:text-warning-400',
+  soon:     'bg-warning-50 dark:bg-warning-500/10 text-warning-600 dark:text-warning-400',
+  upcoming: 'bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400',
   future:   '',
 } as const;
 
@@ -68,23 +68,23 @@ function InlineEdit({
     <td colSpan={5} className="p-3">
       <div className="flex items-center gap-3 flex-wrap">
         <div className="flex items-center gap-1">
-          <span className="text-xs text-slate-500">Amount $</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400">Amount $</span>
           <input
             type="number"
             step="0.01"
             value={amount}
             onChange={e => setAmount(e.target.value)}
-            className="w-24 text-xs border border-primary-300 rounded px-2 py-1 outline-none focus:border-primary-500"
+            className="w-24 text-xs border border-primary-300 dark:border-primary-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded px-2 py-1 outline-none focus:border-primary-500"
             autoFocus
           />
         </div>
         <div className="flex items-center gap-1">
-          <span className="text-xs text-slate-500">Next due</span>
+          <span className="text-xs text-slate-500 dark:text-slate-400">Next due</span>
           <input
             type="date"
             value={nextDue}
             onChange={e => setNextDue(e.target.value)}
-            className="text-xs border border-primary-300 rounded px-2 py-1 outline-none focus:border-primary-500"
+            className="text-xs border border-primary-300 dark:border-primary-600 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 rounded px-2 py-1 outline-none focus:border-primary-500"
           />
         </div>
         <button
@@ -94,7 +94,7 @@ function InlineEdit({
         >
           <Check className="w-3 h-3" /> {isPending ? 'Saving...' : 'Save'}
         </button>
-        <button onClick={onDone} className="text-slate-400 hover:text-slate-600 p-1">
+        <button onClick={onDone} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 p-1">
           <X className="w-3.5 h-3.5" />
         </button>
       </div>
@@ -147,40 +147,40 @@ export default function RecurringPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Recurring Transactions</h1>
-        <p className="text-sm text-slate-500">Manage ongoing bills, subscriptions, and income streams.</p>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Recurring Transactions</h1>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Manage ongoing bills, subscriptions, and income streams.</p>
       </div>
 
       {/* PRD: summary header — monthly committed outflow, active counts, upcoming bills */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="card p-4 bg-white border border-slate-100 rounded-xl shadow-sm">
-          <p className="text-xs text-slate-400 mb-1">Monthly Outflow</p>
+        <div className="card p-4">
+          <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">Monthly Outflow</p>
           <p className="text-lg font-bold text-danger-600">{formatCurrency(monthlyOutflow, currency)}</p>
-          <p className="text-xs text-slate-400 mt-0.5">committed expenses</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">committed expenses</p>
         </div>
-        <div className="card p-4 bg-white border border-slate-100 rounded-xl shadow-sm">
-          <p className="text-xs text-slate-400 mb-1">Active Bills</p>
-          <p className="text-lg font-bold text-slate-800">{activeExpenses.length}</p>
-          <p className="text-xs text-slate-400 mt-0.5">expense schedules</p>
+        <div className="card p-4">
+          <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">Active Bills</p>
+          <p className="text-lg font-bold text-slate-800 dark:text-white">{activeExpenses.length}</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">expense schedules</p>
         </div>
-        <div className="card p-4 bg-white border border-slate-100 rounded-xl shadow-sm">
-          <p className="text-xs text-slate-400 mb-1">Income Streams</p>
+        <div className="card p-4">
+          <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">Income Streams</p>
           <p className="text-lg font-bold text-success-600">{activeIncomes.length}</p>
-          <p className="text-xs text-slate-400 mt-0.5">active inflows</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">active inflows</p>
         </div>
-        <div className="card p-4 bg-white border border-slate-100 rounded-xl shadow-sm">
-          <p className="text-xs text-slate-400 mb-1">Due This Week</p>
-          <p className={cn('text-lg font-bold', next7Days > 0 ? 'text-warning-600' : 'text-slate-800')}>
+        <div className="card p-4">
+          <p className="text-xs text-slate-400 dark:text-slate-500 mb-1">Due This Week</p>
+          <p className={cn('text-lg font-bold', next7Days > 0 ? 'text-warning-600' : 'text-slate-800 dark:text-white')}>
             {next7Days}
           </p>
-          <p className="text-xs text-slate-400 mt-0.5">in next 7 days</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">in next 7 days</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
           {/* Expense / Income type filter tabs */}
-          <div className="flex gap-1 p-1 bg-slate-100 rounded-lg w-fit">
+          <div className="flex gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg w-fit">
             {tabs.map(tab => (
               <button
                 key={tab.key}
@@ -188,8 +188,8 @@ export default function RecurringPage() {
                 className={cn(
                   'flex items-center gap-1.5 px-4 py-1.5 text-sm font-medium rounded-md transition-colors',
                   activeTab === tab.key
-                    ? 'bg-white text-slate-900 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-700',
+                    ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300',
                 )}
               >
                 {tab.label}
@@ -197,8 +197,8 @@ export default function RecurringPage() {
                   <span className={cn(
                     'text-xs px-1.5 rounded-full',
                     activeTab === tab.key
-                      ? 'bg-primary-100 text-primary-700'
-                      : 'bg-slate-200 text-slate-500',
+                      ? 'bg-primary-100 dark:bg-primary-500/20 text-primary-700 dark:text-primary-400'
+                      : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400',
                   )}>
                     {tab.count}
                   </span>
@@ -207,11 +207,11 @@ export default function RecurringPage() {
             ))}
           </div>
 
-          <div className="card bg-white border border-slate-100 rounded-xl shadow-sm overflow-hidden">
+          <div className="card overflow-hidden">
             {isLoading ? (
               <div className="p-5 space-y-3 animate-pulse">
                 {Array.from({ length: 3 }).map((_, i) => (
-                  <div key={i} className="h-12 bg-slate-100 rounded" />
+                  <div key={i} className="h-12 bg-slate-100 dark:bg-slate-800 rounded" />
                 ))}
               </div>
             ) : filtered.length === 0 ? (
@@ -226,7 +226,7 @@ export default function RecurringPage() {
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="bg-slate-50 border-b border-slate-100 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+                    <tr className="bg-slate-50 dark:bg-slate-800/60 border-b border-slate-100 dark:border-slate-700 text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500">
                       <th className="p-3">Merchant</th>
                       <th className="p-3">Frequency</th>
                       <th className="p-3">Next Due</th>
@@ -234,7 +234,7 @@ export default function RecurringPage() {
                       <th className="p-3 text-center">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 text-sm">
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-700/50 text-sm">
                     {filtered.map(item => {
                       const { daysUntil, urgency } = recurringDueUrgency(item.next_due);
                       const isEditing = editingId === item.id;
@@ -249,19 +249,19 @@ export default function RecurringPage() {
                             )}
                           >
                             <td className="p-3">
-                              <p className="font-semibold text-slate-800">
+                              <p className="font-semibold text-slate-800 dark:text-slate-100">
                                 {item.merchant ?? item.category}
                               </p>
-                              <span className="text-[10px] bg-slate-100 px-1.5 py-0.5 rounded text-slate-500 uppercase tracking-wider font-medium">
+                              <span className="text-[10px] bg-slate-100 dark:bg-slate-700 px-1.5 py-0.5 rounded text-slate-500 dark:text-slate-400 uppercase tracking-wider font-medium">
                                 {item.category}
                               </span>
                             </td>
-                            <td className="p-3 text-slate-500 font-medium capitalize">
+                            <td className="p-3 text-slate-500 dark:text-slate-400 font-medium capitalize">
                               {FREQUENCY_LABELS[item.frequency] ?? item.frequency}
                             </td>
                             <td className="p-3">
                               <div className="flex items-center gap-1.5">
-                                <span className="text-slate-600 font-medium">
+                                <span className="text-slate-600 dark:text-slate-300 font-medium">
                                   {new Date(item.next_due).toLocaleDateString('en-US', {
                                     month: 'short', day: 'numeric',
                                   })}
@@ -277,7 +277,7 @@ export default function RecurringPage() {
                               </div>
                             </td>
                             <td className="p-3 text-right font-bold">
-                              <span className={item.type === 'income' ? 'text-success-600' : 'text-slate-900'}>
+                              <span className={item.type === 'income' ? 'text-success-600' : 'text-slate-900 dark:text-white'}>
                                 {item.type === 'income' ? '+' : '-'}{formatCurrency(Number(item.amount), currency)}
                               </span>
                             </td>
@@ -286,7 +286,7 @@ export default function RecurringPage() {
                                 <button
                                   onClick={() => setEditingId(isEditing ? null : item.id)}
                                   title="Edit"
-                                  className="p-1.5 rounded border bg-white text-slate-400 hover:text-primary-600 hover:border-primary-200 transition-colors"
+                                  className="p-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-400 hover:text-primary-600 hover:border-primary-200 dark:hover:border-primary-500 transition-colors"
                                 >
                                   <Pencil className="w-3.5 h-3.5" />
                                 </button>
@@ -294,10 +294,10 @@ export default function RecurringPage() {
                                   onClick={() => toggleStatus({ id: item.id, is_active: !item.is_active })}
                                   title={item.is_active ? 'Pause' : 'Resume'}
                                   className={cn(
-                                    'p-1.5 rounded border bg-white transition-colors',
+                                    'p-1.5 rounded border dark:border-slate-700 bg-white dark:bg-slate-800 transition-colors',
                                     item.is_active
-                                      ? 'text-warning-500 hover:bg-warning-50 hover:border-warning-200'
-                                      : 'text-success-500 hover:bg-success-50 hover:border-success-200',
+                                      ? 'text-warning-500 hover:bg-warning-50 dark:hover:bg-warning-500/10 hover:border-warning-200'
+                                      : 'text-success-500 hover:bg-success-50 dark:hover:bg-success-500/10 hover:border-success-200',
                                   )}
                                 >
                                   {item.is_active
@@ -306,7 +306,7 @@ export default function RecurringPage() {
                                 </button>
                                 <button
                                   onClick={() => handleDelete(item)}
-                                  className="p-1.5 rounded border bg-white text-slate-400 hover:text-danger-600 hover:bg-danger-50 hover:border-danger-200 transition-colors"
+                                  className="p-1.5 rounded border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-400 hover:text-danger-600 hover:bg-danger-50 dark:hover:bg-danger-500/10 hover:border-danger-200 transition-colors"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
                                 </button>
@@ -316,7 +316,7 @@ export default function RecurringPage() {
 
                           {/* Inline edit row — expands below the selected row */}
                           {isEditing && (
-                            <tr key={`${item.id}-edit`} className="bg-slate-50">
+                            <tr key={`${item.id}-edit`} className="bg-slate-50 dark:bg-slate-800/60">
                               <InlineEdit
                                 item={item}
                                 onDone={() => setEditingId(null)}
@@ -333,8 +333,8 @@ export default function RecurringPage() {
           </div>
         </div>
 
-        <div className="card p-5 bg-white border border-slate-100 rounded-xl shadow-sm h-fit">
-          <h2 className="text-sm font-semibold text-slate-800 uppercase tracking-wider mb-4">
+        <div className="card p-5 h-fit">
+          <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-4">
             New Recurring
           </h2>
           <RecurringForm />

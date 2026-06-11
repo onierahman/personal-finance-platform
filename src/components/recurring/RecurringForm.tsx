@@ -12,6 +12,10 @@ import { todayIso } from '@/lib/formatters';
 
 type RecurringFormValues = z.infer<typeof recurringSchema>;
 
+const label = 'block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1';
+const input = 'w-full text-sm rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 p-2.5 outline-none focus:border-primary-500 dark:placeholder:text-slate-500';
+const select = 'w-full text-sm rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-200 p-2.5 outline-none focus:border-primary-500';
+
 export function RecurringForm({ onSuccess }: { onSuccess?: () => void }) {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const supabase = getSupabaseBrowserClient() as any;
@@ -48,7 +52,6 @@ export function RecurringForm({ onSuccess }: { onSuccess?: () => void }) {
     },
   });
 
-  // Drive category options from constants based on selected flow type
   const selectedType = watch('type');
   const categoryOptions = selectedType === 'income' ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
 
@@ -64,20 +67,18 @@ export function RecurringForm({ onSuccess }: { onSuccess?: () => void }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 text-left">
       {error && (
-        <div className="p-3 text-xs font-semibold text-danger-700 bg-danger-50 border border-danger-100 rounded-md">
+        <div className="p-3 text-xs font-semibold text-danger-700 bg-danger-50 dark:bg-danger-500/10 border border-danger-100 dark:border-danger-500/20 rounded-md">
           ⚠️ {error.message}
         </div>
       )}
 
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
-          Merchant / Label
-        </label>
+        <label className={label}>Merchant / Label</label>
         <input
           type="text"
           placeholder="e.g. Netflix, Rent, Salary"
           {...register('merchant')}
-          className="w-full text-sm rounded-md border border-slate-200 p-2.5 outline-none focus:border-primary-500"
+          className={input}
         />
         {errors.merchant && (
           <p className="text-xs font-medium text-danger-600 mt-1">{errors.merchant.message}</p>
@@ -86,28 +87,21 @@ export function RecurringForm({ onSuccess }: { onSuccess?: () => void }) {
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
-            Type
-          </label>
-          <select
-            {...register('type')}
-            className="w-full text-sm rounded-md border border-slate-200 bg-white p-2.5 text-slate-700"
-          >
+          <label className={label}>Type</label>
+          <select {...register('type')} className={select}>
             <option value="expense">Expense (Bill)</option>
             <option value="income">Income (Inflow)</option>
           </select>
         </div>
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
-            Amount
-          </label>
+          <label className={label}>Amount</label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400 font-medium">$</span>
             <input
               type="number"
               step="0.01"
               {...register('amount')}
-              className="w-full text-sm rounded-md border border-slate-200 p-2.5 pl-7 text-slate-900 font-medium outline-none focus:border-primary-500"
+              className={`${input} pl-7 font-medium`}
             />
           </div>
           {errors.amount && (
@@ -118,27 +112,16 @@ export function RecurringForm({ onSuccess }: { onSuccess?: () => void }) {
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
-            Frequency
-          </label>
-          <select
-            {...register('frequency')}
-            className="w-full text-sm rounded-md border border-slate-200 bg-white p-2.5 text-slate-700"
-          >
-            {Object.entries(FREQUENCY_LABELS).map(([value, label]) => (
-              <option key={value} value={value}>{label}</option>
+          <label className={label}>Frequency</label>
+          <select {...register('frequency')} className={select}>
+            {Object.entries(FREQUENCY_LABELS).map(([value, lbl]) => (
+              <option key={value} value={value}>{lbl}</option>
             ))}
           </select>
         </div>
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
-            Category
-          </label>
-          {/* Options switch dynamically based on expense vs income type */}
-          <select
-            {...register('category')}
-            className="w-full text-sm rounded-md border border-slate-200 bg-white p-2.5 text-slate-700"
-          >
+          <label className={label}>Category</label>
+          <select {...register('category')} className={select}>
             <option value="">Select category...</option>
             {categoryOptions.map(c => (
               <option key={c.name} value={c.name}>
@@ -153,13 +136,11 @@ export function RecurringForm({ onSuccess }: { onSuccess?: () => void }) {
       </div>
 
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
-          Account
-        </label>
+        <label className={label}>Account</label>
         <select
           {...register('account_id')}
           disabled={isLoadingAccounts}
-          className="w-full text-sm rounded-md border border-slate-200 bg-white p-2.5 text-slate-700 disabled:opacity-50"
+          className={`${select} disabled:opacity-50`}
         >
           <option value="">Select account...</option>
           {accounts.map(acc => (
@@ -173,43 +154,40 @@ export function RecurringForm({ onSuccess }: { onSuccess?: () => void }) {
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
-            Next Due Date
-          </label>
+          <label className={label}>Next Due Date</label>
           <input
             type="date"
             {...register('next_due')}
-            className="w-full text-sm rounded-md border border-slate-200 p-2.5 outline-none focus:border-primary-500"
+            className={input}
           />
           {errors.next_due && (
             <p className="text-xs font-medium text-danger-600 mt-1">{errors.next_due.message}</p>
           )}
         </div>
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
+          <label className={label}>
             End Date <span className="normal-case font-normal text-slate-400">(optional)</span>
           </label>
           <input
             type="date"
             {...register('end_date')}
-            className="w-full text-sm rounded-md border border-slate-200 p-2.5 outline-none focus:border-primary-500"
+            className={input}
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
+        <label className={label}>
           Note <span className="normal-case font-normal text-slate-400">(optional)</span>
         </label>
         <input
           type="text"
           placeholder="e.g. Annual plan, auto-renews"
           {...register('note')}
-          className="w-full text-sm rounded-md border border-slate-200 p-2.5 outline-none focus:border-primary-500"
+          className={input}
         />
       </div>
 
-      {/* start_date tracked silently — set to today on form init */}
       <input type="hidden" {...register('start_date')} />
 
       <button

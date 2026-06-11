@@ -31,9 +31,9 @@ function CustomTooltip({
   const item = payload[0];
   return (
     <div className="card px-3 py-2 text-xs shadow-dropdown">
-      <p className="font-medium text-slate-700">{item.name}</p>
-      <p className="text-slate-900 font-semibold">{formatCurrency(item.value, currency)}</p>
-      <p className="text-slate-400">{formatPercent(item.payload.percentage)}</p>
+      <p className="font-medium text-slate-700 dark:text-slate-300">{item.name}</p>
+      <p className="text-slate-900 dark:text-white font-semibold">{formatCurrency(item.value, currency)}</p>
+      <p className="text-slate-400 dark:text-slate-500">{formatPercent(item.payload.percentage)}</p>
     </div>
   );
 }
@@ -65,9 +65,9 @@ export function CategoryBreakdown() {
   ];
 
   return (
-    <div className="card p-5 bg-white border border-slate-100 rounded-xl shadow-sm">
+    <div className="card p-5">
       <div className="flex items-center justify-between mb-4">
-        <p className="text-base font-semibold text-slate-800">Spending by Category</p>
+        <p className="text-base font-semibold text-slate-800 dark:text-slate-100">Spending by Category</p>
         <Link
           href="/transactions"
           className="text-xs text-primary-600 hover:underline flex items-center gap-0.5"
@@ -116,11 +116,11 @@ export function CategoryBreakdown() {
                     className="w-2 h-2 rounded-full flex-shrink-0"
                     style={{ backgroundColor: item.color }}
                   />
-                  <span className="text-xs text-slate-600 truncate">
+                  <span className="text-xs text-slate-600 dark:text-slate-400 truncate">
                     {item.icon} {item.name}
                   </span>
                 </div>
-                <span className="text-xs font-semibold text-slate-800 flex-shrink-0">
+                <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 flex-shrink-0">
                   {formatCurrency(item.value, currency)}
                 </span>
               </li>

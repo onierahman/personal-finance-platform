@@ -58,15 +58,15 @@ function StatCard({
         {positive !== undefined && positive !== null && (
           <span className={cn(
             'text-xs font-medium px-2 py-0.5 rounded-full',
-            positive ? 'bg-success-50 text-success-600' : 'bg-danger-50 text-danger-600',
+            positive ? 'bg-success-50 dark:bg-success-500/15 text-success-600' : 'bg-danger-50 dark:bg-danger-500/15 text-danger-600',
           )}>
             {positive ? '▲' : '▼'}
           </span>
         )}
       </div>
-      <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">{label}</p>
-      <p className="text-2xl font-semibold text-slate-900 mt-0.5">{value}</p>
-      {sub && <p className="text-xs text-slate-400 mt-1">{sub}</p>}
+      <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">{label}</p>
+      <p className="text-2xl font-semibold text-slate-900 dark:text-white mt-0.5">{value}</p>
+      {sub && <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{sub}</p>}
     </div>
   );
 }
@@ -93,14 +93,14 @@ function InvestmentForm({
     },
   });
 
-  const field = 'border border-slate-200 rounded-lg px-3 py-2 text-sm text-slate-900 outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-100 w-full';
+  const field = 'border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 outline-none focus:border-primary-400 focus:ring-1 focus:ring-primary-100 w-full';
   const err   = 'text-xs text-danger-600 mt-0.5';
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-xs font-medium text-slate-600">Asset Type</label>
+          <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Asset Type</label>
           <select {...register('asset_type')} className={cn(field, 'mt-1')}>
             {ASSET_TYPES.map(t => (
               <option key={t.value} value={t.value}>{t.label}</option>
@@ -110,7 +110,7 @@ function InvestmentForm({
         </div>
 
         <div>
-          <label className="text-xs font-medium text-slate-600">Symbol / Ticker</label>
+          <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Symbol / Ticker</label>
           <input
             {...register('symbol')}
             placeholder="e.g. AAPL"
@@ -120,7 +120,7 @@ function InvestmentForm({
       </div>
 
       <div>
-        <label className="text-xs font-medium text-slate-600">Name *</label>
+        <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Name *</label>
         <input
           {...register('name')}
           placeholder="e.g. Apple Inc."
@@ -131,7 +131,7 @@ function InvestmentForm({
 
       <div className="grid grid-cols-3 gap-3">
         <div>
-          <label className="text-xs font-medium text-slate-600">Quantity *</label>
+          <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Quantity *</label>
           <input
             {...register('quantity')}
             type="number" step="0.0001" placeholder="0"
@@ -141,7 +141,7 @@ function InvestmentForm({
         </div>
 
         <div>
-          <label className="text-xs font-medium text-slate-600">Buy Price *</label>
+          <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Buy Price *</label>
           <input
             {...register('purchase_price')}
             type="number" step="0.01" placeholder="0.00"
@@ -151,7 +151,7 @@ function InvestmentForm({
         </div>
 
         <div>
-          <label className="text-xs font-medium text-slate-600">Current Price *</label>
+          <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Current Price *</label>
           <input
             {...register('current_price')}
             type="number" step="0.01" placeholder="0.00"
@@ -162,7 +162,7 @@ function InvestmentForm({
       </div>
 
       <div>
-        <label className="text-xs font-medium text-slate-600">Purchase Date *</label>
+        <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Purchase Date *</label>
         <input
           {...register('purchase_date')}
           type="date"
@@ -172,7 +172,7 @@ function InvestmentForm({
       </div>
 
       <div>
-        <label className="text-xs font-medium text-slate-600">Notes</label>
+        <label className="text-xs font-medium text-slate-600 dark:text-slate-400">Notes</label>
         <textarea
           {...register('notes')}
           rows={2}
@@ -192,7 +192,7 @@ function InvestmentForm({
         <button
           type="button"
           onClick={onCancel}
-          className="px-4 py-2 text-sm text-slate-600 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+          className="px-4 py-2 text-sm text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
         >
           Cancel
         </button>
@@ -259,8 +259,8 @@ export default function InvestmentsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-bold text-slate-900">Investments</h1>
-          <p className="text-sm text-slate-500 mt-0.5">Track your portfolio performance</p>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-white">Investments</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">Track your portfolio performance</p>
         </div>
         <button
           onClick={() => { setShowForm(true); setEditingId(null); }}
@@ -278,7 +278,7 @@ export default function InvestmentsPage() {
             value={formatCurrency(summary.totalValue, currency)}
             sub="Current market value"
             icon={BarChart2}
-            iconBg="bg-primary-50"
+            iconBg="bg-primary-50 dark:bg-primary-500/15"
             iconColor="text-primary-600"
           />
           <StatCard
@@ -286,7 +286,7 @@ export default function InvestmentsPage() {
             value={formatCurrency(summary.totalCost, currency)}
             sub="Amount invested"
             icon={DollarSign}
-            iconBg="bg-slate-100"
+            iconBg="bg-slate-100 dark:bg-slate-700"
             iconColor="text-slate-600"
           />
           <StatCard
@@ -294,7 +294,7 @@ export default function InvestmentsPage() {
             value={formatCurrency(summary.totalGainLoss, currency)}
             sub={`${formatPercent(Math.abs(summary.totalGainLossPct))} ${isPositive ? 'gain' : 'loss'}`}
             icon={isPositive ? TrendingUp : TrendingDown}
-            iconBg={isPositive ? 'bg-success-50' : 'bg-danger-50'}
+            iconBg={isPositive ? 'bg-success-50 dark:bg-success-500/15' : 'bg-danger-50 dark:bg-danger-500/15'}
             iconColor={isPositive ? 'text-success-600' : 'text-danger-600'}
             positive={isPositive}
           />
@@ -303,7 +303,7 @@ export default function InvestmentsPage() {
             value={String(investments.length)}
             sub={`${summary.allocation.length} asset types`}
             icon={TrendingUp}
-            iconBg="bg-warning-50"
+            iconBg="bg-warning-50 dark:bg-warning-500/15"
             iconColor="text-warning-600"
           />
         </div>
@@ -312,22 +312,22 @@ export default function InvestmentsPage() {
       {/* Asset Allocation */}
       {summary.allocation.length > 0 && (
         <div className="card p-5">
-          <p className="text-base font-semibold text-slate-800 mb-4">Asset Allocation</p>
+          <p className="text-base font-semibold text-slate-800 dark:text-white mb-4">Asset Allocation</p>
           <div className="space-y-3">
             {summary.allocation.map(item => (
               <div key={item.asset_type}>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm text-slate-700">{item.label}</span>
+                  <span className="text-sm text-slate-700 dark:text-slate-300">{item.label}</span>
                   <div className="flex items-center gap-3">
-                    <span className="text-sm font-semibold text-slate-900">
+                    <span className="text-sm font-semibold text-slate-900 dark:text-white">
                       {formatCurrency(item.value, currency)}
                     </span>
-                    <span className="text-xs text-slate-400 w-10 text-right">
+                    <span className="text-xs text-slate-400 dark:text-slate-500 w-10 text-right">
                       {formatPercent(item.percentage)}
                     </span>
                   </div>
                 </div>
-                <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+                <div className="h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
                   <motion.div
                     className="h-full rounded-full"
                     style={{ backgroundColor: item.color }}
@@ -352,10 +352,10 @@ export default function InvestmentsPage() {
             className="card p-5"
           >
             <div className="flex items-center justify-between mb-4">
-              <p className="text-base font-semibold text-slate-800">Add Investment</p>
+              <p className="text-base font-semibold text-slate-800 dark:text-white">Add Investment</p>
               <button
                 onClick={() => setShowForm(false)}
-                className="text-slate-400 hover:text-slate-600"
+                className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -371,12 +371,12 @@ export default function InvestmentsPage() {
 
       {/* Holdings table */}
       <div className="card p-5">
-        <p className="text-base font-semibold text-slate-800 mb-4">Holdings</p>
+        <p className="text-base font-semibold text-slate-800 dark:text-white mb-4">Holdings</p>
 
         {isLoading ? (
           <div className="space-y-3">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-12 bg-slate-100 rounded animate-pulse" />
+              <div key={i} className="h-12 bg-slate-100 dark:bg-slate-800 rounded animate-pulse" />
             ))}
           </div>
         ) : investments.length === 0 ? (
@@ -396,9 +396,9 @@ export default function InvestmentsPage() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="p-4 bg-slate-50 rounded-lg mb-2"
+                      className="p-4 bg-slate-50 dark:bg-slate-800/60 rounded-lg mb-2"
                     >
-                      <p className="text-sm font-semibold text-slate-700 mb-3">
+                      <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3">
                         Edit: {editingInv.name}
                       </p>
                       <InvestmentForm
@@ -452,7 +452,7 @@ function HoldingRow({
   const isGain = inv.gainLoss >= 0;
 
   return (
-    <div className="flex items-center gap-3 py-3 px-3 rounded-lg hover:bg-slate-50 group transition-colors">
+    <div className="flex items-center gap-3 py-3 px-3 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800/60 group transition-colors">
       {/* Color dot + type */}
       <div
         className="w-8 h-8 rounded-md flex-shrink-0 flex items-center justify-center"
@@ -467,21 +467,21 @@ function HoldingRow({
       {/* Name + meta */}
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2">
-          <p className="text-sm font-semibold text-slate-800 truncate">{inv.name}</p>
+          <p className="text-sm font-semibold text-slate-800 dark:text-white truncate">{inv.name}</p>
           {inv.symbol && (
-            <span className="text-xs font-mono bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded uppercase">
+            <span className="text-xs font-mono bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-1.5 py-0.5 rounded uppercase">
               {inv.symbol}
             </span>
           )}
         </div>
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-slate-400 dark:text-slate-500">
           {inv.quantity} units · Bought {formatDate(inv.purchase_date)}
         </p>
       </div>
 
       {/* Financials */}
       <div className="text-right flex-shrink-0">
-        <p className="text-sm font-bold text-slate-900">
+        <p className="text-sm font-bold text-slate-900 dark:text-white">
           {formatCurrency(inv.currentValue, currency)}
         </p>
         <p className={cn(
@@ -497,7 +497,7 @@ function HoldingRow({
       <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
         <button
           onClick={onEdit}
-          className="p-1.5 rounded hover:bg-slate-100 text-slate-400 hover:text-primary-500 transition-colors"
+          className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-primary-500 transition-colors"
           title="Edit"
         >
           <Pencil className="w-3.5 h-3.5" />

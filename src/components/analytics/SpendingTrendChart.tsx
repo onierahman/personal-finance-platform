@@ -20,7 +20,7 @@ function CustomTooltip({ active, payload, label }: TooltipProps) {
   if (!active || !payload?.length) return null;
   return (
     <div className="card px-3 py-2 text-xs shadow-dropdown min-w-[140px]">
-      <p className="font-semibold text-slate-700 mb-2">{label}</p>
+      <p className="font-semibold text-slate-700 dark:text-slate-300 mb-2">{label}</p>
       {payload.map(p => (
         <div key={p.name} className="flex justify-between gap-4 mb-0.5">
           <span style={{ color: p.color }}>{p.name}</span>

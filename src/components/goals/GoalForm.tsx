@@ -9,7 +9,6 @@ import { useCreateGoal } from '@/features/goals/hooks';
 
 type GoalFormValues = z.infer<typeof savingsGoalSchema>;
 
-// PRD Module E — fixed goal types with defaults
 const GOAL_PRESETS = [
   { label: 'Emergency Fund', icon: '🚨', color: '#EF4444' },
   { label: 'Vacation',       icon: '🏖️', color: '#0EA5E9' },
@@ -25,6 +24,10 @@ const PRIORITY_OPTIONS = [
   { value: 'medium', label: 'Medium', color: 'text-warning-600' },
   { value: 'high',   label: 'High',   color: 'text-danger-600' },
 ] as const;
+
+const labelCls = 'block text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1';
+const inputCls = 'w-full text-sm rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 p-2.5 outline-none focus:border-primary-500 dark:placeholder:text-slate-500';
+const selectCls = 'w-full text-sm rounded-md border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 p-2.5 outline-none focus:border-primary-500';
 
 export function GoalForm({ onSuccess }: { onSuccess?: () => void }) {
   const { mutate: createGoal, isPending, error } = useCreateGoal();
@@ -47,7 +50,6 @@ export function GoalForm({ onSuccess }: { onSuccess?: () => void }) {
     setSelectedPreset(preset.label);
     setValue('icon', preset.icon);
     setValue('color', preset.color);
-    // Only prefill name if still empty — don't overwrite user's custom input
     if (!watch('name')) setValue('name', preset.label === 'Custom' ? '' : preset.label);
   };
 
@@ -64,16 +66,13 @@ export function GoalForm({ onSuccess }: { onSuccess?: () => void }) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 animate-fade-in">
       {error && (
-        <div className="p-3 text-xs font-semibold text-danger-700 bg-danger-50 border border-danger-100 rounded-md">
+        <div className="p-3 text-xs font-semibold text-danger-700 bg-danger-50 dark:bg-danger-500/10 border border-danger-100 dark:border-danger-500/20 rounded-md">
           ⚠️ {error.message}
         </div>
       )}
 
-      {/* PRD: goal type quick-start presets */}
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-2">
-          Goal Type
-        </label>
+        <label className={labelCls}>Goal Type</label>
         <div className="grid grid-cols-4 gap-1.5">
           {GOAL_PRESETS.map(preset => (
             <button
@@ -82,8 +81,8 @@ export function GoalForm({ onSuccess }: { onSuccess?: () => void }) {
               onClick={() => handlePreset(preset)}
               className={`flex flex-col items-center gap-1 p-2 rounded-lg border text-xs transition-colors ${
                 selectedPreset === preset.label
-                  ? 'border-primary-400 bg-primary-50 text-primary-700'
-                  : 'border-slate-200 hover:border-slate-300 text-slate-600'
+                  ? 'border-primary-400 bg-primary-50 dark:bg-primary-500/15 text-primary-700 dark:text-primary-400'
+                  : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600 text-slate-600 dark:text-slate-400'
               }`}
             >
               <span className="text-base">{preset.icon}</span>
@@ -96,14 +95,12 @@ export function GoalForm({ onSuccess }: { onSuccess?: () => void }) {
       </div>
 
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
-          Goal Name
-        </label>
+        <label className={labelCls}>Goal Name</label>
         <input
           type="text"
           placeholder="e.g. Emergency Fund"
           {...register('name')}
-          className="w-full text-sm rounded-md border border-slate-200 p-2.5 outline-none focus:border-primary-500"
+          className={inputCls}
         />
         {errors.name && (
           <p className="text-xs font-medium text-danger-600 mt-1">{errors.name.message}</p>
@@ -111,28 +108,26 @@ export function GoalForm({ onSuccess }: { onSuccess?: () => void }) {
       </div>
 
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
+        <label className={labelCls}>
           Description <span className="normal-case font-normal text-slate-400">(optional)</span>
         </label>
         <input
           type="text"
           placeholder="Short note about this goal"
           {...register('description')}
-          className="w-full text-sm rounded-md border border-slate-200 p-2.5 outline-none focus:border-primary-500"
+          className={inputCls}
         />
       </div>
 
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
-          Target Amount
-        </label>
+        <label className={labelCls}>Target Amount</label>
         <div className="relative">
           <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-400 font-medium">$</span>
           <input
             type="number"
             step="0.01"
             {...register('target_amount')}
-            className="w-full text-sm rounded-md border border-slate-200 p-2.5 pl-7 text-slate-900 font-medium outline-none focus:border-primary-500"
+            className={`${inputCls} pl-7 font-medium`}
           />
         </div>
         {errors.target_amount && (
@@ -142,26 +137,21 @@ export function GoalForm({ onSuccess }: { onSuccess?: () => void }) {
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
+          <label className={labelCls}>
             Deadline <span className="normal-case font-normal text-slate-400">(optional)</span>
           </label>
           <input
             type="date"
             {...register('deadline')}
-            className="w-full text-sm rounded-md border border-slate-200 p-2.5 outline-none focus:border-primary-500"
+            className={inputCls}
           />
           {errors.deadline && (
             <p className="text-xs font-medium text-danger-600 mt-1">{errors.deadline.message}</p>
           )}
         </div>
         <div>
-          <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
-            Priority
-          </label>
-          <select
-            {...register('priority')}
-            className="w-full text-sm rounded-md border border-slate-200 bg-white p-2.5 outline-none focus:border-primary-500"
-          >
+          <label className={labelCls}>Priority</label>
+          <select {...register('priority')} className={selectCls}>
             {PRIORITY_OPTIONS.map(p => (
               <option key={p.value} value={p.value}>{p.label}</option>
             ))}

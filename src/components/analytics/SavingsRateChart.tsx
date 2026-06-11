@@ -19,7 +19,7 @@ function CustomTooltip({ active, payload, label }: TooltipProps) {
   const rate = payload[0].value;
   return (
     <div className="card px-3 py-2 text-xs shadow-dropdown">
-      <p className="font-semibold text-slate-700 mb-1">{label}</p>
+      <p className="font-semibold text-slate-700 dark:text-slate-300 mb-1">{label}</p>
       <p className="text-blue-600 font-medium">{rate.toFixed(1)}% savings rate</p>
     </div>
   );

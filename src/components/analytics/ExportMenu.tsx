@@ -96,7 +96,7 @@ export function ExportMenu({
     <div className="relative">
       <button
         onClick={() => setOpen(p => !p)}
-        className="flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 bg-white text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+        className="flex items-center gap-2 px-4 py-2 rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
       >
         {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
         Export
@@ -107,13 +107,13 @@ export function ExportMenu({
         <>
           <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
           <div className="absolute right-0 top-full mt-1.5 z-20 w-64 card shadow-dropdown py-1.5">
-            <p className="px-3 py-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+            <p className="px-3 py-1.5 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider">
               Export Report
             </p>
             {options.map(opt => (
               <div key={opt.label} className="px-1">
                 <div className="px-2 py-1.5">
-                  <p className="text-xs font-medium text-slate-600 mb-1.5">{opt.label}</p>
+                  <p className="text-xs font-medium text-slate-600 dark:text-slate-400 mb-1.5">{opt.label}</p>
                   <div className="flex gap-2">
                     {opt.formats.includes('csv') && (
                       <button

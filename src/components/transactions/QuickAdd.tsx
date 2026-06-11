@@ -133,24 +133,24 @@ useEffect(() => {
             animate={{ y: 0 }}
             exit={{ y: '100%' }}
             transition={{ type: 'spring', damping: 28, stiffness: 300 }}
-            className="fixed bottom-0 left-0 right-0 z-[110] bg-white rounded-t-2xl shadow-dropdown max-h-[92vh] overflow-y-auto"
+            className="fixed bottom-0 left-0 right-0 z-[110] bg-white dark:bg-slate-900 rounded-t-2xl shadow-dropdown max-h-[92vh] overflow-y-auto"
           >
             {/* Handle */}
             <div className="flex justify-center pt-3 pb-1">
-              <div className="w-10 h-1 bg-slate-200 rounded-full" />
+              <div className="w-10 h-1 bg-slate-200 dark:bg-slate-700 rounded-full" />
             </div>
 
             <div className="px-4 pb-8">
               {/* Header */}
               <div className="flex items-center justify-between py-3 mb-2">
-                <h2 className="text-base font-semibold text-slate-900">Add Transaction</h2>
-                <button onClick={closeQuickAdd} className="p-1.5 rounded-md hover:bg-slate-100 transition-colors">
-                  <X className="w-4 h-4 text-slate-500" />
+                <h2 className="text-base font-semibold text-slate-900 dark:text-white">Add Transaction</h2>
+                <button onClick={closeQuickAdd} className="p-1.5 rounded-md hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                  <X className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                 </button>
               </div>
 
               {/* Type toggle */}
-              <div className="flex rounded-lg bg-slate-100 p-1 mb-5">
+              <div className="flex rounded-lg bg-slate-100 dark:bg-slate-800 p-1 mb-5">
                 {(['expense', 'income'] as const).map(t => (
                   <button
                     key={t}
@@ -160,9 +160,9 @@ useEffect(() => {
                       'flex-1 py-1.5 rounded-md text-sm font-medium transition-all',
                       selectedType === t
                         ? t === 'expense'
-                          ? 'bg-white shadow-sm text-danger-600'
-                          : 'bg-white shadow-sm text-success-600'
-                        : 'text-slate-500',
+                          ? 'bg-white dark:bg-slate-700 shadow-sm text-danger-600 dark:text-danger-400'
+                          : 'bg-white dark:bg-slate-700 shadow-sm text-success-600 dark:text-success-400'
+                        : 'text-slate-500 dark:text-slate-400',
                     )}
                   >
                     {t === 'expense' ? '↓ Expense' : '↑ Income'}
@@ -179,8 +179,8 @@ useEffect(() => {
               >
                 {/* Amount — most prominent */}
                 <div>
-                  <div className="flex items-center gap-2 border-2 border-slate-200 rounded-lg px-4 py-3 focus-within:border-primary-500 transition-colors">
-                    <span className="text-2xl font-medium text-slate-400">$</span>
+                  <div className="flex items-center gap-2 border-2 border-slate-200 dark:border-slate-700 rounded-lg px-4 py-3 focus-within:border-primary-500 dark:focus-within:border-primary-400 transition-colors">
+                    <span className="text-2xl font-medium text-slate-400 dark:text-slate-500">$</span>
                     <input
                       {...amountReg}
                       ref={e => {
@@ -191,7 +191,7 @@ useEffect(() => {
                       step="0.01"
                       min="0.01"
                       placeholder="0.00"
-                      className="flex-1 text-2xl font-semibold text-slate-900 bg-transparent outline-none amount placeholder:text-slate-300"
+                      className="flex-1 text-2xl font-semibold text-slate-900 dark:text-white bg-transparent outline-none amount placeholder:text-slate-300 dark:placeholder:text-slate-600"
                       inputMode="decimal"
                     />
                   </div>
@@ -202,7 +202,7 @@ useEffect(() => {
 
                 {/* Category picker */}
                 <div>
-                  <p className="text-xs font-medium text-slate-500 mb-2">Category</p>
+                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mb-2">Category</p>
                   <Controller
                     control={control}
                     name="category"
@@ -222,31 +222,31 @@ useEffect(() => {
                 {/* Merchant + Date row */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-xs font-medium text-slate-500">Merchant</label>
+                    <label className="text-xs font-medium text-slate-500 dark:text-slate-400">Merchant</label>
                     <input
                       {...register('merchant')}
                       placeholder="Optional"
-                      className="mt-1 w-full px-3 py-2 text-sm border border-slate-200 rounded-md outline-none focus:border-primary-500 transition-colors"
+                      className="mt-1 w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-md outline-none focus:border-primary-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors"
                     />
                   </div>
                   <div>
-                    <label className="text-xs font-medium text-slate-500">Date</label>
+                    <label className="text-xs font-medium text-slate-500 dark:text-slate-400">Date</label>
                     <input
                       {...register('date')}
                       type="date"
-                      className="mt-1 w-full px-3 py-2 text-sm border border-slate-200 rounded-md outline-none focus:border-primary-500 transition-colors"
+                      className="mt-1 w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-md outline-none focus:border-primary-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 transition-colors"
                     />
                   </div>
                 </div>
 
                 {/* Account selector — always render so RHF registers the field */}
                 <div>
-                  <label className="text-xs font-medium text-slate-500">Account</label>
+                  <label className="text-xs font-medium text-slate-500 dark:text-slate-400">Account</label>
                   <div className="relative mt-1">
                     <select
                       {...register('account_id')}
                       disabled={accountsLoading || accounts.length === 0}
-                      className="w-full px-3 py-2 text-sm border border-slate-200 rounded-md outline-none focus:border-primary-500 appearance-none transition-colors bg-white disabled:opacity-50"
+                      className="w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-md outline-none focus:border-primary-500 appearance-none transition-colors bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 disabled:opacity-50"
                     >
                       {accountsLoading && (
                         <option value="">Loading accounts…</option>
@@ -267,11 +267,11 @@ useEffect(() => {
 
                 {/* Note */}
                 <div>
-                  <label className="text-xs font-medium text-slate-500">Note</label>
+                  <label className="text-xs font-medium text-slate-500 dark:text-slate-400">Note</label>
                   <input
                     {...register('note')}
                     placeholder="Optional note"
-                    className="mt-1 w-full px-3 py-2 text-sm border border-slate-200 rounded-md outline-none focus:border-primary-500 transition-colors"
+                    className="mt-1 w-full px-3 py-2 text-sm border border-slate-200 dark:border-slate-700 rounded-md outline-none focus:border-primary-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors"
                   />
                 </div>
 

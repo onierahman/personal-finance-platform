@@ -71,13 +71,13 @@ function BudgetRow({
   };
 
   return (
-    <li className="group p-4 bg-white border border-slate-100 rounded-xl shadow-sm">
+    <li className="group p-4 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-xl shadow-sm">
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-2.5">
           <span className="text-xl leading-none">{meta.icon}</span>
           <div>
-            <p className="text-sm font-semibold text-slate-800">{budget.category}</p>
-            <p className="text-xs text-slate-400 capitalize">{budget.period}</p>
+            <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">{budget.category}</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500 capitalize">{budget.period}</p>
           </div>
         </div>
 
@@ -90,7 +90,7 @@ function BudgetRow({
                 step="0.01"
                 value={editValue}
                 onChange={e => setEditValue(e.target.value)}
-                className="w-24 text-xs border border-primary-300 rounded px-1.5 py-1 outline-none focus:border-primary-500"
+                className="w-24 text-xs border border-primary-300 dark:border-primary-500 rounded px-1.5 py-1 outline-none focus:border-primary-500 bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
                 autoFocus
               />
               <button
@@ -112,7 +112,7 @@ function BudgetRow({
               <button
                 onClick={() => setIsEditing(true)}
                 title="Edit limit"
-                className="text-slate-300 hover:text-primary-500 p-1.5 rounded-md hover:bg-slate-50 transition-colors"
+                className="text-slate-300 hover:text-primary-500 p-1.5 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
               >
                 <Pencil className="w-3.5 h-3.5" />
               </button>
@@ -122,7 +122,7 @@ function BudgetRow({
                 }}
                 disabled={isDeleting}
                 title="Delete budget"
-                className="text-slate-300 hover:text-danger-500 p-1.5 rounded-md hover:bg-slate-50 transition-colors disabled:opacity-30"
+                className="text-slate-300 hover:text-danger-500 p-1.5 rounded-md hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors disabled:opacity-30"
               >
                 <Trash2 className="w-3.5 h-3.5" />
               </button>
@@ -140,7 +140,7 @@ function BudgetRow({
         </span>
       </div>
 
-      <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
+      <div className="h-2 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
         <div
           className={cn('h-full rounded-full transition-all duration-500', COLOR_MAP[status])}
           style={{ width: `${pct}%` }}
@@ -178,14 +178,14 @@ export default function BudgetsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Budgets</h1>
-        <p className="text-sm text-slate-500">Set spending limits by category and period.</p>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">Budgets</h1>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Set spending limits by category and period.</p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 space-y-4">
           {/* Period tabs */}
-          <div className="flex gap-1 p-1 bg-slate-100 rounded-lg w-fit">
+          <div className="flex gap-1 p-1 bg-slate-100 dark:bg-slate-800 rounded-lg w-fit">
             {tabs.map(tab => (
               <button
                 key={tab.key}
@@ -193,8 +193,8 @@ export default function BudgetsPage() {
                 className={cn(
                   'px-4 py-1.5 text-sm font-medium rounded-md transition-colors',
                   activeTab === tab.key
-                    ? 'bg-white text-slate-900 shadow-sm'
-                    : 'text-slate-500 hover:text-slate-700'
+                    ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm'
+                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
                 )}
               >
                 {tab.label}
@@ -202,7 +202,7 @@ export default function BudgetsPage() {
             ))}
           </div>
 
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-400 dark:text-slate-500">
             {tabs.find(t => t.key === activeTab)?.description}
           </p>
 
@@ -225,8 +225,8 @@ export default function BudgetsPage() {
           )}
         </div>
 
-        <div className="card p-5 bg-white border border-slate-100 rounded-xl shadow-sm h-fit">
-          <h2 className="text-sm font-semibold text-slate-800 uppercase tracking-wider mb-4">
+        <div className="card p-5 h-fit">
+          <h2 className="text-sm font-semibold text-slate-800 dark:text-slate-200 uppercase tracking-wider mb-4">
             New Budget
           </h2>
           <BudgetForm />

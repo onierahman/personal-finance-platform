@@ -24,7 +24,7 @@ export function CategoryPicker({ type, value, onChange }: CategoryPickerProps) {
               'flex flex-col items-center gap-1 p-2 rounded-md border transition-all text-center',
               selected
                 ? 'border-transparent ring-2 shadow-sm'
-                : 'border-slate-100 hover:border-slate-200 hover:bg-slate-50',
+                : 'border-slate-100 dark:border-slate-700 hover:border-slate-200 dark:hover:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800',
             )}
             style={selected ? {
               background:   cat.color + '18',
@@ -34,7 +34,7 @@ export function CategoryPicker({ type, value, onChange }: CategoryPickerProps) {
             } : {}}
           >
             <span className="text-xl leading-none">{cat.icon}</span>
-            <span className="text-[10px] font-medium text-slate-600 leading-tight">{cat.name}</span>
+            <span className="text-[10px] font-medium text-slate-600 dark:text-slate-400 leading-tight">{cat.name}</span>
           </button>
         );
       })}

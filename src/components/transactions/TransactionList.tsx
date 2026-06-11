@@ -30,10 +30,10 @@ function TransactionRow({ txn, currency, onDelete }: TransactionRowProps) {
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-slate-800 truncate">
+        <p className="text-sm font-medium text-slate-800 dark:text-slate-200 truncate">
           {txn.merchant ?? txn.category}
         </p>
-        <p className="text-xs text-slate-400 truncate">
+        <p className="text-xs text-slate-400 dark:text-slate-500 truncate">
           {txn.category}{txn.note ? ` · ${txn.note}` : ''}
         </p>
       </div>
@@ -41,7 +41,7 @@ function TransactionRow({ txn, currency, onDelete }: TransactionRowProps) {
       <div className="flex items-center gap-2">
         <span className={cn(
           'amount text-sm font-semibold',
-          txn.type === 'income' ? 'text-success-600' : 'text-slate-900',
+          txn.type === 'income' ? 'text-success-600 dark:text-success-400' : 'text-slate-900 dark:text-white',
         )}>
           {txn.type === 'income' ? '+' : '-'}
           {formatCurrency(txn.amount, currency)}
@@ -50,7 +50,7 @@ function TransactionRow({ txn, currency, onDelete }: TransactionRowProps) {
         {onDelete && (
           <button
             onClick={() => onDelete(txn.id)}
-            className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-danger-50 text-slate-300 hover:text-danger-500 transition-all"
+            className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-danger-50 dark:hover:bg-danger-500/15 text-slate-300 hover:text-danger-500 transition-all"
             aria-label="Delete transaction"
           >
             <Trash2 className="w-3.5 h-3.5" />
@@ -82,7 +82,7 @@ export function RecentTransactions({ limit = 5 }: RecentTransactionsProps) {
       </div>
 
       {isLoading ? (
-        <div className="divide-y divide-slate-50">
+        <div className="divide-y divide-slate-50 dark:divide-slate-800">
           {Array.from({ length: limit }).map((_, i) => <TransactionSkeleton key={i} />)}
         </div>
       ) : !data?.data?.length ? (
@@ -92,7 +92,7 @@ export function RecentTransactions({ limit = 5 }: RecentTransactionsProps) {
           message="Tap + to add your first transaction."
         />
       ) : (
-        <div className="divide-y divide-slate-50">
+        <div className="divide-y divide-slate-50 dark:divide-slate-800">
           {data.data.map(txn => (
             <TransactionRow key={txn.id} txn={txn} currency={currency} />
           ))}
@@ -161,11 +161,11 @@ export function TransactionList({ month, accountId, category, type, search }: Tr
     <div className="card p-4 space-y-1">
       {sortedDates.map((date, idx) => (
         <div key={date}>
-          {idx > 0 && <div className="border-t border-slate-100 mt-2 mb-1" />}
-          <p className="text-xs font-semibold text-slate-400 uppercase tracking-wide py-1.5">
+          {idx > 0 && <div className="border-t border-slate-100 dark:border-slate-800 mt-2 mb-1" />}
+          <p className="text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wide py-1.5">
             {formatDateShort(date)}
           </p>
-          <div className="divide-y divide-slate-50">
+          <div className="divide-y divide-slate-50 dark:divide-slate-800/60">
             {grouped[date].map(txn => (
               <TransactionRow key={txn.id} txn={txn} currency={currency} onDelete={handleDelete} />
             ))}

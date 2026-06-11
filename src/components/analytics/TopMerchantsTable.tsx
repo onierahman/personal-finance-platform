@@ -29,23 +29,23 @@ export function TopMerchantsTable({ months }: Props) {
       <div className="space-y-3">
         {merchants.map((m, i) => (
           <div key={m.merchant} className="flex items-center gap-3">
-            <span className="text-xs font-bold text-slate-400 w-4 shrink-0">{i + 1}</span>
+            <span className="text-xs font-bold text-slate-400 dark:text-slate-500 w-4 shrink-0">{i + 1}</span>
             <span className="text-sm shrink-0">{m.categoryIcon}</span>
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-0.5">
-                <span className="text-sm font-medium text-slate-700 truncate">{m.merchant}</span>
-                <span className="text-sm amount font-semibold text-slate-900 ml-2 shrink-0">
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-300 truncate">{m.merchant}</span>
+                <span className="text-sm amount font-semibold text-slate-900 dark:text-white ml-2 shrink-0">
                   {formatCurrency(m.total, currency)}
                 </span>
               </div>
               <div className="flex items-center gap-2">
-                <div className="flex-1 bg-slate-100 rounded-full h-1.5 overflow-hidden">
+                <div className="flex-1 bg-slate-100 dark:bg-slate-700 rounded-full h-1.5 overflow-hidden">
                   <div
                     className="h-full rounded-full bg-blue-500 transition-all"
                     style={{ width: `${(m.total / maxTotal) * 100}%`, background: m.categoryColor }}
                   />
                 </div>
-                <span className="text-[10px] text-slate-400 shrink-0">
+                <span className="text-[10px] text-slate-400 dark:text-slate-500 shrink-0">
                   {m.count}× · avg {formatCurrency(m.avgAmount, currency)}
                 </span>
               </div>

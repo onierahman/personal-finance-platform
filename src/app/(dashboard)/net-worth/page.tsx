@@ -52,15 +52,15 @@ function SummaryCard({
         <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center', iconBg)}>
           <Icon className={cn('w-5 h-5', iconColor)} />
         </div>
-        <p className="text-xs font-medium text-slate-500 uppercase tracking-wide">{label}</p>
+        <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">{label}</p>
       </div>
       <p className={cn(
         'text-2xl font-bold',
-        negative ? 'text-danger-600' : 'text-slate-900',
+        negative ? 'text-danger-600' : 'text-slate-900 dark:text-white',
       )}>
         {value}
       </p>
-      {sub && <p className="text-xs text-slate-400 mt-1">{sub}</p>}
+      {sub && <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{sub}</p>}
     </div>
   );
 }
@@ -125,7 +125,7 @@ export default function NetWorthPage() {
       <div className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {[1, 2, 3].map(i => (
-            <div key={i} className="card p-5 h-32 animate-pulse bg-slate-100" />
+            <div key={i} className="card p-5 h-32 animate-pulse bg-slate-100 dark:bg-slate-800" />
           ))}
         </div>
       </div>
@@ -136,8 +136,8 @@ export default function NetWorthPage() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-xl font-bold text-slate-900">Net Worth</h1>
-        <p className="text-sm text-slate-500 mt-0.5">
+        <h1 className="text-xl font-bold text-slate-900 dark:text-white">Net Worth</h1>
+        <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">
           Assets minus liabilities — your true financial position
         </p>
       </div>
@@ -149,7 +149,7 @@ export default function NetWorthPage() {
           value={formatCurrency(totalAssets, currency)}
           sub="Liquid + portfolio"
           icon={TrendingUp}
-          iconBg="bg-success-50"
+          iconBg="bg-success-50 dark:bg-success-500/15"
           iconColor="text-success-600"
         />
         <SummaryCard
@@ -157,7 +157,7 @@ export default function NetWorthPage() {
           value={formatCurrency(totalLiabilities, currency)}
           sub="Cards + loans"
           icon={TrendingDown}
-          iconBg="bg-danger-50"
+          iconBg="bg-danger-50 dark:bg-danger-500/15"
           iconColor="text-danger-600"
           negative={totalLiabilities > 0}
         />
@@ -166,7 +166,7 @@ export default function NetWorthPage() {
           value={formatCurrency(netWorth, currency)}
           sub={netWorth >= 0 ? 'Positive net worth' : 'Negative net worth'}
           icon={Wallet}
-          iconBg={netWorth >= 0 ? 'bg-primary-50' : 'bg-danger-50'}
+          iconBg={netWorth >= 0 ? 'bg-primary-50 dark:bg-primary-500/15' : 'bg-danger-50 dark:bg-danger-500/15'}
           iconColor={netWorth >= 0 ? 'text-primary-600' : 'text-danger-600'}
           negative={netWorth < 0}
         />
@@ -175,7 +175,7 @@ export default function NetWorthPage() {
       {/* Asset composition */}
       {totalAssets > 0 && (
         <div className="card p-5">
-          <p className="text-base font-semibold text-slate-800 mb-4">Asset Composition</p>
+          <p className="text-base font-semibold text-slate-800 dark:text-white mb-4">Asset Composition</p>
 
           {/* Stacked progress bar */}
           <div className="h-4 rounded-full overflow-hidden flex mb-3">
@@ -198,11 +198,11 @@ export default function NetWorthPage() {
                   className="w-2.5 h-2.5 rounded-full flex-shrink-0"
                   style={{ backgroundColor: g.color }}
                 />
-                <span className="text-xs text-slate-600">{g.label}</span>
-                <span className="text-xs font-semibold text-slate-900">
+                <span className="text-xs text-slate-600 dark:text-slate-400">{g.label}</span>
+                <span className="text-xs font-semibold text-slate-900 dark:text-white">
                   {formatCurrency(g.value, currency)}
                 </span>
-                <span className="text-xs text-slate-400">
+                <span className="text-xs text-slate-400 dark:text-slate-500">
                   ({formatPercent(totalAssets > 0 ? g.value / totalAssets : 0)})
                 </span>
               </div>
@@ -216,14 +216,14 @@ export default function NetWorthPage() {
         <div className="card p-5">
           <div className="flex items-center gap-2 mb-4">
             <TrendingUp className="w-4 h-4 text-success-600" />
-            <p className="text-base font-semibold text-slate-800">Assets</p>
-            <span className="ml-auto text-sm font-bold text-success-700">
+            <p className="text-base font-semibold text-slate-800 dark:text-white">Assets</p>
+            <span className="ml-auto text-sm font-bold text-success-700 dark:text-success-500">
               {formatCurrency(totalAssets, currency)}
             </span>
           </div>
 
           {assetAccounts.length === 0 && portfolioValue === 0 ? (
-            <p className="text-sm text-slate-400 py-4 text-center">No asset accounts found.</p>
+            <p className="text-sm text-slate-400 dark:text-slate-500 py-4 text-center">No asset accounts found.</p>
           ) : (
             <div className="space-y-3">
               {/* Bank accounts */}
@@ -264,14 +264,14 @@ export default function NetWorthPage() {
         <div className="card p-5">
           <div className="flex items-center gap-2 mb-4">
             <TrendingDown className="w-4 h-4 text-danger-600" />
-            <p className="text-base font-semibold text-slate-800">Liabilities</p>
-            <span className="ml-auto text-sm font-bold text-danger-700">
+            <p className="text-base font-semibold text-slate-800 dark:text-white">Liabilities</p>
+            <span className="ml-auto text-sm font-bold text-danger-700 dark:text-danger-400">
               {formatCurrency(totalLiabilities, currency)}
             </span>
           </div>
 
           {liabilityAccounts.length === 0 ? (
-            <p className="text-sm text-slate-400 py-4 text-center">
+            <p className="text-sm text-slate-400 dark:text-slate-500 py-4 text-center">
               No liabilities — great financial health!
             </p>
           ) : (
@@ -305,10 +305,10 @@ export default function NetWorthPage() {
       {/* Investment holdings summary */}
       {investments.length > 0 && (
         <div className="card p-5">
-          <p className="text-base font-semibold text-slate-800 mb-4">
+          <p className="text-base font-semibold text-slate-800 dark:text-white mb-4">
             Investment Holdings ({investments.length})
           </p>
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-slate-100 dark:divide-slate-700/50">
             {investments.map(inv => {
               const value   = Number(inv.quantity) * Number(inv.current_price);
               const gainLoss = value - Number(inv.quantity) * Number(inv.purchase_price);
@@ -319,13 +319,13 @@ export default function NetWorthPage() {
               return (
                 <div key={inv.id} className="flex items-center justify-between py-3">
                   <div>
-                    <p className="text-sm font-medium text-slate-800">{inv.name}</p>
-                    <p className="text-xs text-slate-400 uppercase font-mono">
+                    <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{inv.name}</p>
+                    <p className="text-xs text-slate-400 dark:text-slate-500 uppercase font-mono">
                       {inv.symbol ?? inv.asset_type}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm font-bold text-slate-900">
+                    <p className="text-sm font-bold text-slate-900 dark:text-white">
                       {formatCurrency(value, currency)}
                     </p>
                     <p className={cn(
@@ -371,21 +371,21 @@ function AccountRow({
             <Icon className="w-3.5 h-3.5" style={{ color: barColor }} />
           </div>
           <div>
-            <p className="text-sm font-medium text-slate-800">{label}</p>
-            <p className="text-xs text-slate-400">{sublabel}</p>
+            <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{label}</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500">{sublabel}</p>
           </div>
         </div>
         <div className="text-right">
           <p className={cn(
             'text-sm font-semibold',
-            isLiability ? 'text-danger-600' : 'text-slate-900',
+            isLiability ? 'text-danger-600' : 'text-slate-900 dark:text-white',
           )}>
             {isLiability ? '-' : ''}{formatCurrency(value, currency)}
           </p>
-          <p className="text-xs text-slate-400">{formatPercent(pct)}</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500">{formatPercent(pct)}</p>
         </div>
       </div>
-      <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden ml-9">
+      <div className="h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden ml-9">
         <motion.div
           className="h-full rounded-full"
           style={{ backgroundColor: barColor }}
