@@ -6,7 +6,6 @@ export const metadata: Metadata = {
   title:       'FinanceOS — Personal Finance Dashboard',
   description: 'Track expenses, budgets, savings, and investments in one place.',
   manifest:    '/manifest.json',
-  icons: { icon: '/favicon.ico' },
 };
 
 export const viewport: Viewport = {
