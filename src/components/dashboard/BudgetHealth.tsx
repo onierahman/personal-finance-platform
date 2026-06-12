@@ -136,12 +136,12 @@ export function BudgetHealth() {
     b => Number(b.spent_amount) > Number(b.limit_amount)
   ).length;
 
-  const VISIBLE_LIMIT = 5;
+  const VISIBLE_LIMIT = 4;
   const visible = budgets.slice(0, VISIBLE_LIMIT);
   const hiddenCount = budgets.length - VISIBLE_LIMIT;
 
   return (
-    <div className="card p-5">
+    <div className="card p-5 flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <p className="text-base font-semibold text-slate-800 dark:text-slate-100">Budget Health</p>
         <Link href="/budgets" className="text-xs text-primary-600 hover:underline flex items-center gap-0.5">
@@ -165,7 +165,7 @@ export function BudgetHealth() {
           }
         />
       ) : (
-        <>
+        <div className="flex flex-1 flex-col">
           {/* PRD: Budget Health Card — Total Used / Available / Overbudget */}
           <div className="grid grid-cols-3 gap-3 mb-5 p-3 bg-slate-50 dark:bg-slate-800/60 rounded-lg">
             <div>
@@ -268,12 +268,12 @@ export function BudgetHealth() {
           {hiddenCount > 0 && (
             <Link
               href="/budgets"
-              className="mt-4 block text-center text-xs text-primary-600 hover:underline"
+              className="mt-auto pt-4 block text-center text-xs text-primary-600 hover:underline"
             >
               +{hiddenCount} more budget{hiddenCount > 1 ? 's' : ''} → View all
             </Link>
           )}
-        </>
+        </div>
       )}
     </div>
   );

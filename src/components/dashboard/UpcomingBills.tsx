@@ -54,7 +54,7 @@ export function UpcomingBills() {
   const hiddenCount = annotated.length - VISIBLE_LIMIT;
 
   return (
-    <div className="card p-5">
+    <div className="card p-5 flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <p className="text-base font-semibold text-slate-800 dark:text-slate-100">Upcoming Bills</p>
         <Link href="/recurring" className="text-xs text-primary-600 hover:underline flex items-center gap-0.5">
@@ -64,7 +64,7 @@ export function UpcomingBills() {
 
       {isLoading ? (
         <div className="space-y-3">
-          {Array.from({ length: 3 }).map((_, i) => <TransactionSkeleton key={i} />)}
+          {Array.from({ length: 4 }).map((_, i) => <TransactionSkeleton key={i} />)}
         </div>
       ) : visible.length === 0 ? (
         <EmptyState
@@ -78,7 +78,7 @@ export function UpcomingBills() {
           }
         />
       ) : (
-        <>
+        <div className="flex flex-1 flex-col">
           <div className="divide-y divide-slate-100 dark:divide-slate-800">
             {visible.map(bill => (
               <div
@@ -121,12 +121,12 @@ export function UpcomingBills() {
           {hiddenCount > 0 && (
             <Link
               href="/recurring"
-              className="mt-3 block text-center text-xs text-primary-600 hover:underline"
+              className="mt-auto pt-4 block text-center text-xs text-primary-600 hover:underline"
             >
               +{hiddenCount} more bill{hiddenCount > 1 ? 's' : ''} → View all
             </Link>
           )}
-        </>
+        </div>
       )}
     </div>
   );

@@ -45,9 +45,11 @@ export default function DashboardPage() {
         </StaggerItem>
 
         {/* Row 4: Financial Planning Matrix
-            items-start prevents height-stretch voids between unequal-height cards */}
+            Cards stretch to equal height (default grid stretch); each card is a
+            flex column with its footer pinned to the bottom so all three align
+            top, bottom, and footer baseline. */}
         <StaggerItem>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <BudgetHealth />
             <UpcomingBills />
             <SavingsGoalsList />

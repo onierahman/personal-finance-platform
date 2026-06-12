@@ -64,7 +64,7 @@ export function SavingsGoalsList() {
 
   const activeGoals = goals.filter(g => g.status === 'active');
 
-  const VISIBLE_LIMIT = 3;
+  const VISIBLE_LIMIT = 4;
   const visible    = activeGoals.slice(0, VISIBLE_LIMIT);
   const hiddenCount = activeGoals.length - VISIBLE_LIMIT;
 
@@ -82,7 +82,7 @@ export function SavingsGoalsList() {
   }
 
   return (
-    <div className="card p-5">
+    <div className="card p-5 flex flex-col">
       <div className="flex items-center justify-between mb-4">
         <div>
           <p className="text-base font-semibold text-slate-800 dark:text-slate-100">Savings Goals</p>
@@ -109,7 +109,7 @@ export function SavingsGoalsList() {
           }
         />
       ) : (
-        <>
+        <div className="flex flex-1 flex-col">
         <ul className="space-y-4">
           {visible.map(goal => {
             const ratio = goal.target_amount > 0
@@ -198,12 +198,12 @@ export function SavingsGoalsList() {
           {hiddenCount > 0 && (
             <Link
               href="/goals"
-              className="mt-4 block text-center text-xs text-primary-600 hover:underline"
+              className="mt-auto pt-4 block text-center text-xs text-primary-600 hover:underline"
             >
               +{hiddenCount} more goal{hiddenCount > 1 ? 's' : ''} → View all
             </Link>
           )}
-        </>
+        </div>
       )}
     </div>
   );
