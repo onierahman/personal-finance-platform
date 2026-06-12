@@ -11,7 +11,7 @@ import {
 import { useInvestments, useCreateInvestment, useUpdateInvestment, useDeleteInvestment } from '@/features/investments/hooks';
 import { buildPortfolioSummary } from '@/features/investments/api';
 import { investmentSchema, type InvestmentSchema } from '@/features/investments/schema';
-import { formatCurrency, formatPercent, formatDate } from '@/lib/formatters';
+import { formatCurrency, formatPercent, formatDate, todayIso } from '@/lib/formatters';
 import { useUser } from '@/hooks/useUser';
 import { cn } from '@/lib/utils';
 import { EmptyState } from '@/components/shared/EmptyState';
@@ -88,7 +88,7 @@ function InvestmentForm({
     resolver: zodResolver(investmentSchema),
     defaultValues: {
       asset_type:     'stock',
-      purchase_date:  new Date().toISOString().split('T')[0],
+      purchase_date:  todayIso(),
       ...defaultValues,
     },
   });

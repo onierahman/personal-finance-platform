@@ -78,7 +78,10 @@ export async function POST(req: Request) {
     if (pct < 0.9) continue;
     if (recentCategories.has(budget.category)) continue;
 
-    const isOver   = pct >= 1;
+    // "Exceeded" means strictly over the limit (spent > limit). Spending
+    // exactly the limit (100%) is a warning ("at 100%"), not an overage —
+    // consistent with the budgets page and the dashboard over-budget count.
+    const isOver   = pct > 1;
     const pctLabel = Math.round(pct * 100);
 
     await notify({
@@ -104,7 +107,7 @@ export async function POST(req: Request) {
               <strong>${escapeHtml(budget.category)}</strong>: $${budget.spent_amount.toFixed(2)} spent of $${budget.limit_amount.toFixed(2)} limit (${pctLabel}%)
             </p>
             <div style="background:#e5e7eb;border-radius:4px;height:8px;overflow:hidden">
-              <div style="background:${pct >= 1 ? '#dc2626' : '#f97316'};height:100%;width:${Math.min(pct * 100, 100)}%"></div>
+              <div style="background:${isOver ? '#dc2626' : '#f97316'};height:100%;width:${Math.min(pct * 100, 100)}%"></div>
             </div>
           </div>
           <a href="${process.env.NEXT_PUBLIC_APP_URL ?? ''}/budgets"

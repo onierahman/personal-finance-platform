@@ -53,8 +53,33 @@ export async function registerWithEmail(
   return { data: null, error: null };
 }
 
+export async function requestPasswordReset(
+  email: string,
+): Promise<ApiResponse<null>> {
+
+  const supabase = getSupabaseBrowserClient() as any;
+
+  const redirectTo = `${window.location.origin}/reset-password`;
+  const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+
+  if (error) return { data: null, error: error.message };
+  return { data: null, error: null };
+}
+
+export async function updatePassword(
+  password: string,
+): Promise<ApiResponse<null>> {
+
+  const supabase = getSupabaseBrowserClient() as any;
+
+  const { error } = await supabase.auth.updateUser({ password });
+
+  if (error) return { data: null, error: error.message };
+  return { data: null, error: null };
+}
+
 export async function logout(): Promise<void> {
-   
+
   const supabase = getSupabaseBrowserClient() as any;
   await supabase.auth.signOut();
 }

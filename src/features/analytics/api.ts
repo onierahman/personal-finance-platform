@@ -1,6 +1,6 @@
 import { getSupabaseBrowserClient } from '@/lib/supabase/client';
 import { getCategoryMeta }         from '@/lib/constants';
-import { formatMonth }             from '@/lib/formatters';
+import { formatMonth, monthStart, monthEnd, toLocalIsoDate } from '@/lib/formatters';
 import type { ApiResponse }        from '@/types';
 import type {
   MonthSummary,
@@ -15,15 +15,9 @@ function getMonthRange(months: number): string[] {
   const now = new Date();
   for (let i = months - 1; i >= 0; i--) {
     const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
-    result.push(d.toISOString().slice(0, 7));
+    result.push(toLocalIsoDate(d).slice(0, 7));
   }
   return result;
-}
-
-function monthStart(ym: string) { return `${ym}-01`; }
-function monthEnd(ym: string) {
-  const [y, m] = ym.split('-').map(Number);
-  return new Date(y, m, 0).toISOString().split('T')[0];
 }
 
 export async function fetchMultiMonthSummary(

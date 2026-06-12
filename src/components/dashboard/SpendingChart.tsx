@@ -5,7 +5,7 @@ import {
 } from 'recharts';
 import { useAllTransactions } from '@/features/transactions/hooks';
 import { useUiStore }         from '@/stores/uiStore';
-import { formatDateShort, formatCurrency, monthStart, monthEnd } from '@/lib/formatters';
+import { formatDateShort, formatCurrency, monthStart, monthEnd, toLocalIsoDate } from '@/lib/formatters';
 import { Skeleton }           from '@/components/shared/LoadingSkeleton';
 import { useUser }            from '@/hooks/useUser';
 import { cn }                 from '@/lib/utils';
@@ -19,7 +19,7 @@ function buildDailyData(
   const days: Array<{ date: string; expenses: number; income: number }> = [];
 
   for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-    const iso = d.toISOString().split('T')[0];
+    const iso = toLocalIsoDate(d);
     const dayTxns = transactions.filter(t => t.date === iso);
     days.push({
       date:     iso,

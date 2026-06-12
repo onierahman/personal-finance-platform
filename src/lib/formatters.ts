@@ -100,14 +100,27 @@ export function formatRelativeDate(date: string | Date): string {
   return formatDate(d);
 }
 
-/** ISO date string for today: YYYY-MM-DD */
-export function todayIso(): string {
-  return new Date().toISOString().split('T')[0];
+/**
+ * Format a Date as a YYYY-MM-DD string using the LOCAL calendar date.
+ * Unlike toISOString() (which converts to UTC and can roll the date
+ * forward/back across midnight), this preserves the date the user
+ * actually sees on their wall clock.
+ */
+export function toLocalIsoDate(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
 }
 
-/** YYYY-MM for current month */
+/** ISO date string for today (local time): YYYY-MM-DD */
+export function todayIso(): string {
+  return toLocalIsoDate(new Date());
+}
+
+/** YYYY-MM for current month (local time) */
 export function currentYearMonth(): string {
-  return new Date().toISOString().slice(0, 7);
+  return todayIso().slice(0, 7);
 }
 
 /** First day of month as ISO date */
@@ -118,7 +131,8 @@ export function monthStart(yearMonth: string): string {
 /** Last day of month as ISO date */
 export function monthEnd(yearMonth: string): string {
   const [y, m] = yearMonth.split('-').map(Number);
-  return new Date(y, m, 0).toISOString().split('T')[0];
+  // Day 0 of the next month = last day of this month, in local time.
+  return toLocalIsoDate(new Date(y, m, 0));
 }
 
 // ── Numbers ──────────────────────────────────────────────────

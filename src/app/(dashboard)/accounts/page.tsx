@@ -371,12 +371,12 @@ export default function AccountsPage() {
             <div className={cn('w-10 h-10 rounded-lg flex items-center justify-center', netWorth >= 0 ? 'bg-primary-50' : 'bg-danger-50')}>
               <Landmark className={cn('w-5 h-5', netWorth >= 0 ? 'text-primary-600' : 'text-danger-600')} />
             </div>
-            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Net Worth</p>
+            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Accounts Net</p>
           </div>
           <p className={cn('text-2xl font-bold', netWorth >= 0 ? 'text-slate-900 dark:text-white' : 'text-danger-600 dark:text-danger-400')}>
             {formatCurrency(netWorth, currency)}
           </p>
-          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{netWorth >= 0 ? 'Positive' : 'Negative'} net worth</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">Cash &amp; liabilities · excludes investments</p>
         </div>
       </div>
 

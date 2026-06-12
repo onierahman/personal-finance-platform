@@ -9,6 +9,19 @@ import { loginWithEmail } from '@/features/auth/bak.api';
 import { loginSchema, type LoginFormValues } from '@/features/auth/schema';
 import { cn } from '@/lib/utils';
 
+/**
+ * Resolve the post-login destination from the ?next= param, defaulting to the
+ * dashboard. Only same-origin absolute paths are allowed — anything else
+ * (external URLs, protocol-relative "//evil.com") is rejected to prevent
+ * open-redirect attacks.
+ */
+function safeNextPath(): string {
+  if (typeof window === 'undefined') return '/dashboard';
+  const next = new URLSearchParams(window.location.search).get('next');
+  if (next && next.startsWith('/') && !next.startsWith('//')) return next;
+  return '/dashboard';
+}
+
 export default function LoginPage() {
   const router = useRouter();
   const [showPw, setShowPw] = useState(false);
@@ -25,7 +38,7 @@ export default function LoginPage() {
     if (res.error) {
       setApiError(res.error);
     } else {
-      router.push('/dashboard');
+      router.push(safeNextPath());
       router.refresh();
     }
   }
@@ -68,7 +81,12 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">Password</label>
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-sm font-medium text-slate-700">Password</label>
+                <Link href="/forgot-password" className="text-xs text-primary-600 font-medium hover:underline">
+                  Forgot password?
+                </Link>
+              </div>
               <div className="relative">
                 <input
                   {...register('password')}

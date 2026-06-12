@@ -117,13 +117,23 @@
   .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom, 0px); }
 
   /* ── Frosted glass (iOS navigation / sheet material) ─────────── */
+  /* The background must stay legible even when backdrop-filter blur is
+     dropped by the compositor (e.g. when content behind the bar is on its
+     own promoted layer). A higher base opacity keeps the bar opaque enough
+     that scrolling content never bleeds through, while the blur still adds
+     the frosted look on browsers/contexts where it renders. */
   .glass {
-    background-color: rgba(255, 255, 255, 0.72);
+    background-color: rgba(255, 255, 255, 0.88);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
   }
   .dark .glass {
-    background-color: rgba(15, 23, 42, 0.72); /* slate-900 @ 72% */
+    background-color: rgba(15, 23, 42, 0.88); /* slate-900 @ 88% */
+  }
+  /* Where backdrop-filter is genuinely unsupported, fall back to fully opaque. */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass      { background-color: rgb(255, 255, 255); }
+    .dark .glass { background-color: rgb(15, 23, 42); }
   }
   /* Lighter scrim used behind modal sheets */
   .glass-scrim {

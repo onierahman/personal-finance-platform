@@ -148,8 +148,14 @@ function BudgetRow({
       </div>
 
       <p className={cn('text-xs mt-1.5', TEXT_COLOR_MAP[status])}>
-        {pct.toFixed(0)}% used
-        {status === 'over' && ' — over budget'}
+        {/* Show the true ratio (uncapped) so an over-limit budget reads e.g.
+            "112% used — over budget". "Over budget" means strictly exceeded
+            (spent > limit); exactly 100% reads "fully used", consistent with
+            the dashboard count and budget notifications. */}
+        {(ratio * 100).toFixed(0)}% used
+        {ratio > 1
+          ? ' — over budget'
+          : ratio === 1 ? ' — fully used' : ''}
       </p>
     </li>
   );

@@ -245,6 +245,14 @@ export function TransactionList({ month, accountId, category, type, search }: Tr
   });
 
   async function handleDelete(id: string) {
+    // Confirm before destroying financial data — consistent with budget/goal
+    // deletes, and deletion is not reversible.
+    const txn = (data?.data ?? []).find(t => t.id === id);
+    const label = txn
+      ? `${txn.merchant ?? txn.category} (${txn.type === 'income' ? '+' : '-'}${formatCurrency(txn.amount, currency)})`
+      : 'this transaction';
+    if (!confirm(`Delete ${label}? This can't be undone.`)) return;
+
     const res = await deleteTxn.mutateAsync(id);
     if (res.error) showError('Delete failed', res.error);
     else success('Transaction deleted');
