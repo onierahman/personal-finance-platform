@@ -51,6 +51,7 @@ export async function enrollTotp(): Promise<{ data: EnrollResult | null; error: 
   const { data, error } = await supabase.auth.mfa.enroll({
     factorType: 'totp',
     friendlyName,
+    issuer: 'FinanceOS',
   });
   if (error) return { data: null, error: error.message };
 
