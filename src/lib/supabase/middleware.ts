@@ -22,52 +22,8 @@ function isProtectedPage(pathname: string): boolean {
   return PROTECTED_PAGE_PREFIXES.some(p => pathname === p || pathname.startsWith(`${p}/`));
 }
 
-const isDev = process.env.NODE_ENV !== 'production';
-
-function generateNonce(): string {
-  // 16 random bytes, base64-encoded
-  const bytes = new Uint8Array(16);
-  crypto.getRandomValues(bytes);
-  let s = '';
-  for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
-  return btoa(s);
-}
-
-function buildCsp(nonce: string): string {
-  // React dev mode needs eval(); strict CSP only in production.
-  const scriptSrc = isDev
-    ? `'self' 'nonce-${nonce}' 'strict-dynamic' 'unsafe-eval'`
-    : `'self' 'nonce-${nonce}' 'strict-dynamic'`;
-
-  return [
-    "default-src 'self'",
-    "base-uri 'self'",
-    "frame-ancestors 'none'",
-    "object-src 'none'",
-    "form-action 'self'",
-    `script-src ${scriptSrc}`,
-    // Inline styles are pervasive in React (framer-motion, Tailwind JIT).
-    // Keeping 'unsafe-inline' on styles is the accepted trade-off; the
-    // script-src nonce is what actually contains XSS.
-    "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: blob: https://*.supabase.co",
-    "font-src 'self' data:",
-    "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://oauth2.googleapis.com https://www.googleapis.com https://api.anthropic.com",
-  ].join('; ');
-}
-
 export async function updateSession(request: NextRequest) {
-  const nonce = generateNonce();
-  const csp = buildCsp(nonce);
-
-  // Forward the nonce on the request so Next.js can inject it into the
-  // <script> tags it streams. This is the documented pattern for nonce CSPs.
-  const requestHeaders = new Headers(request.headers);
-  requestHeaders.set('x-nonce', nonce);
-  requestHeaders.set('Content-Security-Policy', csp);
-
-  let supabaseResponse = NextResponse.next({ request: { headers: requestHeaders } });
-  supabaseResponse.headers.set('Content-Security-Policy', csp);
+  let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -79,8 +35,7 @@ export async function updateSession(request: NextRequest) {
         },
         setAll(cookiesToSet: { name: string; value: string; options?: Record<string, unknown> }[]) {
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
-          supabaseResponse = NextResponse.next({ request: { headers: requestHeaders } });
-          supabaseResponse.headers.set('Content-Security-Policy', csp);
+          supabaseResponse = NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options),
           );
