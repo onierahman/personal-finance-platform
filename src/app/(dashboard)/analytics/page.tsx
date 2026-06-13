@@ -7,6 +7,7 @@ import { CashFlowChart }          from '@/components/analytics/CashFlowChart';
 import { CategoryTrendsChart }    from '@/components/analytics/CategoryTrendsChart';
 import { BudgetPerformanceChart } from '@/components/analytics/BudgetPerformanceChart';
 import { TopMerchantsTable }      from '@/components/analytics/TopMerchantsTable';
+import { SpendingHeatmap }        from '@/components/analytics/SpendingHeatmap';
 import { OverviewStats }          from '@/components/analytics/OverviewStats';
 import { ExportMenu }             from '@/components/analytics/ExportMenu';
 import { useMultiMonthSummary, useCategoryTrends, useBudgetPerformance, useTopMerchants } from '@/features/analytics/hooks';
@@ -107,6 +108,7 @@ export default function AnalyticsPage() {
 
       {tab === 'spending' && (
         <div className="space-y-6">
+          <SpendingHeatmap months={months} />
           <CategoryTrendsChart months={months} type="expense" />
           <TopMerchantsTable months={months} />
         </div>

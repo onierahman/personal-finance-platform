@@ -17,7 +17,8 @@ const PROTECTED_PAGE_PREFIXES = [
 ];
 
 function isProtectedPage(pathname: string): boolean {
-  if (pathname === '/') return true; // root resolves to the dashboard
+  // '/' is the public marketing page — signed-in users are redirected to the
+  // dashboard below, everyone else sees the landing page.
   return PROTECTED_PAGE_PREFIXES.some(p => pathname === p || pathname.startsWith(`${p}/`));
 }
 
@@ -73,10 +74,11 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // Redirect authenticated users away from login/register pages. /reset-password
-  // is excluded: completing a recovery creates a session, and the user must stay
-  // on the page long enough to set their new password.
-  if (user && isPublicPage && pathname !== '/reset-password') {
+  // Redirect authenticated users away from login/register pages and the
+  // marketing landing page. /reset-password is excluded: completing a recovery
+  // creates a session, and the user must stay on the page long enough to set
+  // their new password.
+  if (user && (pathname === '/' || (isPublicPage && pathname !== '/reset-password'))) {
     const url = request.nextUrl.clone();
     url.pathname = '/dashboard';
     return NextResponse.redirect(url);

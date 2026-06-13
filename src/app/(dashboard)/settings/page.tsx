@@ -10,6 +10,9 @@ import {
   type NotificationPreferences,
 } from '@/features/settings/api';
 import { useGmailConnection, useDisconnectGmail, useSendTestEmail, useNotifications } from '@/features/notifications/hooks';
+import { PushPanel } from '@/components/notifications/PushPanel';
+import { TwoFactorPanel } from '@/components/security/TwoFactorPanel';
+import { SampleDataButton } from '@/components/onboarding/SampleDataButton';
 import { CURRENCIES } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -244,7 +247,12 @@ function SecurityTab({
   })();
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 max-w-sm">
+    <div className="space-y-8">
+      <TwoFactorPanel onSaved={onSaved} onError={onError} />
+
+      <div className="h-px bg-slate-100 dark:bg-slate-800" />
+
+      <form onSubmit={handleSubmit} className="space-y-6 max-w-sm">
       <div>
         <p className="text-sm text-slate-500 dark:text-slate-400">
           Change your password. You are signed in via email — choose a strong password with at least 8 characters.
@@ -298,6 +306,7 @@ function SecurityTab({
         {isPending ? 'Updating…' : 'Update Password'}
       </button>
     </form>
+    </div>
   );
 }
 
@@ -448,6 +457,7 @@ function NotificationsTab({ onSaved, onError }: { onSaved: (msg: string) => void
 
   return (
     <div className="space-y-6">
+      <PushPanel onSaved={onSaved} onError={onError} />
       <GmailConnectPanel onSaved={onSaved} onError={onError} />
 
       <div>
@@ -723,10 +733,20 @@ function SettingsPageContent() {
         {/* Content panel */}
         <div className="lg:col-span-3 bg-white dark:bg-slate-900 border border-slate-100 dark:border-slate-800 rounded-xl shadow-sm p-6">
           {activeTab === 'profile' && (
-            <ProfileTab
-              onSaved={(msg) => showToast(msg, 'success')}
-              onError={(msg) => showToast(msg, 'error')}
-            />
+            <div className="space-y-8">
+              <ProfileTab
+                onSaved={(msg) => showToast(msg, 'success')}
+                onError={(msg) => showToast(msg, 'error')}
+              />
+              <div className="h-px bg-slate-100 dark:bg-slate-800" />
+              <div>
+                <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Sample data</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
+                  Load a realistic demo dataset to explore the app, or clear it when you’re ready to use your own.
+                </p>
+                <SampleDataButton variant="subtle" />
+              </div>
+            </div>
           )}
           {activeTab === 'security' && (
             <SecurityTab

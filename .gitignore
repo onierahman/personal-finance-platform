@@ -11,3 +11,6 @@ PRD
 
 # TS incremental build cache
 tsconfig.tsbuildinfo
+
+# Local code backups (rollback snapshots)
+.backup/

@@ -60,6 +60,7 @@ export interface DbAccount {
   color: string;
   icon: string;
   is_active: boolean;
+  is_sample: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -91,6 +92,7 @@ export interface DbTransaction {
   ai_confidence: number | null;
   is_deleted: boolean;
   deleted_at: string | null;
+  is_sample: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -103,6 +105,7 @@ export interface DbBudget {
   period: BudgetPeriod;
   start_date: string;
   spent_amount: number;
+  is_sample: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -119,6 +122,7 @@ export interface DbGoal {
   status: GoalStatus;
   icon: string;
   color: string;
+  is_sample: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -134,6 +138,7 @@ export interface DbInvestment {
   current_price: number;
   purchase_date: string;
   notes: string | null;
+  is_sample: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -151,6 +156,7 @@ export interface DbRecurringTransaction {
   next_due: string;
   end_date: string | null;
   is_active: boolean;
+  is_sample: boolean;
   created_at: string;
   updated_at: string;
 }
@@ -188,14 +194,24 @@ export interface DbAiInsight {
   created_at: string;
 }
 
+export interface DbPushSubscription {
+  id: string;
+  user_id: string;
+  endpoint: string;
+  p256dh: string;
+  auth: string;
+  user_agent: string | null;
+  created_at: string;
+}
+
 // ── Insert types (what you pass to DB) ──────────────────────
 
-export type InsertAccount = Omit<DbAccount, 'id' | 'created_at' | 'updated_at'>;
-export type InsertTransaction = Omit<DbTransaction, 'id' | 'created_at' | 'updated_at' | 'is_deleted' | 'deleted_at' | 'ai_category' | 'ai_confidence'>;
-export type InsertBudget = Omit<DbBudget, 'id' | 'created_at' | 'updated_at' | 'spent_amount'>;
-export type InsertGoal = Omit<DbGoal, 'id' | 'created_at' | 'updated_at'>;
-export type InsertInvestment = Omit<DbInvestment, 'id' | 'created_at' | 'updated_at'>;
-export type InsertRecurring = Omit<DbRecurringTransaction, 'id' | 'created_at' | 'updated_at'>;
+export type InsertAccount = Omit<DbAccount, 'id' | 'created_at' | 'updated_at' | 'is_sample'> & { is_sample?: boolean };
+export type InsertTransaction = Omit<DbTransaction, 'id' | 'created_at' | 'updated_at' | 'is_deleted' | 'deleted_at' | 'ai_category' | 'ai_confidence' | 'is_sample'> & { is_sample?: boolean };
+export type InsertBudget = Omit<DbBudget, 'id' | 'created_at' | 'updated_at' | 'spent_amount' | 'is_sample'> & { is_sample?: boolean };
+export type InsertGoal = Omit<DbGoal, 'id' | 'created_at' | 'updated_at' | 'is_sample'> & { is_sample?: boolean };
+export type InsertInvestment = Omit<DbInvestment, 'id' | 'created_at' | 'updated_at' | 'is_sample'> & { is_sample?: boolean };
+export type InsertRecurring = Omit<DbRecurringTransaction, 'id' | 'created_at' | 'updated_at' | 'is_sample'> & { is_sample?: boolean };
 
 // ── Update types ─────────────────────────────────────────────
 
@@ -222,6 +238,7 @@ export type Database = {
       notifications:          { Row: DbNotification;          Insert: Omit<DbNotification,'id'|'created_at'>; Update: Partial<DbNotification> };
       gmail_tokens:           { Row: DbGmailToken;            Insert: Omit<DbGmailToken,'id'|'created_at'>;   Update: Partial<DbGmailToken> };
       ai_insights:            { Row: DbAiInsight;             Insert: Omit<DbAiInsight,'id'|'created_at'>;    Update: Partial<DbAiInsight> };
+      push_subscriptions:     { Row: DbPushSubscription;      Insert: Omit<DbPushSubscription,'id'|'created_at'>; Update: Partial<DbPushSubscription> };
     };
   };
 };

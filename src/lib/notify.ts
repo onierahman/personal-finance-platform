@@ -3,6 +3,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { sendGmailMessage, refreshAccessToken } from './gmail';
 import { signPayload, verifyPayload, encryptSecret, decryptSecret, escapeHtml } from './crypto';
+import { sendPushToUser } from './push';
 import type { NotificationType } from '@/types/database';
 
 // Max emails per user per hour — safety cap to prevent notification storms
@@ -40,7 +41,20 @@ export async function notify(opts: NotifyOptions): Promise<void> {
 
   const notificationId: string | undefined = inserted?.id;
 
-  // 2. Try email delivery if Gmail is connected
+  // 2. Fire a Web Push (no-op when push isn't configured or the user has no
+  //    subscriptions). Independent of email — failures here are swallowed.
+  try {
+    await sendPushToUser(supabase, userId, {
+      title,
+      body,
+      url: (data?.url as string) || '/dashboard',
+      tag: type,
+    });
+  } catch {
+    // Non-fatal.
+  }
+
+  // 3. Try email delivery if Gmail is connected
   try {
     const { data: tokenRow } = await supabase
       .from('gmail_tokens')

@@ -7,6 +7,7 @@ import { MobileSidebar }     from '@/components/layout/MobileSidebar';
 import { ThemeApplier }      from '@/components/layout/ThemeApplier';
 import { PageTransition }    from '@/components/layout/PageTransition';
 import { QuickAdd }          from '@/components/transactions/QuickAdd';
+import { GoalCelebration }   from '@/components/goals/GoalCelebration';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -27,6 +28,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
       <MobileNav />
       <QuickAdd />
+      <GoalCelebration />
     </div>
   );
 }

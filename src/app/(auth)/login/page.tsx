@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { Wallet, Eye, EyeOff } from 'lucide-react';
 import { loginWithEmail } from '@/features/auth/bak.api';
 import { loginSchema, type LoginFormValues } from '@/features/auth/schema';
+import { needsMfaChallenge, solveMfaChallenge } from '@/features/security/mfa';
 import { cn } from '@/lib/utils';
 
 /**
@@ -27,6 +28,11 @@ export default function LoginPage() {
   const [showPw, setShowPw] = useState(false);
   const [apiError, setApiError] = useState('');
 
+  // Two-factor challenge step (shown after a correct password when 2FA is on).
+  const [mfaStep, setMfaStep] = useState(false);
+  const [mfaCode, setMfaCode] = useState('');
+  const [mfaBusy, setMfaBusy] = useState(false);
+
   const {
     register, handleSubmit,
     formState: { errors, isSubmitting },
@@ -37,10 +43,29 @@ export default function LoginPage() {
     const res = await loginWithEmail(values);
     if (res.error) {
       setApiError(res.error);
-    } else {
-      router.push(safeNextPath());
-      router.refresh();
+      return;
     }
+    // Password accepted — does this account require a second factor?
+    if (await needsMfaChallenge()) {
+      setMfaStep(true);
+      return;
+    }
+    router.push(safeNextPath());
+    router.refresh();
+  }
+
+  async function onVerifyMfa() {
+    if (mfaCode.trim().length < 6) return;
+    setApiError('');
+    setMfaBusy(true);
+    const { error } = await solveMfaChallenge(mfaCode.trim());
+    setMfaBusy(false);
+    if (error) {
+      setApiError(error);
+      return;
+    }
+    router.push(safeNextPath());
+    router.refresh();
   }
 
   return (
@@ -51,8 +76,14 @@ export default function LoginPage() {
           <div className="w-12 h-12 rounded-xl bg-primary-600 flex items-center justify-center mb-3">
             <Wallet className="w-6 h-6 text-white" />
           </div>
-          <h1 className="text-2xl font-semibold text-slate-900">Welcome back</h1>
-          <p className="text-sm text-slate-500 mt-1">Sign in to your FinanceOS account</p>
+          <h1 className="text-2xl font-semibold text-slate-900">
+            {mfaStep ? 'Two-factor verification' : 'Welcome back'}
+          </h1>
+          <p className="text-sm text-slate-500 mt-1">
+            {mfaStep
+              ? 'Enter the 6-digit code from your authenticator app'
+              : 'Sign in to your FinanceOS account'}
+          </p>
         </div>
 
         <div className="card p-6">
@@ -62,6 +93,34 @@ export default function LoginPage() {
             </div>
           )}
 
+          {mfaStep ? (
+            <div className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1.5">
+                  Authentication code
+                </label>
+                <input
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  maxLength={6}
+                  value={mfaCode}
+                  onChange={(e) => setMfaCode(e.target.value.replace(/\D/g, ''))}
+                  onKeyDown={(e) => e.key === 'Enter' && onVerifyMfa()}
+                  placeholder="000000"
+                  autoFocus
+                  className="w-full px-3 py-2.5 text-center text-lg font-mono tracking-[0.3em] border border-slate-200 rounded-md outline-none transition-colors focus:border-primary-500"
+                />
+              </div>
+              <button
+                type="button"
+                onClick={onVerifyMfa}
+                disabled={mfaBusy || mfaCode.length < 6}
+                className="w-full py-2.5 rounded-md bg-primary-600 text-white text-sm font-semibold hover:bg-primary-700 active:scale-[0.98] transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {mfaBusy ? 'Verifying…' : 'Verify & sign in'}
+              </button>
+            </div>
+          ) : (
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1.5">Email</label>
@@ -119,6 +178,7 @@ export default function LoginPage() {
               {isSubmitting ? 'Signing in…' : 'Sign in'}
             </button>
           </form>
+          )}
         </div>
 
         <p className="text-center text-sm text-slate-500 mt-4">
