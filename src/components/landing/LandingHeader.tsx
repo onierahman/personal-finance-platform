@@ -8,8 +8,8 @@ import { useScrolled } from '@/hooks/useScrolled';
 
 const NAV_LINKS = [
   { label: 'Features', href: '#features' },
+  { label: 'Live demo', href: '#see-it' },
   { label: 'AI Import', href: '#ai' },
-  { label: 'How it works', href: '#how-it-works' },
   { label: 'Security', href: '#security' },
   { label: 'FAQ', href: '#faq' },
 ];

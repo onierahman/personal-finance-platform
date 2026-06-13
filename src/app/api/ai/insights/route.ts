@@ -10,13 +10,26 @@ import {
 
 export const dynamic = 'force-dynamic';
 
-function monthRange(d: Date): { start: string; end: string; key: string } {
-  const y = d.getFullYear();
-  const m = d.getMonth();
-  const start = new Date(Date.UTC(y, m, 1));
-  const end = new Date(Date.UTC(y, m + 1, 0));
-  const iso = (x: Date) => x.toISOString().slice(0, 10);
-  return { start: iso(start), end: iso(end), key: iso(start).slice(0, 7) };
+const pad = (n: number) => String(n).padStart(2, '0');
+
+// Month math done purely on the YYYY-MM string so it can't drift across
+// timezones. (A previous version anchored to a UTC midnight Date and then read
+// it with local getMonth(), which rolled back a month on UTC-negative servers
+// and made the review query the wrong month.)
+function monthBounds(monthKey: string): { start: string; end: string } {
+  const [y, m] = monthKey.split('-').map(Number); // m is 1-12
+  const lastDay = new Date(Date.UTC(y, m, 0)).getUTCDate();
+  return { start: `${monthKey}-01`, end: `${monthKey}-${pad(lastDay)}` };
+}
+
+function prevMonthKey(monthKey: string): string {
+  const [y, m] = monthKey.split('-').map(Number);
+  return m === 1 ? `${y - 1}-12` : `${y}-${pad(m - 1)}`;
+}
+
+function currentMonthKey(): string {
+  const now = new Date();
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}`;
 }
 
 interface TxnRow {
@@ -30,9 +43,8 @@ async function computeStats(
   supabase: any,
   monthKey: string,
 ): Promise<InsightStats> {
-  const base = new Date(`${monthKey}-01T00:00:00Z`);
-  const curr = monthRange(base);
-  const prev = monthRange(new Date(Date.UTC(base.getUTCFullYear(), base.getUTCMonth() - 1, 1)));
+  const curr = monthBounds(monthKey);
+  const prev = monthBounds(prevMonthKey(monthKey));
 
   const fetchMonth = async (start: string, end: string): Promise<TxnRow[]> => {
     const { data } = await supabase
@@ -130,7 +142,7 @@ export async function GET(req: Request) {
 
   const url = new URL(req.url);
   const refresh = url.searchParams.get('refresh') === '1';
-  const monthKey = url.searchParams.get('month') || monthRange(new Date()).key;
+  const monthKey = url.searchParams.get('month') || currentMonthKey();
 
   // Return cached insight unless a refresh is requested.
   if (!refresh) {
@@ -166,7 +178,7 @@ export async function GET(req: Request) {
     .maybeSingle();
   const currency = (profile as { currency?: string } | null)?.currency ?? 'USD';
 
-  const payload = (await generateWithAI(stats, currency)) ?? writeRuleBasedInsight(stats);
+  const payload = (await generateWithAI(stats, currency)) ?? writeRuleBasedInsight(stats, currency);
 
   // Cache: replace any existing summary for this period.
   await supabase

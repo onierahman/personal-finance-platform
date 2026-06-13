@@ -39,8 +39,12 @@ function fmtPct(n: number): string {
  * review from the numbers alone — this is what ships until an AI key
  * is configured, and the fallback if a generation call fails.
  */
-export function writeRuleBasedInsight(stats: InsightStats): InsightPayload {
+export function writeRuleBasedInsight(stats: InsightStats, currency = 'USD'): InsightPayload {
   const body: string[] = [];
+  // Format money in the user's own currency so the narrative matches the
+  // figures shown elsewhere on the card.
+  const money = (n: number) =>
+    n.toLocaleString('en-US', { style: 'currency', currency, maximumFractionDigits: 0 });
   const monthLabel = new Date(`${stats.month}-01T00:00:00`).toLocaleString('en-US', {
     month: 'long',
     year: 'numeric',
@@ -121,10 +125,6 @@ export function writeRuleBasedInsight(stats: InsightStats): InsightPayload {
     generatedBy: 'rules',
     generatedAt: new Date().toISOString(),
   };
-}
-
-function money(n: number): string {
-  return n.toLocaleString('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 }
 
 /** Compact prompt describing the numbers for the optional AI writer. */

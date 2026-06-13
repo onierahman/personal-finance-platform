@@ -219,12 +219,12 @@ export function Hero() {
               Get started free
               <ArrowRight size={17} className="transition-transform group-hover:translate-x-0.5" />
             </Link>
-            <a
-              href="#features"
+            <Link
+              href="/demo"
               className="inline-flex items-center gap-2 rounded-md border border-slate-200 bg-white px-6 py-3 text-[15px] font-semibold text-slate-700 shadow-card transition-all hover:bg-slate-50 active:scale-[0.98]"
             >
-              Explore features
-            </a>
+              Try the live demo
+            </Link>
           </motion.div>
 
           <motion.p {...entrance(0.32)} className="mt-4 text-[13px] text-slate-400">

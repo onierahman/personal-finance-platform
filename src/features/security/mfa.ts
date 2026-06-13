@@ -35,19 +35,22 @@ export async function hasVerifiedTotp(): Promise<boolean> {
 export async function enrollTotp(): Promise<{ data: EnrollResult | null; error: string | null }> {
   const supabase = getSupabaseBrowserClient() as AnyClient;
 
-  // Clean up any dangling unverified factors first — Supabase rejects a second
-  // enroll with a duplicate friendly name, and stale unverified factors pile up
-  // if a previous attempt was abandoned.
+  // Clean up any dangling unverified factors first — they pile up if a previous
+  // setup attempt was abandoned, and Supabase caps the number of factors.
   const existing = await listTotpFactors();
-  for (const f of existing) {
-    if (f.status === 'unverified') {
-      await supabase.auth.mfa.unenroll({ factorId: f.id });
-    }
-  }
+  await Promise.all(
+    existing
+      .filter((f) => f.status === 'unverified')
+      .map((f) => supabase.auth.mfa.unenroll({ factorId: f.id })),
+  );
+
+  // Unique friendly name so a fast double-click (two in-flight enroll calls)
+  // can never collide on the same name — that was the mfa_factor_name_conflict.
+  const friendlyName = `Authenticator ${Date.now()}`;
 
   const { data, error } = await supabase.auth.mfa.enroll({
     factorType: 'totp',
-    friendlyName: `Authenticator (${new Date().toISOString().slice(0, 10)})`,
+    friendlyName,
   });
   if (error) return { data: null, error: error.message };
 

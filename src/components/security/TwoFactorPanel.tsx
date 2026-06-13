@@ -148,11 +148,19 @@ export function TwoFactorPanel({
             <p className="text-xs font-medium text-slate-700 dark:text-slate-300 mb-2">
               1. Scan this QR code with your authenticator app
             </p>
-            <div
-              className="w-40 h-40 bg-white rounded-lg p-2 mx-auto [&_svg]:w-full [&_svg]:h-full"
-              // Supabase returns a trusted, self-generated inline SVG QR code.
-              dangerouslySetInnerHTML={{ __html: enroll.qrSvg }}
-            />
+            <div className="w-44 h-44 bg-white rounded-lg p-2 mx-auto flex items-center justify-center [&_svg]:w-full [&_svg]:h-full">
+              {/* Supabase usually returns an SVG image data-URI (render as <img>),
+                  but some versions return raw <svg> markup (inline it). Handle both. */}
+              {enroll.qrSvg.trim().startsWith('<svg') ? (
+                <div
+                  className="w-full h-full"
+                  dangerouslySetInnerHTML={{ __html: enroll.qrSvg }}
+                />
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={enroll.qrSvg} alt="Two-factor QR code" className="w-full h-full" />
+              )}
+            </div>
           </div>
 
           <div>

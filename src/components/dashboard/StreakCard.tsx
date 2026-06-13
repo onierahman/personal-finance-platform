@@ -115,9 +115,9 @@ export function StreakCard() {
 
       {data && data.longest > 0 && (
         <p className="mt-3 border-t border-slate-100 pt-3 text-xs text-slate-400 dark:border-slate-800">
-          Longest: <span className="font-semibold text-slate-600 dark:text-slate-300">{data.longest} days</span>
+          Longest: <span className="font-semibold text-slate-600 dark:text-slate-300">{data.longest} {data.longest === 1 ? 'day' : 'days'}</span>
           <span className="mx-1.5">·</span>
-          {data.daysTracked} days tracked
+          {data.daysTracked} {data.daysTracked === 1 ? 'day' : 'days'} tracked
         </p>
       )}
     </div>

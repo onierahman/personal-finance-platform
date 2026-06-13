@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { LandingHeader } from '@/components/landing/LandingHeader';
 import { Hero } from '@/components/landing/Hero';
 import { FeatureBento } from '@/components/landing/FeatureBento';
+import { ProductShowcase } from '@/components/landing/ProductShowcase';
 import { AIShowcase } from '@/components/landing/AIShowcase';
 import { IntelligenceBand } from '@/components/landing/IntelligenceBand';
 import { HowItWorks } from '@/components/landing/HowItWorks';
@@ -37,6 +38,7 @@ export default function LandingPage() {
       <main>
         <Hero />
         <FeatureBento />
+        <ProductShowcase />
         <AIShowcase />
         <IntelligenceBand />
         <HowItWorks />
