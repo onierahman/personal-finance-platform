@@ -5,20 +5,28 @@ import type { LoginFormValues, RegisterFormValues } from './schema';
 export async function loginWithEmail(
   values: LoginFormValues,
 ): Promise<ApiResponse<User>> {
-   
-  const supabase = getSupabaseBrowserClient() as any;
 
-  const { data, error } = await supabase.auth.signInWithPassword({
-    email:    values.email,
-    password: values.password,
+  // Route through the server proxy so IP+email rate limits are enforced
+  // before the credentials reach Supabase. The proxy sets the session cookies
+  // on success; the browser client then reads the live session.
+  const res = await fetch('/api/auth/login', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email: values.email, password: values.password }),
   });
+  if (!res.ok) {
+    const { error } = await res.json().catch(() => ({ error: 'Login failed' }));
+    return { data: null, error: error || 'Login failed' };
+  }
 
-  if (error) return { data: null, error: error.message };
+  const supabase = getSupabaseBrowserClient() as any;
+  const { data: { user: authUser } } = await supabase.auth.getUser();
+  if (!authUser) return { data: null, error: 'Login failed' };
 
   const { data: profileRaw } = await (supabase as any)
     .from('users')
     .select('*')
-    .eq('id', data.user.id)
+    .eq('id', authUser.id)
     .single();
   const profile = profileRaw as import('@/types/database').DbUser | null;
 

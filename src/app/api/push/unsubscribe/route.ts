@@ -1,7 +1,11 @@
 import { NextResponse } from 'next/server';
 import { getSupabaseServerClient } from '@/lib/supabase/server';
+import { rejectCsrf } from '@/lib/security/csrf';
 
 export async function POST(req: Request) {
+  const csrf = rejectCsrf(req);
+  if (csrf) return csrf;
+
   const supabase = (await getSupabaseServerClient()) as any;
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
